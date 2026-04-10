@@ -1,65 +1,305 @@
-import Image from "next/image";
+import Link from 'next/link'
+import {ChevronRight} from 'lucide-react'
+import {CompactNewsletterForm} from '@/components/CompactNewsletterForm'
+import {getQuickLinkHref} from '@/lib/link-mapping'
+import {
+  featuredNews,
+  latestBlog,
+  latestJobs,
+  latestNews,
+  latestOpportunities,
+  quickLinks,
+  type BlogItem,
+  type FeaturedNewsItem,
+  type JobItem,
+  type OpportunityItem,
+  type QuickLink,
+} from '@/lib/mock-content'
+
+function formatDate(date?: string) {
+  if (!date) return 'No date'
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+  }).format(new Date(date))
+}
+
+function formatViews(views?: number) {
+  return `${(views ?? 0).toLocaleString()} views`
+}
+
+function getCategoryHref(link: QuickLink) {
+  return getQuickLinkHref(link.slug, link.contentType)
+}
+
+function getSectionGridClass(count: number) {
+  if (count <= 1) return 'grid gap-6 md:max-w-[32rem]'
+  if (count === 2) return 'grid gap-6 md:grid-cols-2'
+  return 'grid gap-6 md:grid-cols-3'
+}
+
+type SectionHeaderProps = {
+  title: string
+  href: string
+}
+
+function SectionHeader({title, href}: SectionHeaderProps) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <h2 className="font-display text-[1.9rem] font-bold tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">
+        {title}
+      </h2>
+      <Link
+        href={href}
+        className="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-primary-text transition-colors hover:text-primary-green"
+      >
+        Show All
+      </Link>
+    </div>
+  )
+}
+
+function EditorialCard({item, hrefBase}: {item: FeaturedNewsItem | BlogItem; hrefBase: '/news' | '/blog'}) {
+  return (
+    <article className="bg-card-background pb-2">
+      <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
+        <img src={item.coverImageUrl} alt={item.title} className="h-[220px] w-full object-cover" />
+      </Link>
+      <h3 className="mt-5 font-display text-[1.7rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text">
+        <Link href={`${hrefBase}/${item.slug}`} className="transition-colors hover:text-primary-green">
+          {item.title}
+        </Link>
+      </h3>
+      <p className="mt-3 line-clamp-3 text-[0.98rem] leading-7 text-muted-text">{item.excerpt}</p>
+      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+        <span className="inline-flex rounded-[5px] bg-primary-green px-2.5 py-1 text-white">{item.categoryTitle}</span>
+        <span>Published by {item.authorName}</span>
+        <span>{formatDate(item.publishedAt)}</span>
+        <span>{formatViews(item.views)}</span>
+      </div>
+    </article>
+  )
+}
+
+function JobPreview({item}: {item: JobItem}) {
+  return (
+    <article className="border-b border-border bg-card-background pb-5 pt-4 sm:pt-5">
+      <div>
+        <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.company}</p>
+        <h3 className="mt-3 font-display text-[1.55rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
+          <Link href={`/jobs/${item.slug}`} className="transition-colors hover:text-primary-green">
+            {item.title}
+          </Link>
+        </h3>
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+        <span>{item.employmentType}</span>
+        {item.remote ? <span>Remote</span> : null}
+      </div>
+      <p className="mt-4 text-[1rem] leading-7 text-muted-text">{item.location}</p>
+      <p className="mt-4 line-clamp-3 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
+      <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+        <span>{formatDate(item.publishedAt)}</span>
+        <span>{formatViews(item.views)}</span>
+      </div>
+    </article>
+  )
+}
+
+function OpportunityPreview({item}: {item: OpportunityItem}) {
+  return (
+    <article className="border-b border-border bg-card-background pb-5 pt-4 sm:pt-5">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.organization}</p>
+          <h3 className="mt-3 font-display text-[1.55rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
+            <Link href={`/opportunities/${item.slug}`} className="transition-colors hover:text-primary-green">
+              {item.title}
+            </Link>
+          </h3>
+        </div>
+        <div className="text-right text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+          <p>Deadline</p>
+          <p className="mt-2 text-primary-text">{formatDate(item.deadline)}</p>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+        <span>{item.opportunityType}</span>
+        <span>{item.location}</span>
+      </div>
+      <p className="mt-4 line-clamp-3 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
+      <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+        <span>{formatViews(item.views)}</span>
+      </div>
+    </article>
+  )
+}
 
 export default function Home() {
+  const topLatestNews = latestNews.slice(0, 5)
+  const moreLatestNews = latestNews.slice(5, 10)
+  const homeBlog = latestBlog.slice(0, 3)
+  const homeJobs = latestJobs.slice(0, 3)
+  const homeOpportunities = latestOpportunities.slice(0, 3)
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="mx-auto flex w-full max-w-[1360px] flex-col gap-10 px-5 py-6 sm:px-8 lg:px-16 lg:gap-14 lg:py-8">
+      <section className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <h2 className="shrink-0 font-display text-[1.3rem] font-bold tracking-[-0.04em] text-primary-text sm:text-[1.45rem]">
+            Quick Links
+          </h2>
+          <div className="min-w-0 flex-1 overflow-x-auto scrollbar-none lg:overflow-visible">
+            <div className="flex min-w-max gap-3 pr-5 lg:min-w-0 lg:w-full lg:flex-wrap lg:pr-0">
+              {quickLinks.map((link) => (
+                <Link
+                  key={link._id}
+                  href={getCategoryHref(link)}
+                  className="inline-flex shrink-0 items-center rounded-[8px] border border-border bg-card-background px-4 py-2 text-[0.72rem] font-semibold text-primary-text transition-colors hover:border-primary-green hover:text-primary-green"
+                >
+                  {link.title}
+                  <ChevronRight className="ml-2 h-3.5 w-3.5" strokeWidth={2.1} />
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </section>
+
+      <section className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
+        <div className="grid gap-6 sm:grid-cols-2">
+          {featuredNews.slice(0, 4).map((story) => (
+            <EditorialCard key={story._id} item={story} hrefBase="/news" />
+          ))}
+        </div>
+
+        <aside className="bg-[#fbf7df] px-5 py-6 dark:bg-card-background sm:px-6 sm:py-7">
+          <div className="flex items-start justify-between gap-4">
+            <h2 className="font-display text-[2.35rem] font-bold leading-none tracking-[-0.06em] text-primary-green sm:text-[2.75rem]">
+              Latest
+            </h2>
+            <Link
+              href="/news"
+              className="mt-2 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-primary-text transition-colors hover:text-primary-green"
+            >
+              Show All
+            </Link>
+          </div>
+
+          <div className="relative mt-7 pl-7">
+            <div className="absolute left-[10px] top-2 bottom-2 w-px bg-primary-green/45" />
+            <div className="flex flex-col gap-6">
+              {topLatestNews.map((story) => (
+                <article key={story._id} className="relative border-b border-black/10 pb-5 last:border-b-0 last:pb-0 dark:border-white/10">
+                  <span className="absolute -left-[21px] top-1 h-[8px] w-[8px] rounded-full bg-primary-green" />
+                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+                    {formatDate(story.publishedAt)}
+                  </p>
+                  <h3 className="mt-3 font-display text-[1.35rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text sm:text-[1.5rem]">
+                    <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
+                      {story.title}
+                    </Link>
+                  </h3>
+                  <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+                    <span>Published by {story.authorName}</span>
+                    <span>{formatViews(story.views)}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section className="flex flex-col gap-6">
+        <SectionHeader title="Blog & Guides" href="/blog" />
+        <div className={getSectionGridClass(homeBlog.length)}>
+          {homeBlog.map((post) => (
+            <EditorialCard key={post._id} item={post} hrefBase="/blog" />
+          ))}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-6">
+        <SectionHeader title="Jobs" href="/jobs" />
+        <div className={getSectionGridClass(homeJobs.length)}>
+          {homeJobs.map((job) => (
+            <JobPreview key={job._id} item={job} />
+          ))}
+        </div>
+
+        <aside className="bg-[#fbf7df] px-5 py-6 dark:bg-card-background sm:px-6 sm:py-7">
+          <div className="flex items-start justify-between gap-4">
+            <h3 className="font-display text-[2rem] font-bold leading-none tracking-[-0.06em] text-primary-green sm:text-[2.35rem]">
+              More Latest News
+            </h3>
+            <Link
+              href="/news"
+              className="mt-2 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-primary-text transition-colors hover:text-primary-green"
+            >
+              Show All
+            </Link>
+          </div>
+
+          <div className="mt-7 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {moreLatestNews.map((story) => (
+              <article key={story._id} className="border-b border-black/10 pb-5 last:border-b-0 last:pb-0 dark:border-white/10">
+                <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+                  {formatDate(story.publishedAt)}
+                </p>
+                <h3 className="mt-3 font-display text-[1.2rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
+                  <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
+                    {story.title}
+                  </Link>
+                </h3>
+                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+                  <span>Published by {story.authorName}</span>
+                  <span>{formatViews(story.views)}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </aside>
+      </section>
+
+      <section className="overflow-hidden rounded-[28px] bg-primary-green px-5 py-8 text-white sm:px-8 sm:py-10 lg:px-10">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <h2 className="font-display text-[2.4rem] font-bold leading-[0.96] tracking-[-0.06em] sm:text-[3.2rem] lg:text-[4rem]">
+              Sign up for Techfront Weekly
+            </h2>
+            <p className="mt-5 max-w-2xl text-[1rem] leading-8 text-white/90">
+              Subscribe for jobs, opportunities, guides, and the most useful tech stories in one clean weekly digest.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-5 text-[0.95rem] font-semibold uppercase tracking-[0.08em] text-white">
+              <span>Jobs</span>
+              <span>Opportunities</span>
+              <span>Guides</span>
+            </div>
+          </div>
+
+          <div className="w-full max-w-[34rem]">
+            <CompactNewsletterForm
+              buttonLabel="Subscribe Now"
+              className="flex flex-col gap-4 sm:flex-row"
+              inputClassName="h-13 w-full rounded-[8px] border !border-white bg-transparent px-4 text-[0.82rem] font-semibold uppercase tracking-[0.12em] text-white placeholder:text-white/75 focus:outline-none"
+              buttonClassName="inline-flex h-13 items-center justify-center whitespace-nowrap rounded-[8px] bg-white px-6 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-primary-green"
+              helperTextClassName="text-[0.8rem] text-white/80"
+              successClassName="text-[0.84rem] text-white"
+              errorClassName="text-[0.84rem] text-white/80"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
         </div>
-      </main>
-    </div>
-  );
+      </section>
+      <section className="flex flex-col gap-6">
+        <SectionHeader title="Opportunities" href="/opportunities" />
+        <div className={getSectionGridClass(homeOpportunities.length)}>
+          {homeOpportunities.map((item) => (
+            <OpportunityPreview key={item._id} item={item} />
+          ))}
+        </div>
+      </section>
+    </main>
+  )
 }
