@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaRss, FaXTwitter, FaYoutube } from "react-icons/fa6";
+import { AppImage } from "@/components/AppImage";
 
 export const metadata: Metadata = {
   title: "About | Techfront",
@@ -63,10 +64,10 @@ export default function AboutPage() {
               <article key={member.name} className="bg-card-background p-4">
                 {member.slug ? (
                   <Link href={`/authors/${member.slug}`} className="block">
-                    <img src={member.image} alt={member.name} className="h-[280px] w-full object-cover" />
+                    <AppImage src={member.image} alt={member.name} className="h-[280px] w-full object-cover" width={900} height={1120} sizes="(max-width: 1280px) 50vw, 33vw" />
                   </Link>
                 ) : (
-                  <img src={member.image} alt={member.name} className="h-[280px] w-full object-cover" />
+                  <AppImage src={member.image} alt={member.name} className="h-[280px] w-full object-cover" width={900} height={1120} sizes="(max-width: 1280px) 50vw, 33vw" />
                 )}
                 <h3 className="mt-4 font-display text-[1.8rem] font-bold leading-none tracking-[-0.04em] text-primary-text">
                   {member.slug ? (

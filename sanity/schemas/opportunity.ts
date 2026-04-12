@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {coverImageField, richBodyField, seoField} from './shared'
 
 export const opportunity = defineType({
   name: 'opportunity',
@@ -13,10 +14,12 @@ export const opportunity = defineType({
     defineField({name: 'category', title: 'Category', type: 'reference', to: [{type: 'category'}], validation: (Rule) => Rule.required()}),
     defineField({name: 'deadline', title: 'Deadline', type: 'datetime'}),
     defineField({name: 'applicationUrl', title: 'Application URL', type: 'url', validation: (Rule) => Rule.required()}),
-    defineField({name: 'excerpt', title: 'Excerpt', type: 'text', rows: 3}),
+    defineField({name: 'excerpt', title: 'Excerpt', type: 'text', rows: 3, validation: (Rule) => Rule.required().min(20).max(220)}),
+    coverImageField,
     defineField({name: 'featured', title: 'Featured', type: 'boolean', initialValue: false}),
     defineField({name: 'views', title: 'Views', type: 'number', initialValue: 0}),
-    defineField({name: 'body', title: 'Body', type: 'array', of: [{type: 'block'}]}),
+    richBodyField,
+    seoField,
   ],
   preview: {
     select: {

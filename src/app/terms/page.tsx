@@ -52,7 +52,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Disclaimer and Liability</h2>
           <p className="mt-3">
-            Services are provided on an "as is" basis. To the maximum extent permitted by law, Techfront disclaims warranties and is not
+            Services are provided on an &quot;as is&quot; basis. To the maximum extent permitted by law, Techfront disclaims warranties and is not
             liable for indirect or consequential damages.
           </p>
         </section>

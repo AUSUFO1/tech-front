@@ -11,6 +11,7 @@ export type FeaturedNewsItem = {
   title: string
   excerpt: string
   views: number
+  commentCount?: number
   publishedAt: string
   slug: string
   authorName: string
@@ -22,6 +23,7 @@ export type LatestNewsItem = {
   _id: string
   title: string
   views: number
+  commentCount?: number
   publishedAt: string
   slug: string
   authorName: string
@@ -32,6 +34,7 @@ export type BlogItem = {
   title: string
   excerpt: string
   views: number
+  commentCount?: number
   publishedAt: string
   slug: string
   authorName: string
@@ -44,6 +47,7 @@ export type JobItem = {
   title: string
   excerpt: string
   views: number
+  commentCount?: number
   publishedAt: string
   slug: string
   company: string
@@ -57,6 +61,7 @@ export type OpportunityItem = {
   title: string
   excerpt: string
   views: number
+  commentCount?: number
   slug: string
   organization: string
   location: string

@@ -1,7 +1,9 @@
 import Link from 'next/link'
+import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
 import {StandardPagination} from '@/components/StandardPagination'
-import {latestJobs, latestNews} from '@/lib/mock-content'
+import {getJobsContent, getNewsContent} from '@/lib/content'
+import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -12,18 +14,33 @@ function formatViews(views?: number) {
   return `${(views ?? 0).toLocaleString()} views`
 }
 
+function formatComments(count?: number) {
+  return `${(count ?? 0).toLocaleString()} comments`
+}
+
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: Promise<{category?: string}>
+  searchParams?: Promise<{category?: string; page?: string}>
 }) {
+  const [latestJobs, {latestNews}] = await Promise.all([getJobsContent(), getNewsContent()])
   const params = (await searchParams) ?? {}
   const category = params.category
+  const currentPage = getCurrentPage(params.page)
   const filteredJobs = latestJobs.filter((job) => {
     if (!category) return true
     if (category === 'remote-jobs') return job.remote
     return true
   })
+  const paginated = paginateItems(filteredJobs, currentPage)
+
+  const createPageHref = (page: number) => {
+    const query = new URLSearchParams()
+    if (category) query.set('category', category)
+    if (page > 1) query.set('page', String(page))
+    const queryString = query.toString()
+    return queryString ? `/jobs?${queryString}` : '/jobs'
+  }
 
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 sm:px-8 lg:px-16 lg:pb-16">
@@ -37,26 +54,35 @@ export default async function Page({
 
       <section className="grid gap-8 pb-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
         <div className="border-t border-border">
-          {filteredJobs.map((job) => (
+          {paginated.items.map((job) => (
             <article key={job._id} className="border-b border-border py-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{job.company}</p>
                 <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">{job.remote ? 'Remote' : job.location}</p>
               </div>
               <h2 className="mt-3 font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">
-                <Link href={`/jobs/${job.slug}`} className="transition-colors hover:text-primary-green">
+                <Link
+                  href={`/jobs/${job.slug}`}
+                  className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+                >
                   {job.title}
                 </Link>
               </h2>
               <p className="mt-3 line-clamp-2 text-[1rem] leading-7 text-muted-text">{job.excerpt}</p>
               <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                <span className="bg-primary-green px-2.5 py-1 text-white">{job.employmentType}</span>
+                <CategoryTagLink href="/jobs" label={job.employmentType} />
                 <span>{formatDate(job.publishedAt)}</span>
                 <span>{formatViews(job.views)}</span>
+                <span>{formatComments(job.commentCount)}</span>
               </div>
             </article>
           ))}
-          <StandardPagination summary={`1-${filteredJobs.length} of ${filteredJobs.length}`} />
+          <StandardPagination
+            summary={`${paginated.startItem}-${paginated.endItem} of ${paginated.totalItems}`}
+            currentPage={paginated.page}
+            totalPages={paginated.totalPages}
+            createPageHref={createPageHref}
+          />
         </div>
 
         <aside className="border border-border px-5 py-6 lg:sticky lg:top-[112px]">
@@ -69,7 +95,10 @@ export default async function Page({
                   <span className="absolute -left-[21px] top-1 h-[8px] w-[8px] rounded-full bg-primary-green" />
                   <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">{formatDate(story.publishedAt)}</p>
                   <h3 className="mt-2 font-display text-[1.2rem] font-bold leading-[1.03] tracking-[-0.04em] text-primary-text">
-                    <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
+                    <Link
+                      href={`/news/${story.slug}`}
+                      className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+                    >
                       {story.title}
                     </Link>
                   </h3>
@@ -82,3 +111,4 @@ export default async function Page({
     </main>
   )
 }
+

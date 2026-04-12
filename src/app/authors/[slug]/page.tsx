@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import {notFound} from 'next/navigation'
+import {AppImage} from '@/components/AppImage'
 import {StandardPagination} from '@/components/StandardPagination'
-import {mockAuthors} from '@/lib/mock-authors'
-import {featuredNews, latestBlog} from '@/lib/mock-content'
+import {getAuthorBySlug, getAuthoredItems} from '@/lib/content'
+import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -19,45 +20,27 @@ function formatViews(views?: number) {
 
 export default async function AuthorDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{slug: string}>
+  searchParams?: Promise<{page?: string}>
 }) {
   const {slug} = await params
-  const author = mockAuthors.find((item) => item.slug === slug)
+  const paramsValue = (await searchParams) ?? {}
+  const currentPage = getCurrentPage(paramsValue.page)
+  const [author, authoredItems] = await Promise.all([getAuthorBySlug(slug), getAuthoredItems(slug)])
+  const paginated = paginateItems(authoredItems, currentPage)
 
   if (!author) {
     notFound()
   }
 
-  const authoredItems = [
-    ...featuredNews
-      .filter((item) => item.authorName === author.name)
-      .map((item) => ({
-        _id: `news-${item._id}`,
-        type: 'News',
-        title: item.title,
-        excerpt: item.excerpt,
-        publishedAt: item.publishedAt,
-        views: item.views,
-        href: `/news/${item.slug}`,
-      })),
-    ...latestBlog
-      .filter((item) => item.authorName === author.name)
-      .map((item) => ({
-        _id: `blog-${item._id}`,
-        type: 'Blog',
-        title: item.title,
-        excerpt: item.excerpt,
-        publishedAt: item.publishedAt,
-        views: item.views,
-        href: `/blog/${item.slug}`,
-      })),
-  ].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+  const createPageHref = (page: number) => (page > 1 ? `/authors/${slug}?page=${page}` : `/authors/${slug}`)
 
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 pt-6 sm:px-8 lg:px-16 lg:pb-16">
       <section className="grid gap-6 border-b border-border py-8 md:grid-cols-[220px_minmax(0,1fr)] md:items-center lg:py-10">
-        <img src={author.imageUrl} alt={author.name} className="h-[220px] w-[220px] object-cover" />
+        <AppImage src={author.imageUrl} alt={author.name} className="h-[220px] w-[220px] object-cover" width={440} height={440} sizes="220px" />
         <div>
           <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">{author.title}</p>
           <h1 className="mt-3 font-display text-[2.7rem] font-bold leading-[0.94] tracking-[-0.06em] text-primary-text sm:text-[3.4rem]">
@@ -74,7 +57,7 @@ export default async function AuthorDetailPage({
           <p className="mt-4 text-[1rem] text-muted-text">No articles published yet.</p>
         ) : null}
 
-        {authoredItems.map((item) => (
+        {paginated.items.map((item) => (
           <article key={item._id} className="border-b border-border py-5">
             <p className="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-green">{item.type}</p>
             <h3 className="mt-2 font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">
@@ -90,7 +73,12 @@ export default async function AuthorDetailPage({
           </article>
         ))}
 
-        <StandardPagination summary={`1-${authoredItems.length} of ${authoredItems.length}`} />
+        <StandardPagination
+          summary={`${paginated.startItem}-${paginated.endItem} of ${paginated.totalItems}`}
+          currentPage={paginated.page}
+          totalPages={paginated.totalPages}
+          createPageHref={createPageHref}
+        />
       </section>
     </main>
   )

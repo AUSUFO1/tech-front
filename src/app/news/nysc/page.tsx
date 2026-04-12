@@ -1,5 +1,10 @@
 import {NewsCategoryPage} from '@/components/NewsCategoryPage'
 
-export default function Page() {
-  return <NewsCategoryPage slug="nysc" />
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: Promise<{page?: string}>
+}) {
+  const params = (await searchParams) ?? {}
+  return <NewsCategoryPage slug="nysc" page={params.page} />
 }

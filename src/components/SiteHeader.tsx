@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaRss, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { getQuickLinkHref } from "@/lib/link-mapping";
+import type { QuickLink } from "@/lib/mock-content";
 
 const navItems = [
   { label: "BLOG", href: "/blog" },
@@ -12,6 +15,23 @@ const navItems = [
   { label: "OPPORTUNITIES", href: "/opportunities" },
   { label: "EARN", href: "/earn" },
   { label: "NEWS", href: "/news" },
+];
+
+const legalLinks = [
+  { label: "About", href: "/about" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Use", href: "/terms" },
+  { label: "Accessibility", href: "/accessibility" },
+  { label: "Newsletter", href: "/newsletter" },
+];
+
+const socialLinks = [
+  { label: "Facebook", href: "#", icon: FaFacebookF },
+  { label: "Instagram", href: "#", icon: FaInstagram },
+  { label: "X", href: "#", icon: FaXTwitter },
+  { label: "LinkedIn", href: "#", icon: FaLinkedinIn },
+  { label: "YouTube", href: "#", icon: FaYoutube },
+  { label: "RSS", href: "#", icon: FaRss },
 ];
 
 type MenuTriggerProps = {
@@ -28,17 +48,36 @@ function MenuTrigger({ open, onClick }: MenuTriggerProps) {
       onClick={onClick}
       className="flex h-11 w-11 items-center justify-center rounded-full text-primary-text transition-colors hover:bg-black/5 dark:hover:bg-white/8"
     >
-      <span className="relative block h-4 w-8">
-        <span className="absolute left-1 top-0 h-[2px] w-5 rounded-full bg-current" />
-        <span className="absolute left-0 bottom-0 h-[2px] w-8 rounded-full bg-current" />
-      </span>
+      {open ? <X className="h-6 w-6" strokeWidth={2} /> : (
+        <span className="relative block h-4 w-8">
+          <span className="absolute left-1 top-0 h-[2px] w-5 rounded-full bg-current" />
+          <span className="absolute left-0 bottom-0 h-[2px] w-8 rounded-full bg-current" />
+        </span>
+      )}
     </button>
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const categoryGroups = navItems.map((item) => ({
+    ...item,
+    categories: quickLinks
+      .filter((link) => {
+        if (item.href === "/blog") return link.contentType === "blog";
+        if (item.href === "/jobs") return link.contentType === "jobs";
+        if (item.href === "/opportunities") return link.contentType === "opportunities";
+        if (item.href === "/earn") return link.contentType === "earn";
+        if (item.href === "/news") return link.contentType === "news";
+        return false;
+      })
+      .map((link) => ({
+        title: link.title,
+        href: getQuickLinkHref(link.slug, link.contentType),
+      })),
+  }));
 
   useEffect(() => {
     if (!menuOpen) {
@@ -99,13 +138,13 @@ export function SiteHeader() {
             >
               Newsletter
             </Link>
-            <button
-              type="button"
+            <Link
+              href="/search"
               aria-label="Search"
               className="hidden h-11 w-11 items-center justify-center rounded-full text-primary-text transition-colors hover:bg-black/5 dark:hover:bg-white/8 sm:flex"
             >
               <Search className="h-5 w-5" strokeWidth={1.8} />
-            </button>
+            </Link>
             <ThemeToggle />
             <MenuTrigger open={menuOpen} onClick={handleMenuToggle} />
           </div>
@@ -113,46 +152,107 @@ export function SiteHeader() {
       </header>
 
       <div
-        className={`fixed inset-0 top-[92px] z-40 bg-card-background transition-all duration-300 lg:hidden ${
+        className={`fixed inset-0 top-[92px] z-40 overflow-y-auto border-t border-border bg-card-background transition-all duration-300 ${
           menuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"
         }`}
       >
-        <div className="mx-auto flex h-full w-full max-w-[1360px] flex-col px-5 pb-8 pt-6 sm:px-8">
-          <div className="pb-6">
-            <Link
-              href="/newsletter"
-              onClick={handleMenuClose}
-              className="inline-flex h-12 items-center justify-center bg-primary-green px-6 text-[0.74rem] font-bold uppercase tracking-[0.16em] !text-white transition-opacity hover:opacity-90"
-            >
-              Newsletter
-            </Link>
-            <form action="/search" className="mt-4">
-              <label htmlFor="mobile-nav-search" className="sr-only">
-                Search
-              </label>
-              <input
-                id="mobile-nav-search"
-                type="search"
-                name="q"
-                placeholder="Search jobs, news, guides"
-                className="h-12 w-full border border-border bg-transparent px-4 text-[0.82rem] font-semibold tracking-[0.02em] text-primary-text placeholder:text-muted-text focus:border-primary-green focus:outline-none"
-              />
-            </form>
-          </div>
+        <div className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-8 pt-6 sm:px-8 lg:px-16 lg:pb-10">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_320px] lg:gap-10">
+            <div>
+              <div className="flex flex-wrap items-center gap-4 pb-6 text-primary-text">
+                {socialLinks.map((link) => {
+                  const Icon = link.icon;
 
-          <div className="flex flex-1 flex-col">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={handleMenuClose}
-                className={`border-b border-border py-5 font-display text-[1.75rem] font-bold leading-none tracking-[-0.04em] transition-colors ${
-                  isActivePath(item.href) ? "text-primary-green" : "text-primary-text hover:text-primary-green"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+                  return (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      onClick={handleMenuClose}
+                      aria-label={link.label}
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border transition-colors hover:border-primary-green hover:text-primary-green"
+                    >
+                      <Icon className="h-4.5 w-4.5" />
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <form action="/search" className="max-w-[34rem]">
+                <label htmlFor="menu-nav-search" className="sr-only">
+                  Search
+                </label>
+                <input
+                  id="menu-nav-search"
+                  type="search"
+                  name="q"
+                  placeholder="Search jobs, news, guides"
+                  className="h-12 w-full border border-border bg-transparent px-4 text-[0.82rem] font-semibold tracking-[0.02em] text-primary-text placeholder:text-muted-text focus:border-primary-green focus:outline-none"
+                />
+              </form>
+
+              <div className="mt-8 grid gap-8 lg:grid-cols-2">
+                {categoryGroups.map((group) => (
+                  <section key={group.href} className="border-t border-border pt-5">
+                    <Link
+                      href={group.href}
+                      onClick={handleMenuClose}
+                      className={`font-display text-[2rem] font-bold leading-none tracking-[-0.05em] transition-colors sm:text-[2.4rem] ${
+                        isActivePath(group.href) ? "text-primary-green" : "text-primary-text hover:text-primary-green"
+                      }`}
+                    >
+                      {group.label}
+                    </Link>
+
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      {group.categories.map((category) => (
+                        <Link
+                          key={category.href}
+                          href={category.href}
+                          onClick={handleMenuClose}
+                          className="inline-flex border border-border bg-card-background px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-text transition-colors hover:border-primary-green hover:text-primary-green"
+                        >
+                          {category.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </div>
+
+            <aside className="border-t border-border pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+              <div>
+                <p className="text-[0.72rem] font-bold uppercase tracking-[0.16em] text-muted-text">Explore</p>
+                <div className="mt-4 grid gap-3">
+                  {legalLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={handleMenuClose}
+                      className="text-[0.92rem] font-semibold text-primary-text transition-colors hover:text-primary-green"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 border-t border-border pt-6">
+                <Link
+                  href="/newsletter"
+                  onClick={handleMenuClose}
+                  className="inline-flex rounded-full bg-primary-green px-5 py-3 text-[0.72rem] font-bold uppercase tracking-[0.16em] !text-white transition-opacity hover:opacity-90"
+                >
+                  Join Newsletter
+                </Link>
+              </div>
+
+              <div className="mt-8 border-t border-border pt-6">
+                <p className="max-w-[18rem] text-[0.92rem] leading-7 text-muted-text">
+                  Techfront covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.
+                </p>
+              </div>
+            </aside>
           </div>
         </div>
       </div>

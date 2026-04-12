@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {seoField} from './shared'
 
 export const category = defineType({
   name: 'category',
@@ -52,6 +53,7 @@ export const category = defineType({
       type: 'number',
       initialValue: 0,
     }),
+    seoField,
   ],
   preview: {
     select: {

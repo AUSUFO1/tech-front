@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import {latestNews} from '@/lib/mock-content'
+import {getNewsContent} from '@/lib/content'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -10,7 +10,9 @@ function formatViews(views?: number) {
   return `${(views ?? 0).toLocaleString()} views`
 }
 
-export function LatestNewsRail() {
+export async function LatestNewsRail() {
+  const {latestNews} = await getNewsContent()
+
   return (
     <aside className="border border-border px-5 py-6 lg:sticky lg:top-[112px]">
       <h2 className="font-display text-[2rem] font-bold leading-none tracking-[-0.06em] text-primary-green">Latest News</h2>

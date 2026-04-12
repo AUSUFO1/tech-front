@@ -65,7 +65,9 @@ export function ArticleComments({postType, postSlug}: ArticleCommentsProps) {
       setLoading(true)
       setErrorMessage('')
       try {
-        const response = await fetch(`/api/comments?postType=${postType}&postSlug=${encodeURIComponent(postSlug)}`)
+        const response = await fetch(`/api/comments?postType=${postType}&postSlug=${encodeURIComponent(postSlug)}`, {
+          cache: 'no-store',
+        })
         if (!response.ok) throw new Error('Failed to load comments')
         const payload = (await response.json()) as {comments: Comment[]}
         if (active) setComments(payload.comments ?? [])
@@ -154,6 +156,11 @@ export function ArticleComments({postType, postSlug}: ArticleCommentsProps) {
       setStatusMessage(payload.message || 'Comment submitted.')
       form.reset()
       setTurnstileToken('')
+      const refreshed = await fetch(`/api/comments?postType=${postType}&postSlug=${encodeURIComponent(postSlug)}`, {cache: 'no-store'})
+      if (refreshed.ok) {
+        const nextPayload = (await refreshed.json()) as {comments: Comment[]}
+        setComments(nextPayload.comments ?? [])
+      }
       if (turnstileWidgetIdRef.current && window.turnstile?.reset) {
         window.turnstile.reset(turnstileWidgetIdRef.current)
       }

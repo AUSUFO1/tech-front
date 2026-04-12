@@ -1,9 +1,5 @@
-"use client"
-
 import Link from 'next/link'
-import {useMemo} from 'react'
-import {useSearchParams} from 'next/navigation'
-import {featuredNews, latestBlog, latestJobs, latestOpportunities} from '@/lib/mock-content'
+import {getSearchContent} from '@/lib/content'
 
 type SearchResult = {
   id: string
@@ -17,35 +13,39 @@ function normalize(value: string) {
   return value.trim().toLowerCase()
 }
 
-export default function SearchPage() {
-  const searchParams = useSearchParams()
-  const query = searchParams.get('q') ?? ''
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{q?: string}>
+}) {
+  const params = (await searchParams) ?? {}
+  const query = params.q ?? ''
   const q = normalize(query)
+  const {blog, jobs, news, opportunities} = await getSearchContent()
 
-  const results = useMemo<SearchResult[]>(() => {
-    const mapped: SearchResult[] = [
-      ...featuredNews.map((item) => ({
+  const mapped: SearchResult[] = [
+      ...news.map((item) => ({
         id: item._id,
         title: item.title,
         excerpt: item.excerpt,
         href: `/news/${item.slug}`,
         type: 'News' as const,
       })),
-      ...latestBlog.map((item) => ({
+      ...blog.map((item) => ({
         id: item._id,
         title: item.title,
         excerpt: item.excerpt,
         href: `/blog/${item.slug}`,
         type: 'Blog' as const,
       })),
-      ...latestJobs.map((item) => ({
+      ...jobs.map((item) => ({
         id: item._id,
         title: item.title,
         excerpt: item.excerpt,
         href: `/jobs/${item.slug}`,
         type: 'Job' as const,
       })),
-      ...latestOpportunities.map((item) => ({
+      ...opportunities.map((item) => ({
         id: item._id,
         title: item.title,
         excerpt: item.excerpt,
@@ -54,10 +54,7 @@ export default function SearchPage() {
       })),
     ]
 
-    if (!q) return mapped
-
-    return mapped.filter((item) => normalize(`${item.title} ${item.excerpt} ${item.type}`).includes(q))
-  }, [q])
+  const results = !q ? mapped : mapped.filter((item) => normalize(`${item.title} ${item.excerpt} ${item.type}`).includes(q))
 
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 pt-6 sm:px-8 lg:px-16 lg:pb-16">

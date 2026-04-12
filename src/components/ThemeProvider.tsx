@@ -39,20 +39,25 @@ export function ThemeProvider({
   children: React.ReactNode;
 }>) {
   const [resolvedTheme, setResolvedTheme] = useState<Theme>(() => {
-    if (typeof document !== "undefined" && document.documentElement.classList.contains("dark")) {
-      return "dark";
+    if (typeof window !== "undefined") {
+      const savedTheme = window.localStorage.getItem("techfront-theme") as Theme | null;
+      if (savedTheme) {
+        return savedTheme;
+      }
+
+      if (document.documentElement.classList.contains("dark")) {
+        return "dark";
+      }
+
+      return getSystemTheme();
     }
 
     return "light";
   });
 
   useEffect(() => {
-    const savedTheme = window.localStorage.getItem("techfront-theme") as Theme | null;
-    const initialTheme = savedTheme ?? getSystemTheme();
-
-    setResolvedTheme(initialTheme);
-    applyTheme(initialTheme);
-    document.cookie = `techfront-theme=${initialTheme}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    applyTheme(resolvedTheme);
+    document.cookie = `techfront-theme=${resolvedTheme}; Path=/; Max-Age=31536000; SameSite=Lax`;
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -72,7 +77,7 @@ export function ThemeProvider({
     return () => {
       mediaQuery.removeEventListener("change", handleChange);
     };
-  }, []);
+  }, [resolvedTheme]);
 
   const value = useMemo<ThemeContextValue>(() => ({
     resolvedTheme,

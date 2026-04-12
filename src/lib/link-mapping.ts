@@ -65,3 +65,16 @@ export function getQuickLinkHref(slug: string, contentType: ContentType) {
 export function getTopicHref(topic: string) {
   return topicToPath[topic.trim().toLowerCase()]
 }
+
+function slugifyLabel(label: string) {
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+export function getCategoryHrefFromLabel(label: string, contentType: ContentType) {
+  return getQuickLinkHref(slugifyLabel(label), contentType)
+}

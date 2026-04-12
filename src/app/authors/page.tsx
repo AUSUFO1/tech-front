@@ -1,8 +1,19 @@
 import Link from 'next/link'
+import {AppImage} from '@/components/AppImage'
 import {StandardPagination} from '@/components/StandardPagination'
-import {mockAuthors} from '@/lib/mock-authors'
+import {getAuthorsContent} from '@/lib/content'
+import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
-export default function AuthorsPage() {
+export default async function AuthorsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{page?: string}>
+}) {
+  const mockAuthors = await getAuthorsContent()
+  const params = (await searchParams) ?? {}
+  const currentPage = getCurrentPage(params.page)
+  const paginated = paginateItems(mockAuthors, currentPage)
+  const createPageHref = (page: number) => (page > 1 ? `/authors?page=${page}` : '/authors')
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 pt-6 sm:px-8 lg:px-16 lg:pb-16">
       <section className="border-b border-border py-8 lg:py-10">
@@ -15,9 +26,9 @@ export default function AuthorsPage() {
       </section>
 
       <section className="grid gap-7 py-8 md:grid-cols-2 xl:grid-cols-3">
-        {mockAuthors.map((author) => (
+        {paginated.items.map((author) => (
           <article key={author._id} className="bg-card-background p-4">
-            <img src={author.imageUrl} alt={author.name} className="h-[300px] w-full object-cover" />
+            <AppImage src={author.imageUrl} alt={author.name} className="h-[300px] w-full object-cover" width={900} height={1200} sizes="(max-width: 1280px) 50vw, 33vw" />
             <h2 className="mt-4 font-display text-[2rem] font-bold leading-none tracking-[-0.05em] text-primary-text">
               <Link href={`/authors/${author.slug}`} className="transition-colors hover:text-primary-green">
                 {author.name}
@@ -29,7 +40,12 @@ export default function AuthorsPage() {
         ))}
       </section>
 
-      <StandardPagination summary={`1-${mockAuthors.length} of ${mockAuthors.length}`} />
+      <StandardPagination
+        summary={`${paginated.startItem}-${paginated.endItem} of ${paginated.totalItems}`}
+        currentPage={paginated.page}
+        totalPages={paginated.totalPages}
+        createPageHref={createPageHref}
+      />
     </main>
   )
 }

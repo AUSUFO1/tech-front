@@ -1,24 +1,19 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useTheme } from "@/components/ThemeProvider";
+
+function subscribe() {
+  return () => {};
+}
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
 
   if (!mounted) {
-    return (
-      <span
-        aria-hidden="true"
-        className="flex h-11 w-11 items-center justify-center rounded-full"
-      />
-    );
+    return <span aria-hidden="true" className="flex h-11 w-11 items-center justify-center rounded-full" />;
   }
 
   const isDark = resolvedTheme === "dark";

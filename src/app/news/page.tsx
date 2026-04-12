@@ -1,6 +1,10 @@
 import Link from 'next/link'
+import {AppImage} from '@/components/AppImage'
+import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {StandardPagination} from '@/components/StandardPagination'
-import {featuredNews, latestNews} from '@/lib/mock-content'
+import {getNewsContent} from '@/lib/content'
+import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -25,7 +29,21 @@ function formatViews(views?: number) {
   return `${(views ?? 0).toLocaleString()} views`
 }
 
-export default function Page() {
+function formatComments(count?: number) {
+  return `${(count ?? 0).toLocaleString()} comments`
+}
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: Promise<{page?: string}>
+}) {
+  const {featuredNews, latestNews} = await getNewsContent()
+  const params = (await searchParams) ?? {}
+  const currentPage = getCurrentPage(params.page)
+  const paginated = paginateItems(featuredNews, currentPage)
+
+  const createPageHref = (page: number) => (page > 1 ? `/news?page=${page}` : '/news')
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 sm:px-8 lg:px-16 lg:pb-16">
       <section className="border-b border-border py-8 lg:py-10">
@@ -53,31 +71,40 @@ export default function Page() {
 
       <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
         <div className="border-t border-border">
-          {featuredNews.map((story) => (
+          {paginated.items.map((story) => (
             <article key={story._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[240px_minmax(0,1fr)] sm:gap-5">
               <Link href={`/news/${story.slug}`} className="block overflow-hidden">
-                <img src={story.coverImageUrl} alt={story.title} className="h-[150px] w-full object-cover sm:h-[158px]" />
+                <AppImage src={story.coverImageUrl} alt={story.title} className="h-[150px] w-full object-cover sm:h-[158px]" width={900} height={620} sizes="(max-width: 640px) 100vw, 240px" />
               </Link>
 
               <div className="min-w-0">
                 <h2 className="font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">
-                  <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
+                  <Link
+                    href={`/news/${story.slug}`}
+                    className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+                  >
                     {story.title}
                   </Link>
                 </h2>
                 <p className="mt-3 line-clamp-2 text-[1.02rem] leading-7 text-muted-text">{story.excerpt}</p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                  <span className="bg-primary-green px-2.5 py-1 text-white">{story.categoryTitle}</span>
+                  <CategoryTagLink href={getCategoryHrefFromLabel(story.categoryTitle, 'news')} label={story.categoryTitle} />
                   <span>{story.authorName}</span>
                   <span>{formatShortDate(story.publishedAt)}</span>
                   <span>{formatViews(story.views)}</span>
+                  <span>{formatComments(story.commentCount)}</span>
                 </div>
               </div>
             </article>
           ))}
 
-          <StandardPagination summary="1-10 of 10" />
+          <StandardPagination
+            summary={`${paginated.startItem}-${paginated.endItem} of ${paginated.totalItems}`}
+            currentPage={paginated.page}
+            totalPages={paginated.totalPages}
+            createPageHref={createPageHref}
+          />
         </div>
 
         <aside className="border border-border px-5 py-6 lg:sticky lg:top-[112px]">
@@ -91,13 +118,17 @@ export default function Page() {
                   <span className="absolute -left-[21px] top-1 h-[8px] w-[8px] rounded-full bg-primary-green" />
                   <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">{formatShortDate(story.publishedAt)}</p>
                   <h3 className="mt-2 font-display text-[1.25rem] font-bold leading-[1.02] tracking-[-0.04em] text-primary-text">
-                    <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
+                    <Link
+                      href={`/news/${story.slug}`}
+                      className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+                    >
                       {story.title}
                     </Link>
                   </h3>
                   <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.66rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                     <span>{story.authorName}</span>
                     <span>{formatViews(story.views)}</span>
+                    <span>{formatComments(story.commentCount)}</span>
                   </div>
                 </article>
               ))}
@@ -112,3 +143,4 @@ export default function Page() {
     </main>
   )
 }
+

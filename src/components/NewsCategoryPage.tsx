@@ -1,8 +1,12 @@
 import Link from 'next/link'
+import {AppImage} from '@/components/AppImage'
+import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
 import {StandardPagination} from '@/components/StandardPagination'
-import {featuredNews, latestNews} from '@/lib/mock-content'
+import {getNewsContent} from '@/lib/content'
+import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
 import {NEWS_SUBCATEGORIES, getNewsSubcategory, type NewsSubcategory} from '@/lib/news-subcategories'
+import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -17,11 +21,17 @@ function formatViews(views?: number) {
   return `${(views ?? 0).toLocaleString()} views`
 }
 
-type NewsCategoryPageProps = {
-  slug: NewsSubcategory['slug']
+function formatComments(count?: number) {
+  return `${(count ?? 0).toLocaleString()} comments`
 }
 
-export function NewsCategoryPage({slug}: NewsCategoryPageProps) {
+type NewsCategoryPageProps = {
+  slug: NewsSubcategory['slug']
+  page?: string
+}
+
+export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
+  const {featuredNews, latestNews} = await getNewsContent()
   const category = getNewsSubcategory(slug)
 
   if (!category) {
@@ -29,6 +39,9 @@ export function NewsCategoryPage({slug}: NewsCategoryPageProps) {
   }
 
   const items = featuredNews.filter((story) => category.matchCategories.includes(story.categoryTitle))
+  const currentPage = getCurrentPage(page)
+  const paginated = paginateItems(items, currentPage)
+  const createPageHref = (targetPage: number) => (targetPage > 1 ? `/news/${slug}?page=${targetPage}` : `/news/${slug}`)
 
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 sm:px-8 lg:px-16 lg:pb-16">
@@ -74,30 +87,41 @@ export function NewsCategoryPage({slug}: NewsCategoryPageProps) {
             </div>
           ) : null}
 
-          {items.map((story) => (
+          {paginated.items.map((story) => (
             <article key={story._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[240px_minmax(0,1fr)] sm:gap-5">
               <Link href={`/news/${story.slug}`} className="block overflow-hidden">
-                <img src={story.coverImageUrl} alt={story.title} className="h-[150px] w-full object-cover sm:h-[158px]" />
+                <AppImage src={story.coverImageUrl} alt={story.title} className="h-[150px] w-full object-cover sm:h-[158px]" width={900} height={620} sizes="(max-width: 640px) 100vw, 240px" />
               </Link>
 
               <div className="min-w-0">
                 <h2 className="font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">
-                  <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
+                  <Link
+                    href={`/news/${story.slug}`}
+                    className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+                  >
                     {story.title}
                   </Link>
                 </h2>
                 <p className="mt-3 line-clamp-2 text-[1.02rem] leading-7 text-muted-text">{story.excerpt}</p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                  <span className="bg-primary-green px-2.5 py-1 text-white">{story.categoryTitle}</span>
+                  <CategoryTagLink href={getCategoryHrefFromLabel(story.categoryTitle, 'news')} label={story.categoryTitle} />
                   <span>{story.authorName}</span>
                   <span>{formatDate(story.publishedAt)}</span>
                   <span>{formatViews(story.views)}</span>
+                  <span>{formatComments(story.commentCount)}</span>
                 </div>
               </div>
             </article>
           ))}
-          {items.length > 0 ? <StandardPagination summary={`1-${items.length} of ${items.length}`} /> : null}
+          {items.length > 0 ? (
+            <StandardPagination
+              summary={`${paginated.startItem}-${paginated.endItem} of ${paginated.totalItems}`}
+              currentPage={paginated.page}
+              totalPages={paginated.totalPages}
+              createPageHref={createPageHref}
+            />
+          ) : null}
         </div>
 
         <aside className="border border-border px-5 py-6 lg:sticky lg:top-[112px]">
@@ -111,13 +135,17 @@ export function NewsCategoryPage({slug}: NewsCategoryPageProps) {
                   <span className="absolute -left-[21px] top-1 h-[8px] w-[8px] rounded-full bg-primary-green" />
                   <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">{formatDate(story.publishedAt)}</p>
                   <h3 className="mt-2 font-display text-[1.2rem] font-bold leading-[1.03] tracking-[-0.04em] text-primary-text">
-                    <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
+                    <Link
+                      href={`/news/${story.slug}`}
+                      className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+                    >
                       {story.title}
                     </Link>
                   </h3>
                   <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.66rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                     <span>{story.authorName}</span>
                     <span>{formatViews(story.views)}</span>
+                    <span>{formatComments(story.commentCount)}</span>
                   </div>
                 </article>
               ))}
@@ -128,3 +156,4 @@ export function NewsCategoryPage({slug}: NewsCategoryPageProps) {
     </main>
   )
 }
+

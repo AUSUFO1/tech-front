@@ -114,7 +114,14 @@ export async function GET(request: Request) {
   }
 
   const comments = await readClient.fetch(PUBLIC_COMMENT_QUERY, {postType, postSlug})
-  return NextResponse.json({comments})
+  return NextResponse.json(
+    {comments},
+    {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      },
+    }
+  )
 }
 
 export async function POST(request: Request) {

@@ -2,55 +2,104 @@ import type {Metadata} from 'next'
 import Link from 'next/link'
 import {notFound} from 'next/navigation'
 import {ArticleComments} from '@/components/ArticleComments'
+import {AppImage} from '@/components/AppImage'
+import {CoverImageMeta} from '@/components/CoverImageMeta'
 import {InlineNewsletter} from '@/components/InlineNewsletter'
+import {RelatedStoryCard} from '@/components/RelatedStoryCard'
+import {SanityBodyContent} from '@/components/SanityBodyContent'
 import {ShareActions} from '@/components/ShareActions'
-import {latestBlog} from '@/lib/mock-content'
-
+import {StructuredData} from '@/components/StructuredData'
+import {ViewTracker} from '@/components/ViewTracker'
+import {getBlogContent} from '@/lib/content'
+import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
+ 
 function formatDate(date?: string) {
   if (!date) return 'No date'
   return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(date))
 }
 
-const earnPosts = latestBlog.filter((item) => ['Freelancing', 'Career Growth'].includes(item.categoryTitle))
+function formatComments(count?: number) {
+  return `${(count ?? 0).toLocaleString()} comments`
+}
 
 type Props = {params: Promise<{slug: string}>}
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
+  const latestBlog = await getBlogContent()
+  const earnPosts = latestBlog.filter((item) => ['Freelancing', 'Career Growth'].includes(item.categoryTitle))
   const item = earnPosts.find((post) => post.slug === slug)
   if (!item) return {title: 'Earn | Techfront'}
-  return {
-    title: `${item.title} | Techfront`,
-    description: item.excerpt,
-    openGraph: {title: item.title, description: item.excerpt, type: 'article'},
-  }
+  return buildArticleMetadata({
+    title: item.title,
+    excerpt: item.excerpt,
+    coverImageUrl: item.coverImageUrl,
+    publishedAt: item.publishedAt,
+    pathname: `/earn/${slug}`,
+    seo: item.seo,
+  })
 }
 
 export default async function EarnDetailPage({params}: Props) {
   const {slug} = await params
+  const latestBlog = await getBlogContent()
+  const earnPosts = latestBlog.filter((item) => ['Freelancing', 'Career Growth'].includes(item.categoryTitle))
   const post = earnPosts.find((item) => item.slug === slug)
   if (!post) notFound()
 
   const related = earnPosts.filter((item) => item.slug !== post.slug).slice(0, 3)
+  const structuredData = buildStructuredData({
+    kind: 'article',
+    title: post.title,
+    description: post.seo?.metaDescription || post.excerpt,
+    pathname: `/earn/${post.slug}`,
+    image: post.seo?.ogImageUrl || post.coverImageUrl,
+    publishedAt: post.publishedAt,
+    authorName: post.authorName,
+  })
 
   return (
     <main className="mx-auto w-full max-w-[980px] px-5 pb-16 pt-8 sm:px-8 lg:pt-10">
-      <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">{post.categoryTitle}</p>
+      <StructuredData data={structuredData} />
+      <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+        <Link href={getCategoryHrefFromLabel(post.categoryTitle, 'earn')} className="hover:opacity-90">
+          {post.categoryTitle}
+        </Link>
+      </p>
       <h1 className="mt-3 font-display text-[2.6rem] font-bold leading-[0.95] tracking-[-0.06em] text-primary-text sm:text-[3.5rem]">
         {post.title}
       </h1>
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-        <Link href={`/authors/${post.authorName.toLowerCase().replaceAll(' ', '-')}`} className="hover:text-primary-green">
+        <Link href={`/authors/${post.authorSlug || post.authorName.toLowerCase().replaceAll(' ', '-')}`} className="hover:text-primary-green">
           Published by {post.authorName}
         </Link>
         <span>{formatDate(post.publishedAt)}</span>
+        <ViewTracker postType="earn" postSlug={post.slug} initialViews={post.views ?? 0} />
+        <span>{formatComments(post.commentCount)}</span>
       </div>
 
-      <img src={post.coverImageUrl} alt={post.title} className="mt-8 h-[420px] w-full object-cover" />
+      <AppImage
+        src={post.coverImageUrl}
+        alt={post.coverImageAlt ?? post.title}
+        className="mt-8 h-[420px] w-full object-cover"
+        width={1400}
+        height={840}
+        sizes="100vw"
+        priority
+      />
+      <CoverImageMeta
+        caption={post.coverImageCaption}
+        credit={post.coverImageCredit}
+        sourceUrl={post.coverImageSourceUrl}
+      />
 
-      <article className="mt-8 max-w-none">
-        <p className="text-[1.06rem] leading-8 text-muted-text">{post.excerpt}</p>
-      </article>
+      <SanityBodyContent body={post.body} />
+      {!post.body?.length ? (
+        <article className="mt-8 max-w-none">
+          <p className="text-[1.06rem] leading-8 text-muted-text">{post.excerpt}</p>
+        </article>
+      ) : null}
 
       <ShareActions title={post.title} topics={[post.categoryTitle]} />
 
@@ -61,13 +110,13 @@ export default async function EarnDetailPage({params}: Props) {
         <h2 className="font-display text-[2rem] font-bold tracking-[-0.05em] text-primary-text">Related Stories</h2>
         <div className="mt-5 grid gap-6 md:grid-cols-3">
           {related.map((item) => (
-            <article key={item._id} className="border-t border-border pt-4">
-              <h3 className="font-display text-[1.35rem] font-bold leading-[1.05] tracking-[-0.04em] text-primary-text">
-                <Link href={`/earn/${item.slug}`} className="hover:text-primary-green">
-                  {item.title}
-                </Link>
-              </h3>
-            </article>
+            <RelatedStoryCard
+              key={item._id}
+              href={`/earn/${item.slug}`}
+              title={item.title}
+              imageUrl={item.coverImageUrl}
+              date={item.publishedAt}
+            />
           ))}
         </div>
       </section>

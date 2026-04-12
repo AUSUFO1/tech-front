@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import {useMemo} from 'react'
+import {usePathname, useSearchParams} from 'next/navigation'
 import {FaFacebookF, FaLinkedinIn, FaWhatsapp, FaXTwitter} from 'react-icons/fa6'
 import {Link2} from 'lucide-react'
 import {getTopicHref} from '@/lib/link-mapping'
@@ -12,7 +12,12 @@ type ShareActionsProps = {
 }
 
 export function ShareActions({title, topics = []}: ShareActionsProps) {
-  const pageUrl = useMemo(() => (typeof window !== 'undefined' ? window.location.href : ''), [])
+  const pathname = usePathname() ?? ''
+  const searchParams = useSearchParams()
+  const query = searchParams?.toString()
+  const configuredBaseUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? ''
+  const fallbackUrl = configuredBaseUrl ? `${configuredBaseUrl}${pathname}${query ? `?${query}` : ''}` : ''
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : fallbackUrl
 
   const encodedTitle = encodeURIComponent(title)
   const encodedUrl = encodeURIComponent(pageUrl)
@@ -70,16 +75,16 @@ export function ShareActions({title, topics = []}: ShareActionsProps) {
       <div className="mt-6 border-t border-border pt-6">
         <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-text">Share This Story</p>
         <div className="mt-4 flex flex-wrap items-center gap-4 text-primary-text">
-          <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noreferrer" aria-label="Facebook" className="transition-colors hover:text-primary-green">
+          <a href={pageUrl ? `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` : '#'} target="_blank" rel="noreferrer" aria-label="Facebook" className="transition-colors hover:text-primary-green">
             <FaFacebookF className="h-4 w-4" />
           </a>
-          <a href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`} target="_blank" rel="noreferrer" aria-label="X" className="transition-colors hover:text-primary-green">
+          <a href={pageUrl ? `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}` : '#'} target="_blank" rel="noreferrer" aria-label="X" className="transition-colors hover:text-primary-green">
             <FaXTwitter className="h-4 w-4" />
           </a>
-          <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="transition-colors hover:text-primary-green">
+          <a href={pageUrl ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` : '#'} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="transition-colors hover:text-primary-green">
             <FaLinkedinIn className="h-4 w-4" />
           </a>
-          <a href={`https://wa.me/?text=${encodedTitle}%20${encodedUrl}`} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="transition-colors hover:text-primary-green">
+          <a href={pageUrl ? `https://wa.me/?text=${encodedTitle}%20${encodedUrl}` : '#'} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="transition-colors hover:text-primary-green">
             <FaWhatsapp className="h-4 w-4" />
           </a>
           <button type="button" onClick={handleCopy} aria-label="Copy link" className="transition-colors hover:text-primary-green">

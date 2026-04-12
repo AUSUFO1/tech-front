@@ -1,20 +1,12 @@
 import Link from 'next/link'
 import {ChevronRight} from 'lucide-react'
+import {AppImage} from '@/components/AppImage'
+import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {CompactNewsletterForm} from '@/components/CompactNewsletterForm'
-import {getQuickLinkHref} from '@/lib/link-mapping'
-import {
-  featuredNews,
-  latestBlog,
-  latestJobs,
-  latestNews,
-  latestOpportunities,
-  quickLinks,
-  type BlogItem,
-  type FeaturedNewsItem,
-  type JobItem,
-  type OpportunityItem,
-  type QuickLink,
-} from '@/lib/mock-content'
+import {getHomepageContent} from '@/lib/content'
+import {isEarnCategory} from '@/lib/content-sections'
+import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
+import {type BlogItem, type FeaturedNewsItem, type JobItem, type OpportunityItem, type QuickLink} from '@/lib/mock-content'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -29,8 +21,21 @@ function formatViews(views?: number) {
   return `${(views ?? 0).toLocaleString()} views`
 }
 
+function formatComments(count?: number) {
+  return `${(count ?? 0).toLocaleString()} comments`
+}
+
 function getCategoryHref(link: QuickLink) {
   return getQuickLinkHref(link.slug, link.contentType)
+}
+
+type TopUpdateItem = {
+  _id: string
+  title: string
+  href: string
+  label: string
+  date?: string
+  views: number
 }
 
 function getSectionGridClass(count: number) {
@@ -64,19 +69,27 @@ function EditorialCard({item, hrefBase}: {item: FeaturedNewsItem | BlogItem; hre
   return (
     <article className="bg-card-background pb-2">
       <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
-        <img src={item.coverImageUrl} alt={item.title} className="h-[220px] w-full object-cover" />
+        <AppImage src={item.coverImageUrl} alt={item.title} className="h-[220px] w-full object-cover" width={1200} height={780} sizes="(max-width: 768px) 100vw, 50vw" />
       </Link>
       <h3 className="mt-5 font-display text-[1.7rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text">
-        <Link href={`${hrefBase}/${item.slug}`} className="transition-colors hover:text-primary-green">
+        <Link
+          href={`${hrefBase}/${item.slug}`}
+          className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+        >
           {item.title}
         </Link>
       </h3>
       <p className="mt-3 line-clamp-3 text-[0.98rem] leading-7 text-muted-text">{item.excerpt}</p>
       <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-        <span className="inline-flex rounded-[5px] bg-primary-green px-2.5 py-1 text-white">{item.categoryTitle}</span>
+        <CategoryTagLink
+          href={getCategoryHrefFromLabel(item.categoryTitle, hrefBase === '/news' ? 'news' : 'blog')}
+          label={item.categoryTitle}
+          className="inline-flex rounded-[5px] bg-primary-green px-2.5 py-1 text-white transition-opacity hover:opacity-90"
+        />
         <span>Published by {item.authorName}</span>
         <span>{formatDate(item.publishedAt)}</span>
         <span>{formatViews(item.views)}</span>
+        <span>{formatComments(item.commentCount)}</span>
       </div>
     </article>
   )
@@ -88,13 +101,16 @@ function JobPreview({item}: {item: JobItem}) {
       <div>
         <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.company}</p>
         <h3 className="mt-3 font-display text-[1.55rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
-          <Link href={`/jobs/${item.slug}`} className="transition-colors hover:text-primary-green">
+          <Link
+            href={`/jobs/${item.slug}`}
+            className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+          >
             {item.title}
           </Link>
         </h3>
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
-        <span>{item.employmentType}</span>
+        <CategoryTagLink href="/jobs" label={item.employmentType} />
         {item.remote ? <span>Remote</span> : null}
       </div>
       <p className="mt-4 text-[1rem] leading-7 text-muted-text">{item.location}</p>
@@ -102,6 +118,7 @@ function JobPreview({item}: {item: JobItem}) {
       <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
         <span>{formatDate(item.publishedAt)}</span>
         <span>{formatViews(item.views)}</span>
+        <span>{formatComments(item.commentCount)}</span>
       </div>
     </article>
   )
@@ -114,7 +131,10 @@ function OpportunityPreview({item}: {item: OpportunityItem}) {
         <div>
           <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.organization}</p>
           <h3 className="mt-3 font-display text-[1.55rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
-            <Link href={`/opportunities/${item.slug}`} className="transition-colors hover:text-primary-green">
+            <Link
+              href={`/opportunities/${item.slug}`}
+              className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+            >
               {item.title}
             </Link>
           </h3>
@@ -125,21 +145,61 @@ function OpportunityPreview({item}: {item: OpportunityItem}) {
         </div>
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
-        <span>{item.opportunityType}</span>
+        <CategoryTagLink href={getCategoryHrefFromLabel(item.opportunityType, 'opportunities')} label={item.opportunityType} />
         <span>{item.location}</span>
       </div>
       <p className="mt-4 line-clamp-3 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
       <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
         <span>{formatViews(item.views)}</span>
+        <span>{formatComments(item.commentCount)}</span>
       </div>
     </article>
   )
 }
 
-export default function Home() {
-  const topLatestNews = latestNews.slice(0, 5)
+export default async function Home() {
+  const {featuredNews, latestBlog, latestJobs, latestNews, latestOpportunities, quickLinks} = await getHomepageContent()
+  const featuredStoryIds = new Set(featuredNews.slice(0, 4).map((story) => story._id))
+  const topUpdates: TopUpdateItem[] = [
+    ...latestNews
+      .filter((story) => !featuredStoryIds.has(story._id))
+      .map((story) => ({
+        _id: story._id,
+        title: story.title,
+        href: `/news/${story.slug}`,
+        label: 'News',
+        date: story.publishedAt,
+        views: story.views,
+      })),
+    ...latestBlog.map((post) => ({
+      _id: post._id,
+      title: post.title,
+      href: `/blog/${post.slug}`,
+      label: 'Blog',
+      date: post.publishedAt,
+      views: post.views,
+    })),
+    ...latestJobs.map((job) => ({
+      _id: job._id,
+      title: job.title,
+      href: `/jobs/${job.slug}`,
+      label: 'Jobs',
+      date: job.publishedAt,
+      views: job.views,
+    })),
+    ...latestOpportunities.map((item) => ({
+      _id: item._id,
+      title: item.title,
+      href: `/opportunities/${item.slug}`,
+      label: 'Opportunity',
+      date: item.deadline,
+      views: item.views,
+    })),
+  ]
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 6)
   const moreLatestNews = latestNews.slice(5, 10)
-  const homeBlog = latestBlog.slice(0, 3)
+  const homeBlog = latestBlog.filter((post) => !isEarnCategory(post.categoryTitle)).slice(0, 6)
   const homeJobs = latestJobs.slice(0, 3)
   const homeOpportunities = latestOpportunities.slice(0, 3)
 
@@ -177,33 +237,36 @@ export default function Home() {
         <aside className="bg-[#fbf7df] px-5 py-6 dark:bg-card-background sm:px-6 sm:py-7">
           <div className="flex items-start justify-between gap-4">
             <h2 className="font-display text-[2.35rem] font-bold leading-none tracking-[-0.06em] text-primary-green sm:text-[2.75rem]">
-              Latest
+              Top Updates
             </h2>
             <Link
-              href="/news"
+              href="/search"
               className="mt-2 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-primary-text transition-colors hover:text-primary-green"
             >
-              Show All
+              Browse All
             </Link>
           </div>
 
           <div className="relative mt-7 pl-7">
             <div className="absolute left-[10px] top-2 bottom-2 w-px bg-primary-green/45" />
             <div className="flex flex-col gap-6">
-              {topLatestNews.map((story) => (
-                <article key={story._id} className="relative border-b border-black/10 pb-5 last:border-b-0 last:pb-0 dark:border-white/10">
+              {topUpdates.map((item) => (
+                <article key={item._id} className="relative border-b border-black/10 pb-5 last:border-b-0 last:pb-0 dark:border-white/10">
                   <span className="absolute -left-[21px] top-1 h-[8px] w-[8px] rounded-full bg-primary-green" />
                   <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">
-                    {formatDate(story.publishedAt)}
+                    {item.label}
                   </p>
                   <h3 className="mt-3 font-display text-[1.35rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text sm:text-[1.5rem]">
-                    <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
-                      {story.title}
+                    <Link
+                      href={item.href}
+                      className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+                    >
+                      {item.title}
                     </Link>
                   </h3>
                   <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                    <span>Published by {story.authorName}</span>
-                    <span>{formatViews(story.views)}</span>
+                    <span>{formatDate(item.date)}</span>
+                    <span>{formatViews(item.views)}</span>
                   </div>
                 </article>
               ))}
@@ -249,13 +312,17 @@ export default function Home() {
                   {formatDate(story.publishedAt)}
                 </p>
                 <h3 className="mt-3 font-display text-[1.2rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
-                  <Link href={`/news/${story.slug}`} className="transition-colors hover:text-primary-green">
+                  <Link
+                    href={`/news/${story.slug}`}
+                    className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+                  >
                     {story.title}
                   </Link>
                 </h3>
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                   <span>Published by {story.authorName}</span>
                   <span>{formatViews(story.views)}</span>
+                  <span>{formatComments(story.commentCount)}</span>
                 </div>
               </article>
             ))}
@@ -303,3 +370,4 @@ export default function Home() {
     </main>
   )
 }
+

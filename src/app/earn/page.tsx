@@ -1,7 +1,11 @@
 import Link from 'next/link'
+import {AppImage} from '@/components/AppImage'
+import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
 import {StandardPagination} from '@/components/StandardPagination'
-import {latestBlog, latestNews} from '@/lib/mock-content'
+import {getBlogContent, getNewsContent} from '@/lib/content'
+import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -12,17 +16,32 @@ function formatViews(views?: number) {
   return `${(views ?? 0).toLocaleString()} views`
 }
 
+function formatComments(count?: number) {
+  return `${(count ?? 0).toLocaleString()} comments`
+}
+
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: Promise<{category?: string}>
+  searchParams?: Promise<{category?: string; page?: string}>
 }) {
+  const [latestBlog, {latestNews}] = await Promise.all([getBlogContent(), getNewsContent()])
   const params = (await searchParams) ?? {}
   const category = params.category
+  const currentPage = getCurrentPage(params.page)
   const earnItems = latestBlog.filter((item) => {
     if (category === 'freelancing') return item.categoryTitle === 'Freelancing'
     return ['Freelancing', 'Career Growth'].includes(item.categoryTitle)
   })
+  const paginated = paginateItems(earnItems, currentPage)
+
+  const createPageHref = (page: number) => {
+    const query = new URLSearchParams()
+    if (category) query.set('category', category)
+    if (page > 1) query.set('page', String(page))
+    const queryString = query.toString()
+    return queryString ? `/earn?${queryString}` : '/earn'
+  }
 
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 sm:px-8 lg:px-16 lg:pb-16">
@@ -36,10 +55,10 @@ export default async function Page({
 
       <section className="grid gap-8 pb-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
         <div className="border-t border-border">
-          {earnItems.map((post) => (
+          {paginated.items.map((post) => (
             <article key={post._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[230px_minmax(0,1fr)] sm:gap-5">
               <Link href={`/earn/${post.slug}`} className="block overflow-hidden">
-                <img src={post.coverImageUrl} alt={post.title} className="h-[150px] w-full object-cover sm:h-[158px]" />
+                <AppImage src={post.coverImageUrl} alt={post.title} className="h-[150px] w-full object-cover sm:h-[158px]" width={900} height={620} sizes="(max-width: 640px) 100vw, 230px" />
               </Link>
               <div className="min-w-0">
                 <h2 className="font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">
@@ -49,15 +68,21 @@ export default async function Page({
                 </h2>
                 <p className="mt-3 line-clamp-2 text-[1rem] leading-7 text-muted-text">{post.excerpt}</p>
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                  <span className="bg-primary-green px-2.5 py-1 text-white">{post.categoryTitle}</span>
+                  <CategoryTagLink href={getCategoryHrefFromLabel(post.categoryTitle, 'earn')} label={post.categoryTitle} />
                   <span>{post.authorName}</span>
                   <span>{formatDate(post.publishedAt)}</span>
                   <span>{formatViews(post.views)}</span>
+                  <span>{formatComments(post.commentCount)}</span>
                 </div>
               </div>
             </article>
           ))}
-          <StandardPagination summary="1-4 of 4" />
+          <StandardPagination
+            summary={`${paginated.startItem}-${paginated.endItem} of ${paginated.totalItems}`}
+            currentPage={paginated.page}
+            totalPages={paginated.totalPages}
+            createPageHref={createPageHref}
+          />
         </div>
 
         <aside className="border border-border px-5 py-6 lg:sticky lg:top-[112px]">

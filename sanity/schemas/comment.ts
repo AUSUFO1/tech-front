@@ -4,6 +4,9 @@ export const comment = defineType({
   name: 'comment',
   title: 'Comment',
   type: 'document',
+  // Moderation is an operational workflow, not editorial drafting.
+  // liveEdit prevents draft/published divergence for status updates.
+  liveEdit: true,
   fields: [
     defineField({
       name: 'postType',

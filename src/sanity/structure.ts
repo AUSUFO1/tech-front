@@ -13,5 +13,53 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('opportunity').title('Opportunities'),
       S.divider(),
       S.documentTypeListItem('newsletterSubscriber').title('Newsletter Subscribers'),
-      S.documentTypeListItem('comment').title('Comments'),
+      S.listItem()
+        .title('Comments')
+        .child(
+          S.list()
+            .title('Comments')
+            .items([
+              S.listItem()
+                .title('Pending')
+                .schemaType('comment')
+                .child(
+                  S.documentList()
+                    .title('Pending Comments')
+                    .schemaType('comment')
+                    .filter('_type == "comment" && !(_id in path("drafts.**")) && status == "pending"')
+                    .defaultOrdering([{field: 'createdAt', direction: 'desc'}])
+                ),
+              S.listItem()
+                .title('Approved')
+                .schemaType('comment')
+                .child(
+                  S.documentList()
+                    .title('Approved Comments')
+                    .schemaType('comment')
+                    .filter('_type == "comment" && !(_id in path("drafts.**")) && status == "approved"')
+                    .defaultOrdering([{field: 'createdAt', direction: 'desc'}])
+                ),
+              S.listItem()
+                .title('Rejected')
+                .schemaType('comment')
+                .child(
+                  S.documentList()
+                    .title('Rejected Comments')
+                    .schemaType('comment')
+                    .filter('_type == "comment" && !(_id in path("drafts.**")) && status == "rejected"')
+                    .defaultOrdering([{field: 'createdAt', direction: 'desc'}])
+                ),
+              S.divider(),
+              S.listItem()
+                .title('All Comments')
+                .schemaType('comment')
+                .child(
+                  S.documentList()
+                    .title('All Comments')
+                    .schemaType('comment')
+                    .filter('_type == "comment" && !(_id in path("drafts.**"))')
+                    .defaultOrdering([{field: 'createdAt', direction: 'desc'}])
+                ),
+            ])
+        ),
     ])
