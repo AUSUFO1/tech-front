@@ -6,8 +6,8 @@ import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaRss, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import type { QuickLink } from "@/lib/content-types";
 import { getQuickLinkHref } from "@/lib/link-mapping";
-import type { QuickLink } from "@/lib/mock-content";
 
 const navItems = [
   { label: "BLOG", href: "/blog" },
@@ -21,6 +21,8 @@ const legalLinks = [
   { label: "About", href: "/about" },
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Use", href: "/terms" },
+  { label: "Editorial Policy", href: "/editorial-policy" },
+  { label: "Corrections Policy", href: "/corrections-policy" },
   { label: "Accessibility", href: "/accessibility" },
   { label: "Newsletter", href: "/newsletter" },
 ];
@@ -206,7 +208,7 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
                     <div className="mt-5 flex flex-wrap gap-3">
                       {group.categories.map((category) => (
                         <Link
-                          key={category.href}
+                          key={`${group.href}-${category.href}-${category.title}`}
                           href={category.href}
                           onClick={handleMenuClose}
                           className="inline-flex border border-border bg-card-background px-3 py-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-text transition-colors hover:border-primary-green hover:text-primary-green"

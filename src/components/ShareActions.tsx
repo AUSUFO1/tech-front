@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import {usePathname, useSearchParams} from 'next/navigation'
+import {useMemo} from 'react'
 import {FaFacebookF, FaLinkedinIn, FaWhatsapp, FaXTwitter} from 'react-icons/fa6'
 import {Link2} from 'lucide-react'
 import {getTopicHref} from '@/lib/link-mapping'
@@ -14,10 +15,11 @@ type ShareActionsProps = {
 export function ShareActions({title, topics = []}: ShareActionsProps) {
   const pathname = usePathname() ?? ''
   const searchParams = useSearchParams()
-  const query = searchParams?.toString()
-  const configuredBaseUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? ''
-  const fallbackUrl = configuredBaseUrl ? `${configuredBaseUrl}${pathname}${query ? `?${query}` : ''}` : ''
-  const pageUrl = typeof window !== 'undefined' ? window.location.href : fallbackUrl
+  const pageUrl = useMemo(() => {
+    if (typeof window === 'undefined') return ''
+    const query = searchParams?.toString()
+    return `${window.location.origin}${pathname}${query ? `?${query}` : ''}`
+  }, [pathname, searchParams])
 
   const encodedTitle = encodeURIComponent(title)
   const encodedUrl = encodeURIComponent(pageUrl)

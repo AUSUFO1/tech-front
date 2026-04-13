@@ -25,7 +25,11 @@ export function ThemeToggle() {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="flex h-11 w-11 items-center justify-center rounded-full text-primary-text transition-colors hover:bg-black/5 dark:hover:bg-white/8"
     >
-      {isDark ? <Sun className="h-5 w-5" strokeWidth={1.8} /> : <Moon className="h-5 w-5" strokeWidth={1.8} />}
+      {isDark ? (
+        <Sun className="h-5 w-5 text-[#f7f0cf]" strokeWidth={1.8} />
+      ) : (
+        <Moon className="h-5 w-5 text-[#0b1120]" strokeWidth={1.8} />
+      )}
     </button>
   );
 }

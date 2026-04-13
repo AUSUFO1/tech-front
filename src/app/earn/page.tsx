@@ -4,7 +4,7 @@ import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
 import {StandardPagination} from '@/components/StandardPagination'
 import {getBlogContent, getNewsContent} from '@/lib/content'
-import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
@@ -68,7 +68,10 @@ export default async function Page({
                 </h2>
                 <p className="mt-3 line-clamp-2 text-[1rem] leading-7 text-muted-text">{post.excerpt}</p>
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                  <CategoryTagLink href={getCategoryHrefFromLabel(post.categoryTitle, 'earn')} label={post.categoryTitle} />
+                  <CategoryTagLink
+                    href={post.categorySlug ? getQuickLinkHref(post.categorySlug, 'earn') : getCategoryHrefFromLabel(post.categoryTitle, 'earn')}
+                    label={post.categoryTitle}
+                  />
                   <span>{post.authorName}</span>
                   <span>{formatDate(post.publishedAt)}</span>
                   <span>{formatViews(post.views)}</span>

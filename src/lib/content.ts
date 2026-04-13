@@ -2,21 +2,14 @@ import {groq} from 'next-sanity'
 import {draftMode} from 'next/headers'
 import {client} from '@/sanity/lib/client'
 import {urlFor} from '@/sanity/lib/image'
-import {mockAuthors} from '@/lib/mock-authors'
 import {
-  featuredNews as mockFeaturedNews,
-  latestBlog as mockLatestBlog,
-  latestJobs as mockLatestJobs,
-  latestNews as mockLatestNews,
-  latestOpportunities as mockLatestOpportunities,
-  quickLinks as mockQuickLinks,
+  type QuickLink,
   type BlogItem,
   type FeaturedNewsItem,
   type JobItem,
   type LatestNewsItem,
   type OpportunityItem,
-  type QuickLink,
-} from '@/lib/mock-content'
+} from '@/lib/content-types'
 import {isEarnCategory} from '@/lib/content-sections'
 
 const previewToken = process.env.SANITY_API_TOKEN
@@ -35,6 +28,13 @@ type PortableTextSpan = {
   _type: 'span'
   _key?: string
   text?: string
+  marks?: string[]
+}
+
+type PortableTextMarkDef = {
+  _key: string
+  _type: string
+  href?: string
 }
 
 type PortableTextBlock = {
@@ -44,6 +44,7 @@ type PortableTextBlock = {
   listItem?: 'bullet' | 'number'
   level?: number
   children?: PortableTextSpan[]
+  markDefs?: PortableTextMarkDef[]
 }
 
 type PortableTextImage = {
@@ -69,6 +70,7 @@ export type SeoFields = {
 type SharedContentExtras = {
   body?: PortableContentNode[]
   authorSlug?: string
+  categorySlug?: string
   coverImageAlt?: string
   coverImageCaption?: string
   coverImageCredit?: string
@@ -104,6 +106,7 @@ type SanityCategory = {
   title: string
   slug?: string
   contentType: QuickLink['contentType']
+  description?: string
   order?: number
 }
 
@@ -191,21 +194,14 @@ function toImageUrl(image?: SanityImageLike | null) {
   if (!image?.asset) return undefined
 
   try {
-    return urlFor(image).width(1200).fit('crop').auto('format').url()
+    return urlFor(image).width(1600).fit('max').auto('format').url()
   } catch {
     return undefined
   }
 }
 
-function fallbackCover(image?: SanityImageLike | null) {
-  return (
-    toImageUrl(image) ??
-    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80'
-  )
-}
-
 function mapQuickLinks(items?: SanityCategory[]): QuickLink[] {
-  if (!items?.length) return mockQuickLinks
+  if (!items?.length) return []
 
   return items.map((item, index) => ({
     _id: item._id,
@@ -229,7 +225,7 @@ function mapSeo(seo?: SanityContentBase['seo']): SeoFields | undefined {
 }
 
 function mapFeaturedNews(items?: SanityNews[]): NewsContentItem[] {
-  if (!items?.length) return mockFeaturedNews
+  if (!items?.length) return []
 
   return items.map((item) => ({
     _id: item._id,
@@ -242,7 +238,8 @@ function mapFeaturedNews(items?: SanityNews[]): NewsContentItem[] {
     authorName: item.author?.name ?? 'Techfront Editorial',
     authorSlug: item.author?.slug ?? '',
     categoryTitle: item.category?.title ?? 'News',
-    coverImageUrl: fallbackCover(item.coverImage),
+    categorySlug: item.category?.slug ?? '',
+    coverImageUrl: toImageUrl(item.coverImage) ?? '',
     coverImageAlt: item.coverImage?.alt,
     coverImageCaption: item.coverImage?.caption,
     coverImageCredit: item.coverImage?.credit,
@@ -265,7 +262,7 @@ function mapLatestNews(items?: SanityNews[]): LatestNewsItem[] {
 }
 
 function mapBlog(items?: SanityBlog[]): BlogContentItem[] {
-  if (!items?.length) return mockLatestBlog
+  if (!items?.length) return []
 
   return items.map((item) => ({
     _id: item._id,
@@ -278,7 +275,8 @@ function mapBlog(items?: SanityBlog[]): BlogContentItem[] {
     authorName: item.author?.name ?? 'Techfront Editorial',
     authorSlug: item.author?.slug ?? '',
     categoryTitle: item.category?.title ?? 'Blog',
-    coverImageUrl: fallbackCover(item.coverImage),
+    categorySlug: item.category?.slug ?? '',
+    coverImageUrl: toImageUrl(item.coverImage) ?? '',
     coverImageAlt: item.coverImage?.alt,
     coverImageCaption: item.coverImage?.caption,
     coverImageCredit: item.coverImage?.credit,
@@ -289,7 +287,7 @@ function mapBlog(items?: SanityBlog[]): BlogContentItem[] {
 }
 
 function mapJobs(items?: SanityJob[]): JobContentItem[] {
-  if (!items?.length) return mapMockJobs()
+  if (!items?.length) return []
 
   return items.map((item) => ({
     _id: item._id,
@@ -304,7 +302,8 @@ function mapJobs(items?: SanityJob[]): JobContentItem[] {
     remote: Boolean(item.remote),
     employmentType: item.employmentType ?? 'Full-time',
     categoryTitle: item.category?.title ?? item.employmentType ?? 'Jobs',
-    coverImageUrl: fallbackCover(item.coverImage),
+    categorySlug: item.category?.slug ?? '',
+    coverImageUrl: toImageUrl(item.coverImage) ?? '',
     coverImageAlt: item.coverImage?.alt,
     coverImageCaption: item.coverImage?.caption,
     coverImageCredit: item.coverImage?.credit,
@@ -316,7 +315,7 @@ function mapJobs(items?: SanityJob[]): JobContentItem[] {
 }
 
 function mapOpportunities(items?: SanityOpportunity[]): OpportunityContentItem[] {
-  if (!items?.length) return mapMockOpportunities()
+  if (!items?.length) return []
 
   return items.map((item) => ({
     _id: item._id,
@@ -330,7 +329,8 @@ function mapOpportunities(items?: SanityOpportunity[]): OpportunityContentItem[]
     opportunityType: item.opportunityType ?? 'Opportunity',
     deadline: item.deadline ?? '',
     categoryTitle: item.category?.title ?? item.opportunityType ?? 'Opportunities',
-    coverImageUrl: fallbackCover(item.coverImage),
+    categorySlug: item.category?.slug ?? '',
+    coverImageUrl: toImageUrl(item.coverImage) ?? '',
     coverImageAlt: item.coverImage?.alt,
     coverImageCaption: item.coverImage?.caption,
     coverImageCredit: item.coverImage?.credit,
@@ -338,20 +338,6 @@ function mapOpportunities(items?: SanityOpportunity[]): OpportunityContentItem[]
     applicationUrl: item.applicationUrl,
     body: item.body,
     seo: mapSeo(item.seo),
-  }))
-}
-
-function mapMockJobs(): JobContentItem[] {
-  return mockLatestJobs.map((item) => ({
-    ...item,
-    coverImageUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80',
-  }))
-}
-
-function mapMockOpportunities(): OpportunityContentItem[] {
-  return mockLatestOpportunities.map((item) => ({
-    ...item,
-    coverImageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80',
   }))
 }
 
@@ -450,6 +436,18 @@ const navigationCategoriesQuery = groq`
   title,
   "slug": slug.current,
   contentType,
+  description,
+  order
+}
+`
+
+const categoryBySlugQuery = groq`
+*[_type == "category" && contentType == $contentType && slug.current == $slug][0] {
+  _id,
+  title,
+  "slug": slug.current,
+  contentType,
+  description,
   order
 }
 `
@@ -734,12 +732,12 @@ export async function getHomepageContent(): Promise<{
     }
   } catch {
     return {
-      quickLinks: mockQuickLinks,
-      featuredNews: mockFeaturedNews,
-      latestNews: mockLatestNews,
-      latestBlog: mockLatestBlog,
-      latestJobs: mapMockJobs(),
-      latestOpportunities: mapMockOpportunities(),
+      quickLinks: [],
+      featuredNews: [],
+      latestNews: [],
+      latestBlog: [],
+      latestJobs: [],
+      latestOpportunities: [],
     }
   }
 }
@@ -749,7 +747,15 @@ export async function getNavigationQuickLinks(): Promise<QuickLink[]> {
     const items = await sanityFetch<SanityCategory[]>(navigationCategoriesQuery)
     return mapQuickLinks(items)
   } catch {
-    return mockQuickLinks
+    return []
+  }
+}
+
+export async function getCategoryBySlug(slug: string, contentType: QuickLink['contentType']) {
+  try {
+    return await sanityFetch<SanityCategory | null>(categoryBySlugQuery, {slug, contentType})
+  } catch {
+    return null
   }
 }
 
@@ -765,8 +771,8 @@ export async function getNewsContent(): Promise<{
     }
   } catch {
     return {
-      featuredNews: mockFeaturedNews,
-      latestNews: mockLatestNews,
+      featuredNews: [],
+      latestNews: [],
     }
   }
 }
@@ -774,9 +780,9 @@ export async function getNewsContent(): Promise<{
 export async function getNewsBySlug(slug: string): Promise<NewsContentItem | null> {
   try {
     const item = await sanityFetch<SanityNews | null>(newsBySlugQuery, {slug})
-    return item ? mapFeaturedNews([item])[0] : mockFeaturedNews.find((story) => story.slug === slug) ?? null
+    return item ? mapFeaturedNews([item])[0] : null
   } catch {
-    return mockFeaturedNews.find((story) => story.slug === slug) ?? null
+    return null
   }
 }
 
@@ -785,16 +791,16 @@ export async function getBlogContent(): Promise<BlogContentItem[]> {
     const items = await sanityFetch<SanityBlog[]>(allBlogQuery)
     return mapBlog(items)
   } catch {
-    return mockLatestBlog
+    return []
   }
 }
 
 export async function getBlogBySlug(slug: string): Promise<BlogContentItem | null> {
   try {
     const item = await sanityFetch<SanityBlog | null>(blogBySlugQuery, {slug})
-    return item ? mapBlog([item])[0] : mockLatestBlog.find((post) => post.slug === slug) ?? null
+    return item ? mapBlog([item])[0] : null
   } catch {
-    return mockLatestBlog.find((post) => post.slug === slug) ?? null
+    return null
   }
 }
 
@@ -803,16 +809,16 @@ export async function getJobsContent(): Promise<JobContentItem[]> {
     const items = await sanityFetch<SanityJob[]>(allJobsQuery)
     return mapJobs(items)
   } catch {
-    return mapMockJobs()
+    return []
   }
 }
 
 export async function getJobBySlug(slug: string): Promise<JobContentItem | null> {
   try {
     const item = await sanityFetch<SanityJob | null>(jobBySlugQuery, {slug})
-    return item ? mapJobs([item])[0] : mapMockJobs().find((post) => post.slug === slug) ?? null
+    return item ? mapJobs([item])[0] : null
   } catch {
-    return mapMockJobs().find((post) => post.slug === slug) ?? null
+    return null
   }
 }
 
@@ -821,41 +827,43 @@ export async function getOpportunitiesContent(): Promise<OpportunityContentItem[
     const items = await sanityFetch<SanityOpportunity[]>(allOpportunitiesQuery)
     return mapOpportunities(items)
   } catch {
-    return mapMockOpportunities()
+    return []
   }
 }
 
 export async function getOpportunityBySlug(slug: string): Promise<OpportunityContentItem | null> {
   try {
     const item = await sanityFetch<SanityOpportunity | null>(opportunityBySlugQuery, {slug})
-    return item ? mapOpportunities([item])[0] : mapMockOpportunities().find((post) => post.slug === slug) ?? null
+    return item ? mapOpportunities([item])[0] : null
   } catch {
-    return mapMockOpportunities().find((post) => post.slug === slug) ?? null
+    return null
   }
 }
 
 export async function getAuthorsContent(): Promise<AuthorListItem[]> {
   try {
     const items = await sanityFetch<SanityAuthor[]>(authorsQuery)
-    if (!items?.length) return mockAuthors
+    if (!items?.length) return []
 
-    return items.map((item) => ({
-      _id: item._id,
-      name: item.name,
-      slug: item.slug ?? '',
-      title: item.title ?? '',
-      bio: item.bio ?? '',
-      imageUrl: fallbackCover(item.image),
-    }))
+    return items
+      .map((item) => ({
+        _id: item._id,
+        name: item.name,
+        slug: item.slug ?? '',
+        title: item.title ?? '',
+        bio: item.bio ?? '',
+        imageUrl: toImageUrl(item.image) ?? '',
+      }))
+      .filter((item) => item.slug && item.title.trim() && item.bio.trim() && item.imageUrl)
   } catch {
-    return mockAuthors
+    return []
   }
 }
 
 export async function getAuthorBySlug(slug: string) {
   try {
     const item = await sanityFetch<SanityAuthor | null>(authorBySlugQuery, {slug})
-    if (!item) return mockAuthors.find((author) => author.slug === slug) ?? null
+    if (!item) return null
 
     return {
       _id: item._id,
@@ -863,10 +871,10 @@ export async function getAuthorBySlug(slug: string) {
       slug: item.slug ?? '',
       title: item.title ?? '',
       bio: item.bio ?? '',
-      imageUrl: fallbackCover(item.image),
+      imageUrl: toImageUrl(item.image) ?? '',
     }
   } catch {
-    return mockAuthors.find((author) => author.slug === slug) ?? null
+    return null
   }
 }
 
@@ -898,36 +906,10 @@ export async function getAuthoredItems(slug: string): Promise<AuthoredItem[]> {
       })),
     ].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
 
-    if (items.length) return items
-  } catch {}
-
-  const author = mockAuthors.find((item) => item.slug === slug)
-  if (!author) return []
-
-  return [
-    ...mockFeaturedNews
-      .filter((item) => item.authorName === author.name)
-      .map((item) => ({
-        _id: `news-${item._id}`,
-        type: 'News' as const,
-        title: item.title,
-        excerpt: item.excerpt,
-        publishedAt: item.publishedAt,
-        views: item.views,
-        href: `/news/${item.slug}`,
-      })),
-    ...mockLatestBlog
-      .filter((item) => item.authorName === author.name)
-      .map((item) => ({
-        _id: `blog-${item._id}`,
-        type: isEarnCategory(item.categoryTitle) ? ('Earn' as const) : ('Blog' as const),
-        title: item.title,
-        excerpt: item.excerpt,
-        publishedAt: item.publishedAt,
-        views: item.views,
-        href: `${isEarnCategory(item.categoryTitle) ? '/earn' : '/blog'}/${item.slug}`,
-      })),
-  ].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    return items
+  } catch {
+    return []
+  }
 }
 
 export async function getSearchContent(): Promise<{
@@ -952,10 +934,10 @@ export async function getSearchContent(): Promise<{
     }
   } catch {
     return {
-      news: mockFeaturedNews,
-      blog: mockLatestBlog,
-      jobs: mapMockJobs(),
-      opportunities: mapMockOpportunities(),
+      news: [],
+      blog: [],
+      jobs: [],
+      opportunities: [],
     }
   }
 }
@@ -982,15 +964,7 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
       ),
     ]
   } catch {
-    return [
-      ...mockFeaturedNews.map((item) => ({url: `/news/${item.slug}`, lastModified: item.publishedAt})),
-      ...mockLatestBlog.map((item) => ({
-        url: `${['Freelancing', 'Career Growth'].includes(item.categoryTitle) ? '/earn' : '/blog'}/${item.slug}`,
-        lastModified: item.publishedAt,
-      })),
-      ...mockLatestJobs.map((item) => ({url: `/jobs/${item.slug}`, lastModified: item.publishedAt})),
-      ...mockLatestOpportunities.map((item) => ({url: `/opportunities/${item.slug}`, lastModified: item.deadline || new Date().toISOString()})),
-    ]
+    return []
   }
 }
 
@@ -1007,16 +981,7 @@ export async function getRecentNewsSitemapEntries(): Promise<Array<{title: strin
       }]
     })
   } catch {
-    return mockFeaturedNews.slice(0, 10).flatMap((item) => {
-      const publishedAt = item.publishedAt
-      if (!publishedAt) return []
-      return [{
-        title: item.title,
-        slug: item.slug,
-        publishedAt,
-        lastModified: publishedAt,
-      }]
-    })
+    return []
   }
 }
 

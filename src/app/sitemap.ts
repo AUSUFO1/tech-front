@@ -3,8 +3,13 @@ import {getSitemapEntries} from '@/lib/content'
 import {getMetadataBase} from '@/lib/seo'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = getMetadataBase().toString().replace(/\/$/, '')
+  const metadataBase = getMetadataBase()
+  const baseUrl = metadataBase?.toString().replace(/\/$/, '')
   const dynamicEntries = await getSitemapEntries()
+
+  if (!baseUrl) {
+    return []
+  }
 
   const staticEntries: MetadataRoute.Sitemap = [
     '',

@@ -12,7 +12,7 @@ import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
 import {getNewsBySlug, getNewsContent} from '@/lib/content'
-import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
 function formatDate(date?: string) {
@@ -64,7 +64,7 @@ export default async function NewsDetailPage({params}: Props) {
       <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
         <div>
           <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
-            <Link href={getCategoryHrefFromLabel(story.categoryTitle, 'news')} className="hover:opacity-90">
+            <Link href={story.categorySlug ? getQuickLinkHref(story.categorySlug, 'news') : getCategoryHrefFromLabel(story.categoryTitle, 'news')} className="hover:opacity-90">
               {story.categoryTitle}
             </Link>
           </p>
@@ -83,7 +83,7 @@ export default async function NewsDetailPage({params}: Props) {
           <AppImage
             src={story.coverImageUrl}
             alt={story.coverImageAlt ?? story.title}
-            className="mt-8 h-[420px] w-full object-cover"
+            className="mt-8 h-auto w-full bg-card-background object-contain sm:h-[420px] sm:object-cover"
             width={1600}
             height={900}
             sizes="(min-width: 1024px) 900px, 100vw"

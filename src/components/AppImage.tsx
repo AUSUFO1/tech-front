@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
 type AppImageProps = {
-  src: string
+  src?: string
   alt: string
   className?: string
   width?: number
@@ -19,6 +19,8 @@ export function AppImage({
   sizes = '100vw',
   priority = false,
 }: AppImageProps) {
+  if (!src) return null
+
   return (
     <Image
       src={src}

@@ -16,6 +16,64 @@ function getBlockText(node: PortableContentNode) {
   return (node.children ?? []).map((child) => child.text ?? '').join('').trim()
 }
 
+function renderSpanChildren(node: Extract<PortableContentNode, {_type: 'block'}>) {
+  const markDefs = new Map((node.markDefs ?? []).map((item) => [item._key, item]))
+
+  return (node.children ?? []).map((child, index) => {
+    const baseKey = child._key ?? `${node._key ?? 'block'}-${index}`
+    let content: ReactNode = child.text ?? ''
+
+    for (const mark of child.marks ?? []) {
+      const definition = markDefs.get(mark)
+
+      if (mark === 'strong') {
+        content = <strong key={`${baseKey}-strong`}>{content}</strong>
+        continue
+      }
+
+      if (mark === 'em') {
+        content = <em key={`${baseKey}-em`}>{content}</em>
+        continue
+      }
+
+      if (mark === 'code') {
+        content = (
+          <code key={`${baseKey}-code`} className="rounded bg-black/8 px-1.5 py-0.5 text-[0.95em] text-primary-text dark:bg-white/10">
+            {content}
+          </code>
+        )
+        continue
+      }
+
+      if (mark === 'underline') {
+        content = <span key={`${baseKey}-underline`} className="underline underline-offset-4">{content}</span>
+        continue
+      }
+
+      if (mark === 'strike-through') {
+        content = <span key={`${baseKey}-strike`} className="line-through">{content}</span>
+        continue
+      }
+
+      if (definition?._type === 'link' && definition.href) {
+        const isExternal = /^https?:\/\//.test(definition.href)
+        content = (
+          <Link
+            key={`${baseKey}-link-${definition._key}`}
+            href={definition.href}
+            {...(isExternal ? {target: '_blank', rel: 'noreferrer'} : {})}
+            className="font-semibold text-primary-text underline underline-offset-4 decoration-primary-green/70 transition-colors hover:text-primary-green hover:decoration-primary-green"
+          >
+            {content}
+          </Link>
+        )
+      }
+    }
+
+    return <span key={baseKey}>{content}</span>
+  })
+}
+
 function isListBlock(node: PortableContentNode): node is PortableContentNode & {_type: 'block'; listItem: 'bullet' | 'number'; level?: number} {
   return node._type === 'block' && (node.listItem === 'bullet' || node.listItem === 'number')
 }
@@ -76,7 +134,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
     if (isListBlock(node)) {
       const listType = node.listItem
       const listLevel = node.level ?? 1
-      const listNodes: Array<{key: string; text: string}> = []
+      const listNodes: Array<{key: string; content: ReactNode[]}> = []
 
       let cursor = index
       while (cursor < body.length) {
@@ -88,7 +146,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
         if (itemText) {
           listNodes.push({
             key: candidate._key ?? `${listType}-${cursor}`,
-            text: itemText,
+            content: renderSpanChildren(candidate),
           })
         }
         cursor += 1
@@ -102,7 +160,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
             <ol key={`ol-${listNodes[0].key}`} className="list-decimal space-y-2 pl-7">
               {listNodes.map((item) => (
                 <li key={item.key} className="text-[1.02rem] leading-8 text-muted-text">
-                  {item.text}
+                  {item.content}
                 </li>
               ))}
             </ol>
@@ -112,7 +170,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
             <ul key={`ul-${listNodes[0].key}`} className="list-disc space-y-2 pl-7">
               {listNodes.map((item) => (
                 <li key={item.key} className="text-[1.02rem] leading-8 text-muted-text">
-                  {item.text}
+                  {item.content}
                 </li>
               ))}
             </ul>
@@ -128,7 +186,14 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
 
       rendered.push(
         <figure key={node._key ?? imageUrl} className="space-y-3">
-          <AppImage src={imageUrl} alt={node.alt ?? ''} className="w-full object-cover" width={1200} height={800} sizes="100vw" />
+          <AppImage
+            src={imageUrl}
+            alt={node.alt ?? ''}
+            className="h-auto w-full bg-card-background object-contain sm:max-h-[36rem] sm:object-cover"
+            width={1200}
+            height={800}
+            sizes="100vw"
+          />
           {node.caption || node.credit ? (
             <figcaption className="text-[0.86rem] leading-6 text-muted-text">
               {node.caption ? <span>{node.caption}</span> : null}
@@ -151,7 +216,8 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
 
     const text = getBlockText(node)
     if (!text) continue
-    const style = node._type === 'block' ? node.style : undefined
+    const blockNode = node._type === 'block' ? node : null
+    const style = blockNode?.style
     const heading = tocByKey.get(node._key ?? `heading-${index}`)
 
     if (style === 'h1') {
@@ -161,7 +227,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
           key={node._key ?? text}
           className="scroll-mt-28 font-display text-[2.2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.8rem]"
         >
-          {text}
+          {blockNode ? renderSpanChildren(blockNode) : text}
         </h1>
       )
       continue
@@ -174,7 +240,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
           key={node._key ?? text}
           className="scroll-mt-28 font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.3rem]"
         >
-          {text}
+          {blockNode ? renderSpanChildren(blockNode) : text}
         </h2>
       )
       continue
@@ -187,7 +253,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
           key={node._key ?? text}
           className="scroll-mt-28 font-display text-[1.55rem] font-bold leading-[1.02] tracking-[-0.04em] text-primary-text sm:text-[1.75rem]"
         >
-          {text}
+          {blockNode ? renderSpanChildren(blockNode) : text}
         </h3>
       )
       continue
@@ -196,7 +262,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
     if (style === 'h4') {
       rendered.push(
         <h4 id={heading?.id} key={node._key ?? text} className="scroll-mt-28 font-display text-[1.24rem] font-bold tracking-[-0.02em] text-primary-text">
-          {text}
+          {blockNode ? renderSpanChildren(blockNode) : text}
         </h4>
       )
       continue
@@ -205,7 +271,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
     if (style === 'h5') {
       rendered.push(
         <h5 id={heading?.id} key={node._key ?? text} className="scroll-mt-28 text-[1.06rem] font-bold uppercase tracking-[0.08em] text-primary-text">
-          {text}
+          {blockNode ? renderSpanChildren(blockNode) : text}
         </h5>
       )
       continue
@@ -214,7 +280,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
     if (style === 'h6') {
       rendered.push(
         <h6 id={heading?.id} key={node._key ?? text} className="scroll-mt-28 text-[0.95rem] font-bold uppercase tracking-[0.1em] text-primary-text">
-          {text}
+          {blockNode ? renderSpanChildren(blockNode) : text}
         </h6>
       )
       continue
@@ -223,7 +289,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
     if (style === 'blockquote') {
       rendered.push(
         <blockquote key={node._key ?? text} className="border-l-2 border-primary-green pl-4 font-serif text-[1.2rem] leading-8 text-primary-text">
-          {text}
+          {blockNode ? renderSpanChildren(blockNode) : text}
         </blockquote>
       )
       continue
@@ -231,7 +297,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
 
     rendered.push(
       <p key={node._key ?? text}>
-        {text}
+        {blockNode ? renderSpanChildren(blockNode) : text}
       </p>
     )
   }
@@ -241,7 +307,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
       {toc.length > 0 ? (
         <nav aria-label="Table of contents" className="rounded-sm border border-border bg-card-background p-5">
           <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-text">Table of Contents</p>
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-3 list-disc space-y-2 pl-5 marker:text-primary-green">
             {toc.map((item) => (
               <li key={item.key}>
                 <a

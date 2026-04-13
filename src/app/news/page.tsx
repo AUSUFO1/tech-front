@@ -3,7 +3,7 @@ import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {StandardPagination} from '@/components/StandardPagination'
 import {getNewsContent} from '@/lib/content'
-import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
@@ -74,7 +74,14 @@ export default async function Page({
           {paginated.items.map((story) => (
             <article key={story._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[240px_minmax(0,1fr)] sm:gap-5">
               <Link href={`/news/${story.slug}`} className="block overflow-hidden">
-                <AppImage src={story.coverImageUrl} alt={story.title} className="h-[150px] w-full object-cover sm:h-[158px]" width={900} height={620} sizes="(max-width: 640px) 100vw, 240px" />
+                <AppImage
+                  src={story.coverImageUrl}
+                  alt={story.title}
+                  className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[158px] sm:aspect-auto sm:object-cover"
+                  width={900}
+                  height={620}
+                  sizes="(max-width: 640px) 100vw, 240px"
+                />
               </Link>
 
               <div className="min-w-0">
@@ -89,7 +96,10 @@ export default async function Page({
                 <p className="mt-3 line-clamp-2 text-[1.02rem] leading-7 text-muted-text">{story.excerpt}</p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                  <CategoryTagLink href={getCategoryHrefFromLabel(story.categoryTitle, 'news')} label={story.categoryTitle} />
+                  <CategoryTagLink
+                    href={story.categorySlug ? getQuickLinkHref(story.categorySlug, 'news') : getCategoryHrefFromLabel(story.categoryTitle, 'news')}
+                    label={story.categoryTitle}
+                  />
                   <span>{story.authorName}</span>
                   <span>{formatShortDate(story.publishedAt)}</span>
                   <span>{formatViews(story.views)}</span>

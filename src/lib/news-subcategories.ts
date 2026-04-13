@@ -1,7 +1,7 @@
 export type NewsSubcategory = {
   slug: 'tech' | 'finance' | 'health-tech' | 'nysc' | 'africa'
   title: string
-  description: string
+  primaryCategorySlug: string
   matchCategories: string[]
 }
 
@@ -9,31 +9,31 @@ export const NEWS_SUBCATEGORIES: NewsSubcategory[] = [
   {
     slug: 'tech',
     title: 'Artificial Intelligence',
-    description: 'Everything you need to know about AI tools, platforms, product updates, and practical adoption trends.',
+    primaryCategorySlug: 'artificial-intelligence',
     matchCategories: ['Artificial Intelligence', 'Bootcamps', 'Beginner Guides'],
   },
   {
     slug: 'finance',
     title: 'Finance & Money',
-    description: 'Personal finance, digital money behavior, and practical insights for ambitious readers building long-term stability.',
+    primaryCategorySlug: 'finance',
     matchCategories: ['Finance'],
   },
   {
     slug: 'health-tech',
     title: 'Health Tech',
-    description: 'Digital health innovation, productivity and wellness tech, and how software is reshaping healthcare experiences.',
+    primaryCategorySlug: 'health-tech',
     matchCategories: ['Health Tech'],
   },
   {
     slug: 'nysc',
     title: 'NYSC & Education',
-    description: 'Corps-member opportunities, training resources, and education-focused updates that support career growth.',
+    primaryCategorySlug: 'nysc',
     matchCategories: ['NYSC', 'Scholarships'],
   },
   {
     slug: 'africa',
     title: 'Africa Tech',
-    description: 'Startup momentum, hiring shifts, funding moves, and ecosystem stories from across Africa.',
+    primaryCategorySlug: 'africa-tech',
     matchCategories: ['Africa Tech'],
   },
 ]

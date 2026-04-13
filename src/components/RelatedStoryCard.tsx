@@ -21,7 +21,14 @@ export function RelatedStoryCard({href, title, imageUrl, date}: RelatedStoryCard
   return (
     <article className="border-t border-border pt-4">
       <Link href={href} className="block overflow-hidden">
-        <AppImage src={imageUrl} alt={title} className="h-[160px] w-full object-cover" width={800} height={520} sizes="(max-width: 768px) 100vw, 33vw" />
+        <AppImage
+          src={imageUrl}
+          alt={title}
+          className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[160px] sm:aspect-auto sm:object-cover"
+          width={800}
+          height={520}
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
       </Link>
       <div className="mt-4">
         <p className="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-green">{formatDate(date)}</p>

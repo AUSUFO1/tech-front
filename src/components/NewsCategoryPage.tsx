@@ -3,8 +3,8 @@ import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
 import {StandardPagination} from '@/components/StandardPagination'
-import {getNewsContent} from '@/lib/content'
-import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCategoryBySlug, getNewsContent} from '@/lib/content'
+import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {NEWS_SUBCATEGORIES, getNewsSubcategory, type NewsSubcategory} from '@/lib/news-subcategories'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
@@ -38,6 +38,11 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
     return null
   }
 
+  const cmsCategory = await getCategoryBySlug(category.primaryCategorySlug, 'news')
+  const categoryDescription =
+    cmsCategory?.description?.trim() ||
+    'Published stories in this section will appear here as soon as they are available.'
+
   const items = featuredNews.filter((story) => category.matchCategories.includes(story.categoryTitle))
   const currentPage = getCurrentPage(page)
   const paginated = paginateItems(items, currentPage)
@@ -49,7 +54,7 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
         <h1 className="font-display text-[3.2rem] font-bold leading-[0.9] tracking-[-0.07em] text-primary-text sm:text-[4.6rem]">
           {category.title}
         </h1>
-        <p className="mt-4 max-w-4xl text-[1.18rem] leading-9 text-muted-text">{category.description}</p>
+        <p className="mt-4 max-w-4xl text-[1.18rem] leading-9 text-muted-text">{categoryDescription}</p>
       </section>
 
       <section className="overflow-x-auto border-b border-border py-3 scrollbar-none">
@@ -90,7 +95,14 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
           {paginated.items.map((story) => (
             <article key={story._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[240px_minmax(0,1fr)] sm:gap-5">
               <Link href={`/news/${story.slug}`} className="block overflow-hidden">
-                <AppImage src={story.coverImageUrl} alt={story.title} className="h-[150px] w-full object-cover sm:h-[158px]" width={900} height={620} sizes="(max-width: 640px) 100vw, 240px" />
+                <AppImage
+                  src={story.coverImageUrl}
+                  alt={story.title}
+                  className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[158px] sm:aspect-auto sm:object-cover"
+                  width={900}
+                  height={620}
+                  sizes="(max-width: 640px) 100vw, 240px"
+                />
               </Link>
 
               <div className="min-w-0">
@@ -105,7 +117,10 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
                 <p className="mt-3 line-clamp-2 text-[1.02rem] leading-7 text-muted-text">{story.excerpt}</p>
 
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                  <CategoryTagLink href={getCategoryHrefFromLabel(story.categoryTitle, 'news')} label={story.categoryTitle} />
+                  <CategoryTagLink
+                    href={story.categorySlug ? getQuickLinkHref(story.categorySlug, 'news') : getCategoryHrefFromLabel(story.categoryTitle, 'news')}
+                    label={story.categoryTitle}
+                  />
                   <span>{story.authorName}</span>
                   <span>{formatDate(story.publishedAt)}</span>
                   <span>{formatViews(story.views)}</span>

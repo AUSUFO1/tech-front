@@ -20,15 +20,15 @@ function getSiteUrl() {
     process.env.NEXT_PUBLIC_SITE_URL ??
     (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : undefined)
 
-  return envUrl ?? 'http://localhost:3000'
+  return envUrl
 }
 
 export function buildArticleMetadata({title, excerpt, coverImageUrl, publishedAt, pathname, seo}: SeoInput): Metadata {
   const siteUrl = getSiteUrl()
-  const metadataBase = new URL(siteUrl)
+  const metadataBase = siteUrl ? new URL(siteUrl) : undefined
   const resolvedTitle = seo?.metaTitle?.trim() || title
   const description = seo?.metaDescription?.trim() || excerpt || 'Stay Ahead. Stay Informed. Earn with Tech.'
-  const canonical = seo?.canonicalUrl?.trim() || `${siteUrl}${pathname}`
+  const canonical = seo?.canonicalUrl?.trim() || (siteUrl ? `${siteUrl}${pathname}` : pathname)
   const image = seo?.ogImageUrl || coverImageUrl
 
   return {
@@ -60,7 +60,8 @@ export function buildArticleMetadata({title, excerpt, coverImageUrl, publishedAt
 }
 
 export function getMetadataBase() {
-  return new URL(getSiteUrl())
+  const siteUrl = getSiteUrl()
+  return siteUrl ? new URL(siteUrl) : undefined
 }
 
 type StructuredDataInput = {
@@ -79,11 +80,11 @@ type StructuredDataInput = {
 
 export function buildStructuredData(input: StructuredDataInput) {
   const siteUrl = getSiteUrl()
-  const url = `${siteUrl}${input.pathname}`
+  const url = siteUrl ? `${siteUrl}${input.pathname}` : input.pathname
   const publisher = {
     '@type': 'Organization',
     name: 'Techfront',
-    url: siteUrl,
+    ...(siteUrl ? {url: siteUrl} : {}),
   }
 
   if (input.kind === 'job') {

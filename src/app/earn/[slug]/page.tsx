@@ -11,7 +11,7 @@ import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
 import {getBlogContent} from '@/lib/content'
-import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
  
 function formatDate(date?: string) {
@@ -63,7 +63,7 @@ export default async function EarnDetailPage({params}: Props) {
     <main className="mx-auto w-full max-w-[980px] px-5 pb-16 pt-8 sm:px-8 lg:pt-10">
       <StructuredData data={structuredData} />
       <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
-        <Link href={getCategoryHrefFromLabel(post.categoryTitle, 'earn')} className="hover:opacity-90">
+        <Link href={post.categorySlug ? getQuickLinkHref(post.categorySlug, 'earn') : getCategoryHrefFromLabel(post.categoryTitle, 'earn')} className="hover:opacity-90">
           {post.categoryTitle}
         </Link>
       </p>
@@ -82,7 +82,7 @@ export default async function EarnDetailPage({params}: Props) {
       <AppImage
         src={post.coverImageUrl}
         alt={post.coverImageAlt ?? post.title}
-        className="mt-8 h-[420px] w-full object-cover"
+        className="mt-8 h-auto w-full bg-card-background object-contain sm:h-[420px] sm:object-cover"
         width={1400}
         height={840}
         sizes="100vw"

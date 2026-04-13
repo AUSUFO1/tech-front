@@ -12,7 +12,7 @@ import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
 import {getOpportunitiesContent, getOpportunityBySlug} from '@/lib/content'
-import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
 function formatDate(date?: string) {
@@ -67,8 +67,8 @@ export default async function OpportunityDetailPage({params}: Props) {
             {item.title}
           </h1>
           <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-            <Link href={getCategoryHrefFromLabel(item.opportunityType, 'opportunities')} className="text-primary-green hover:opacity-90">
-              {item.opportunityType}
+            <Link href={item.categorySlug ? getQuickLinkHref(item.categorySlug, 'opportunities') : getCategoryHrefFromLabel(item.opportunityType, 'opportunities')} className="text-primary-green hover:opacity-90">
+              {item.categoryTitle ?? item.opportunityType}
             </Link>
             <span>{item.location}</span>
             <span>Deadline {formatDate(item.deadline)}</span>
@@ -79,7 +79,7 @@ export default async function OpportunityDetailPage({params}: Props) {
           <AppImage
             src={item.coverImageUrl}
             alt={item.coverImageAlt ?? item.title}
-            className="mt-8 h-[420px] w-full object-cover"
+            className="mt-8 h-auto w-full bg-card-background object-contain sm:h-[420px] sm:object-cover"
             width={1600}
             height={900}
             sizes="(min-width: 1024px) 900px, 100vw"
@@ -99,7 +99,7 @@ export default async function OpportunityDetailPage({params}: Props) {
                 href={item.applicationUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-11 w-fit items-center bg-primary-green px-5 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-white"
+                className="inline-flex h-11 w-fit items-center bg-primary-green px-5 text-[0.74rem] font-bold uppercase tracking-[0.14em] !text-white"
               >
                 Apply Now
               </Link>

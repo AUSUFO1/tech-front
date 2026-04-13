@@ -2,40 +2,26 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaRss, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { AppImage } from "@/components/AppImage";
+import { getAuthorsContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About | Techfront",
   description: "About Techfront",
 };
 
-const team = [
-  {
-    name: "Yusuf",
-    slug: "yusuf-abubakar",
-    role: "Founder & Frontend Developer",
-    bio: "Builds and scales Techfront's product experience, editorial systems, and frontend architecture.",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    name: "Techfront Editorial",
-    slug: "techfront-editorial",
-    role: "Newsroom",
-    bio: "Covers tech, jobs, opportunities, and practical growth stories with a sharp, beginner-friendly voice.",
-    image:
-      "https://images.unsplash.com/photo-1541534401786-2077eed87a72?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    name: "Community Desk",
-    slug: "",
-    role: "Audience & Growth",
-    bio: "Supports distribution, reader feedback, and newsletter growth across Nigeria and global audiences.",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80",
-  },
+const socialLinks = [
+  { label: "Facebook", href: "#", icon: FaFacebookF },
+  { label: "Instagram", href: "#", icon: FaInstagram },
+  { label: "X", href: "#", icon: FaXTwitter },
+  { label: "LinkedIn", href: "#", icon: FaLinkedinIn },
+  { label: "YouTube", href: "#", icon: FaYoutube },
+  { label: "RSS", href: "/rss.xml", icon: FaRss },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const authors = await getAuthorsContent();
+  const featuredAuthors = authors.slice(0, 3);
+
   return (
     <main className="bg-background text-primary-text">
       <section className="mx-auto w-full max-w-[1360px] border-b border-border px-5 py-12 sm:px-8 lg:px-16 lg:py-16">
@@ -59,30 +45,38 @@ export default function AboutPage() {
             <h2 className="mt-2 font-display text-[3rem] font-bold leading-none tracking-[-0.05em] text-primary-text">Our Staff</h2>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {team.map((member) => (
-              <article key={member.name} className="bg-card-background p-4">
-                {member.slug ? (
+          {featuredAuthors.length > 0 ? (
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredAuthors.map((member) => (
+                <article key={member._id} className="bg-card-background p-4">
                   <Link href={`/authors/${member.slug}`} className="block">
-                    <AppImage src={member.image} alt={member.name} className="h-[280px] w-full object-cover" width={900} height={1120} sizes="(max-width: 1280px) 50vw, 33vw" />
+                    <AppImage
+                      src={member.imageUrl}
+                      alt={member.name}
+                      className="aspect-[4/5] w-full bg-card-background object-contain object-top"
+                      width={900}
+                      height={1120}
+                      sizes="(max-width: 1280px) 50vw, 33vw"
+                    />
                   </Link>
-                ) : (
-                  <AppImage src={member.image} alt={member.name} className="h-[280px] w-full object-cover" width={900} height={1120} sizes="(max-width: 1280px) 50vw, 33vw" />
-                )}
-                <h3 className="mt-4 font-display text-[1.8rem] font-bold leading-none tracking-[-0.04em] text-primary-text">
-                  {member.slug ? (
+                  <h3 className="mt-4 font-display text-[1.8rem] font-bold leading-none tracking-[-0.04em] text-primary-text">
                     <Link href={`/authors/${member.slug}`} className="transition-colors hover:text-primary-green">
                       {member.name}
                     </Link>
-                  ) : (
-                    member.name
-                  )}
-                </h3>
-                <p className="mt-2 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">{member.role}</p>
-                <p className="mt-3 text-[0.98rem] leading-7 text-muted-text">{member.bio}</p>
-              </article>
-            ))}
-          </div>
+                  </h3>
+                  <p className="mt-2 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">{member.title}</p>
+                  <p className="mt-3 line-clamp-5 text-[0.98rem] leading-7 text-muted-text">{member.bio}</p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="border border-border bg-card-background p-6">
+              <h3 className="font-display text-[1.8rem] font-bold tracking-[-0.04em] text-primary-text">Team profiles coming soon</h3>
+              <p className="mt-3 max-w-2xl text-[1rem] leading-7 text-muted-text">
+                Publish complete author profiles in Sanity and they will appear here automatically.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -91,24 +85,14 @@ export default function AboutPage() {
           <div className="flex flex-wrap items-center gap-4 border-b border-border pb-5 text-primary-text">
             <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">Follow Us On</p>
             <div className="flex items-center gap-4">
-              <Link href="#" aria-label="Facebook" className="transition-colors hover:text-primary-green">
-                <FaFacebookF className="h-4 w-4" />
-              </Link>
-              <Link href="#" aria-label="Instagram" className="transition-colors hover:text-primary-green">
-                <FaInstagram className="h-4 w-4" />
-              </Link>
-              <Link href="#" aria-label="X" className="transition-colors hover:text-primary-green">
-                <FaXTwitter className="h-4 w-4" />
-              </Link>
-              <Link href="#" aria-label="LinkedIn" className="transition-colors hover:text-primary-green">
-                <FaLinkedinIn className="h-4 w-4" />
-              </Link>
-              <Link href="#" aria-label="YouTube" className="transition-colors hover:text-primary-green">
-                <FaYoutube className="h-4 w-4" />
-              </Link>
-              <Link href="#" aria-label="RSS" className="transition-colors hover:text-primary-green">
-                <FaRss className="h-4 w-4" />
-              </Link>
+              {socialLinks.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <Link key={link.label} href={link.href} aria-label={link.label} className="transition-colors hover:text-primary-green">
+                    <Icon className="h-4 w-4" />
+                  </Link>
+                );
+              })}
             </div>
           </div>
 

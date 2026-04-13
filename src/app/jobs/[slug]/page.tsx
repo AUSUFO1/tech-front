@@ -79,7 +79,7 @@ export default async function JobDetailPage({params}: Props) {
           <AppImage
             src={job.coverImageUrl}
             alt={job.coverImageAlt ?? job.title}
-            className="mt-8 h-[420px] w-full object-cover"
+            className="mt-8 h-auto w-full bg-card-background object-contain sm:h-[420px] sm:object-cover"
             width={1600}
             height={900}
             sizes="(min-width: 1024px) 900px, 100vw"
@@ -99,7 +99,7 @@ export default async function JobDetailPage({params}: Props) {
                 href={job.applicationUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-11 w-fit items-center bg-primary-green px-5 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-white"
+                className="inline-flex h-11 w-fit items-center bg-primary-green px-5 text-[0.74rem] font-bold uppercase tracking-[0.14em] !text-white"
               >
                 Apply Now
               </Link>

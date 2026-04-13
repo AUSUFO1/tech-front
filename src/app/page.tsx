@@ -5,8 +5,8 @@ import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {CompactNewsletterForm} from '@/components/CompactNewsletterForm'
 import {getHomepageContent} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
+import {type BlogItem, type FeaturedNewsItem, type JobItem, type OpportunityItem, type QuickLink} from '@/lib/content-types'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
-import {type BlogItem, type FeaturedNewsItem, type JobItem, type OpportunityItem, type QuickLink} from '@/lib/mock-content'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -69,7 +69,14 @@ function EditorialCard({item, hrefBase}: {item: FeaturedNewsItem | BlogItem; hre
   return (
     <article className="bg-card-background pb-2">
       <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
-        <AppImage src={item.coverImageUrl} alt={item.title} className="h-[220px] w-full object-cover" width={1200} height={780} sizes="(max-width: 768px) 100vw, 50vw" />
+        <AppImage
+          src={item.coverImageUrl}
+          alt={item.title}
+          className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[220px] sm:aspect-auto sm:object-cover"
+          width={1200}
+          height={780}
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
       </Link>
       <h3 className="mt-5 font-display text-[1.7rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text">
         <Link
@@ -80,9 +87,9 @@ function EditorialCard({item, hrefBase}: {item: FeaturedNewsItem | BlogItem; hre
         </Link>
       </h3>
       <p className="mt-3 line-clamp-3 text-[0.98rem] leading-7 text-muted-text">{item.excerpt}</p>
-      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+                <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
         <CategoryTagLink
-          href={getCategoryHrefFromLabel(item.categoryTitle, hrefBase === '/news' ? 'news' : 'blog')}
+          href={item.categorySlug ? getQuickLinkHref(item.categorySlug, hrefBase === '/news' ? 'news' : 'blog') : getCategoryHrefFromLabel(item.categoryTitle, hrefBase === '/news' ? 'news' : 'blog')}
           label={item.categoryTitle}
           className="inline-flex rounded-[5px] bg-primary-green px-2.5 py-1 text-white transition-opacity hover:opacity-90"
         />
@@ -145,7 +152,10 @@ function OpportunityPreview({item}: {item: OpportunityItem}) {
         </div>
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
-        <CategoryTagLink href={getCategoryHrefFromLabel(item.opportunityType, 'opportunities')} label={item.opportunityType} />
+        <CategoryTagLink
+          href={item.categorySlug ? getQuickLinkHref(item.categorySlug, 'opportunities') : getCategoryHrefFromLabel(item.opportunityType, 'opportunities')}
+          label={item.categoryTitle ?? item.opportunityType}
+        />
         <span>{item.location}</span>
       </div>
       <p className="mt-4 line-clamp-3 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>

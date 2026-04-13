@@ -8,12 +8,12 @@ const newsSlugToPath: Record<string, string> = {
 }
 
 const directSlugToPath: Record<string, string> = {
-  'remote-jobs': '/jobs?category=remote-jobs',
-  scholarships: '/opportunities?category=scholarships',
-  bootcamps: '/opportunities?category=bootcamps',
-  'beginner-guides': '/blog?category=beginner-guides',
-  'career-growth': '/blog?category=career-growth',
-  freelancing: '/earn?category=freelancing',
+  'remote-jobs': '/jobs/category/remote-jobs',
+  scholarships: '/opportunities/category/scholarships',
+  bootcamps: '/opportunities/category/bootcamps',
+  'beginner-guides': '/blog/category/beginner-guides',
+  'career-growth': '/earn/category/career-growth',
+  freelancing: '/earn/category/freelancing',
 }
 
 const topicToPath: Record<string, string> = {
@@ -21,14 +21,14 @@ const topicToPath: Record<string, string> = {
   finance: '/news/finance',
   nysc: '/news/nysc',
   'africa tech': '/news/africa',
-  'beginner guides': '/blog?category=beginner-guides',
-  'career growth': '/blog?category=career-growth',
-  freelancing: '/earn?category=freelancing',
-  remote: '/jobs?category=remote-jobs',
-  scholarship: '/opportunities?category=scholarships',
-  scholarships: '/opportunities?category=scholarships',
-  bootcamp: '/opportunities?category=bootcamps',
-  bootcamps: '/opportunities?category=bootcamps',
+  'beginner guides': '/blog/category/beginner-guides',
+  'career growth': '/earn/category/career-growth',
+  freelancing: '/earn/category/freelancing',
+  remote: '/jobs/category/remote-jobs',
+  scholarship: '/opportunities/category/scholarships',
+  scholarships: '/opportunities/category/scholarships',
+  bootcamp: '/opportunities/category/bootcamps',
+  bootcamps: '/opportunities/category/bootcamps',
   internship: '/jobs',
   'full-time': '/jobs',
   'part-time': '/jobs',
@@ -48,13 +48,13 @@ export function getQuickLinkHref(slug: string, contentType: ContentType) {
 
   switch (contentType) {
     case 'blog':
-      return '/blog'
+      return `/blog/category/${slug}`
     case 'jobs':
-      return '/jobs'
+      return `/jobs/category/${slug}`
     case 'opportunities':
-      return '/opportunities'
+      return `/opportunities/category/${slug}`
     case 'earn':
-      return '/earn'
+      return `/earn/category/${slug}`
     case 'news':
       return newsSlugToPath[slug] ?? '/news'
     default:

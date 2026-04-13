@@ -11,8 +11,18 @@ function escapeXml(value: string) {
 }
 
 export async function GET() {
-  const baseUrl = getMetadataBase().toString().replace(/\/$/, '')
+  const metadataBase = getMetadataBase()
+  const baseUrl = metadataBase?.toString().replace(/\/$/, '')
   const entries = await getRecentNewsSitemapEntries()
+
+  if (!baseUrl) {
+    return new Response('', {
+      status: 500,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+      },
+    })
+  }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">

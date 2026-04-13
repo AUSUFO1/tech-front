@@ -3,7 +3,7 @@ import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
 import {StandardPagination} from '@/components/StandardPagination'
 import {getNewsContent, getOpportunitiesContent} from '@/lib/content'
-import {getCategoryHrefFromLabel} from '@/lib/link-mapping'
+import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
@@ -72,7 +72,10 @@ export default async function Page({
               </h2>
               <p className="mt-3 line-clamp-2 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
               <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                <CategoryTagLink href={getCategoryHrefFromLabel(item.opportunityType, 'opportunities')} label={item.opportunityType} />
+                <CategoryTagLink
+                  href={item.categorySlug ? getQuickLinkHref(item.categorySlug, 'opportunities') : getCategoryHrefFromLabel(item.opportunityType, 'opportunities')}
+                  label={item.categoryTitle ?? item.opportunityType}
+                />
                 <span>{item.location}</span>
                 <span>{formatViews(item.views)}</span>
                 <span>{formatComments(item.commentCount)}</span>

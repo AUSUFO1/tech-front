@@ -9,10 +9,10 @@ export default async function AuthorsPage({
 }: {
   searchParams?: Promise<{page?: string}>
 }) {
-  const mockAuthors = await getAuthorsContent()
+  const authors = await getAuthorsContent()
   const params = (await searchParams) ?? {}
   const currentPage = getCurrentPage(params.page)
-  const paginated = paginateItems(mockAuthors, currentPage)
+  const paginated = paginateItems(authors, currentPage)
   const createPageHref = (page: number) => (page > 1 ? `/authors?page=${page}` : '/authors')
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 pt-6 sm:px-8 lg:px-16 lg:pb-16">
@@ -28,14 +28,27 @@ export default async function AuthorsPage({
       <section className="grid gap-7 py-8 md:grid-cols-2 xl:grid-cols-3">
         {paginated.items.map((author) => (
           <article key={author._id} className="bg-card-background p-4">
-            <AppImage src={author.imageUrl} alt={author.name} className="h-[300px] w-full object-cover" width={900} height={1200} sizes="(max-width: 1280px) 50vw, 33vw" />
+            <AppImage
+              src={author.imageUrl}
+              alt={author.name}
+              className="aspect-[4/5] w-full bg-card-background object-contain object-top"
+              width={900}
+              height={1200}
+              sizes="(max-width: 1280px) 50vw, 33vw"
+            />
             <h2 className="mt-4 font-display text-[2rem] font-bold leading-none tracking-[-0.05em] text-primary-text">
               <Link href={`/authors/${author.slug}`} className="transition-colors hover:text-primary-green">
                 {author.name}
               </Link>
             </h2>
             <p className="mt-2 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">{author.title}</p>
-            <p className="mt-3 text-[0.98rem] leading-7 text-muted-text">{author.bio}</p>
+            <p className="mt-3 line-clamp-6 text-[0.98rem] leading-7 text-muted-text">{author.bio}</p>
+            <Link
+              href={`/authors/${author.slug}`}
+              className="mt-4 inline-flex text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green transition-colors hover:text-primary-text"
+            >
+              Read More
+            </Link>
           </article>
         ))}
       </section>

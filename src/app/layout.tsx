@@ -47,30 +47,36 @@ export default async function RootLayout({
   const { isEnabled: isDraftMode } = await draftMode();
   const savedTheme = cookieStore.get("techfront-theme")?.value;
   const serverTheme = savedTheme === "dark" ? "dark" : "light";
-  const siteUrl = getMetadataBase().toString().replace(/\/$/, "");
+  const metadataBase = getMetadataBase();
+  const siteUrl = metadataBase?.toString().replace(/\/$/, "");
   const siteStructuredData = [
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "Techfront",
-      url: siteUrl,
+      ...(siteUrl ? { url: siteUrl } : {}),
       slogan: "Stay Ahead. Stay Informed. Earn with Tech.",
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "Techfront",
-      url: siteUrl,
-      potentialAction: {
-        "@type": "SearchAction",
-        target: `${siteUrl}/search?q={search_term_string}`,
-        "query-input": "required name=search_term_string",
-      },
+      ...(siteUrl ? { url: siteUrl } : {}),
+      ...(siteUrl
+        ? {
+            potentialAction: {
+              "@type": "SearchAction",
+              target: `${siteUrl}/search?q={search_term_string}`,
+              "query-input": "required name=search_term_string",
+            },
+          }
+        : {}),
     },
   ];
 
   return (
     <html
+      id="top"
       lang="en"
       suppressHydrationWarning
       className={`${sora.variable} ${inter.variable} ${sourceSerif.variable} ${jetBrainsMono.variable} ${
