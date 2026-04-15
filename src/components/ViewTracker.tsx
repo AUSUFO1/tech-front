@@ -6,6 +6,11 @@ type PostType = 'news' | 'blog' | 'jobs' | 'opportunities' | 'earn'
 
 const VIEW_TTL_MS = 12 * 60 * 60 * 1000
 
+type StoredViewState = {
+  timestamp: number
+  views: number
+}
+
 function formatViews(value: number) {
   return `${value.toLocaleString()} views`
 }
@@ -27,8 +32,14 @@ export function ViewTracker({
     try {
       const saved = window.localStorage.getItem(storageKey)
       if (saved) {
-        const timestamp = Number(saved)
+        const parsed = JSON.parse(saved) as Partial<StoredViewState>
+        const timestamp = Number(parsed.timestamp)
+        const storedViews = Number(parsed.views)
+
         if (Number.isFinite(timestamp) && Date.now() - timestamp < VIEW_TTL_MS) {
+          if (Number.isFinite(storedViews) && storedViews >= initialViews) {
+            setViews(storedViews)
+          }
           return
         }
       }
@@ -50,7 +61,13 @@ export function ViewTracker({
 
         if (!cancelled && typeof payload.views === 'number') {
           setViews(payload.views)
-          window.localStorage.setItem(storageKey, String(Date.now()))
+          window.localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              timestamp: Date.now(),
+              views: payload.views,
+            } satisfies StoredViewState)
+          )
         }
       } catch {}
     }

@@ -24,18 +24,10 @@ export async function GET(request: Request) {
   const slug = searchParams.get('slug')
   const path = searchParams.get('path')
 
-  const expectedSecret =
-    process.env.NODE_ENV === 'development'
-      ? process.env.SANITY_PREVIEW_SECRET ||
-        process.env.SANITY_STUDIO_PREVIEW_SECRET ||
-        process.env.NEXT_PUBLIC_SANITY_STUDIO_PREVIEW_SECRET ||
-        process.env.NEXT_PUBLIC_SANITY_PREVIEW_SECRET
-      : process.env.SANITY_PREVIEW_SECRET ||
-        process.env.SANITY_STUDIO_PREVIEW_SECRET
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  const expectedSecret = process.env.SANITY_PREVIEW_SECRET || process.env.SANITY_STUDIO_PREVIEW_SECRET
 
-  const isDevBypass = process.env.NODE_ENV === 'development' && !expectedSecret
-
-  if (!isDevBypass && (!expectedSecret || secret !== expectedSecret)) {
+  if (!isDevelopment && (!expectedSecret || secret !== expectedSecret)) {
     return NextResponse.json({error: 'Invalid preview secret'}, {status: 401})
   }
 

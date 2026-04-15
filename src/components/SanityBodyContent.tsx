@@ -189,7 +189,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
           <AppImage
             src={imageUrl}
             alt={node.alt ?? ''}
-            className="h-auto w-full bg-card-background object-contain sm:max-h-[36rem] sm:object-cover"
+            className="h-auto w-full bg-card-background object-contain sm:max-h-[36rem] sm:object-contain"
             width={1200}
             height={800}
             sizes="100vw"

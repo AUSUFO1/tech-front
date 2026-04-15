@@ -128,7 +128,7 @@ export async function SectionCategoryPage({section, slug, page}: SectionCategory
                   <AppImage
                     src={item.coverImageUrl}
                     alt={item.title}
-                    className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[158px] sm:aspect-auto sm:object-cover"
+                    className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[158px] sm:aspect-auto sm:object-contain"
                     width={900}
                     height={620}
                     sizes="(max-width: 640px) 100vw, 230px"

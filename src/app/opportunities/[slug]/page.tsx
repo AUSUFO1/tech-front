@@ -79,7 +79,7 @@ export default async function OpportunityDetailPage({params}: Props) {
           <AppImage
             src={item.coverImageUrl}
             alt={item.coverImageAlt ?? item.title}
-            className="mt-8 h-auto w-full bg-card-background object-contain sm:h-[420px] sm:object-cover"
+            className="mt-8 h-auto max-h-[42rem] w-full bg-card-background object-contain"
             width={1600}
             height={900}
             sizes="(min-width: 1024px) 900px, 100vw"

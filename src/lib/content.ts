@@ -759,6 +759,15 @@ export async function getCategoryBySlug(slug: string, contentType: QuickLink['co
   }
 }
 
+export async function getCategoriesByContentType(contentType: QuickLink['contentType']) {
+  try {
+    const items = await sanityFetch<SanityCategory[]>(navigationCategoriesQuery)
+    return items.filter((item) => item.contentType === contentType)
+  } catch {
+    return []
+  }
+}
+
 export async function getNewsContent(): Promise<{
   featuredNews: NewsContentItem[]
   latestNews: LatestNewsItem[]

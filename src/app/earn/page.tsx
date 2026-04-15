@@ -58,7 +58,14 @@ export default async function Page({
           {paginated.items.map((post) => (
             <article key={post._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[230px_minmax(0,1fr)] sm:gap-5">
               <Link href={`/earn/${post.slug}`} className="block overflow-hidden">
-                <AppImage src={post.coverImageUrl} alt={post.title} className="h-[150px] w-full object-cover sm:h-[158px]" width={900} height={620} sizes="(max-width: 640px) 100vw, 230px" />
+                <AppImage
+                  src={post.coverImageUrl}
+                  alt={post.title}
+                  className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[158px] sm:aspect-auto sm:object-contain"
+                  width={900}
+                  height={620}
+                  sizes="(max-width: 640px) 100vw, 230px"
+                />
               </Link>
               <div className="min-w-0">
                 <h2 className="font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">

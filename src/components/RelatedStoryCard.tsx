@@ -24,7 +24,7 @@ export function RelatedStoryCard({href, title, imageUrl, date}: RelatedStoryCard
         <AppImage
           src={imageUrl}
           alt={title}
-          className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[160px] sm:aspect-auto sm:object-cover"
+          className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[160px] sm:aspect-auto sm:object-contain"
           width={800}
           height={520}
           sizes="(max-width: 768px) 100vw, 33vw"

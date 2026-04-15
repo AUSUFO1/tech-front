@@ -3,9 +3,8 @@ import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
 import {StandardPagination} from '@/components/StandardPagination'
-import {getCategoryBySlug, getNewsContent} from '@/lib/content'
+import {getCategoriesByContentType, getCategoryBySlug, getNewsContent} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
-import {NEWS_SUBCATEGORIES, getNewsSubcategory, type NewsSubcategory} from '@/lib/news-subcategories'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
 
 function formatDate(date?: string) {
@@ -26,27 +25,29 @@ function formatComments(count?: number) {
 }
 
 type NewsCategoryPageProps = {
-  slug: NewsSubcategory['slug']
+  slug: string
   page?: string
 }
 
 export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
-  const {featuredNews, latestNews} = await getNewsContent()
-  const category = getNewsSubcategory(slug)
+  const [{featuredNews, latestNews}, category, newsCategories] = await Promise.all([
+    getNewsContent(),
+    getCategoryBySlug(slug, 'news'),
+    getCategoriesByContentType('news'),
+  ])
 
   if (!category) {
     return null
   }
 
-  const cmsCategory = await getCategoryBySlug(category.primaryCategorySlug, 'news')
   const categoryDescription =
-    cmsCategory?.description?.trim() ||
+    category.description?.trim() ||
     'Published stories in this section will appear here as soon as they are available.'
 
-  const items = featuredNews.filter((story) => category.matchCategories.includes(story.categoryTitle))
+  const items = featuredNews.filter((story) => story.categorySlug === slug)
   const currentPage = getCurrentPage(page)
   const paginated = paginateItems(items, currentPage)
-  const createPageHref = (targetPage: number) => (targetPage > 1 ? `/news/${slug}?page=${targetPage}` : `/news/${slug}`)
+  const createPageHref = (targetPage: number) => (targetPage > 1 ? `/news/category/${slug}?page=${targetPage}` : `/news/category/${slug}`)
 
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 sm:px-8 lg:px-16 lg:pb-16">
@@ -59,13 +60,13 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
 
       <section className="overflow-x-auto border-b border-border py-3 scrollbar-none">
         <div className="flex min-w-max items-center gap-5 pr-5">
-          {NEWS_SUBCATEGORIES.map((item) => {
+          {newsCategories.map((item) => {
             const isActive = item.slug === slug
 
             return (
               <Link
-                key={item.slug}
-                href={`/news/${item.slug}`}
+                key={item._id}
+                href={`/news/category/${item.slug}`}
                 className={`border-b-[2px] pb-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] transition-colors ${
                   isActive
                     ? 'border-primary-green text-primary-green'
@@ -98,7 +99,7 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
                 <AppImage
                   src={story.coverImageUrl}
                   alt={story.title}
-                  className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[158px] sm:aspect-auto sm:object-cover"
+                  className="aspect-[4/3] w-full bg-card-background object-contain md:h-[158px] md:aspect-auto md:object-contain"
                   width={900}
                   height={620}
                   sizes="(max-width: 640px) 100vw, 240px"

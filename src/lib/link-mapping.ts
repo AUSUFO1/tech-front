@@ -1,12 +1,5 @@
 type ContentType = 'blog' | 'jobs' | 'opportunities' | 'earn' | 'news'
 
-const newsSlugToPath: Record<string, string> = {
-  'artificial-intelligence': '/news/tech',
-  finance: '/news/finance',
-  nysc: '/news/nysc',
-  'africa-tech': '/news/africa',
-}
-
 const directSlugToPath: Record<string, string> = {
   'remote-jobs': '/jobs/category/remote-jobs',
   scholarships: '/opportunities/category/scholarships',
@@ -17,10 +10,11 @@ const directSlugToPath: Record<string, string> = {
 }
 
 const topicToPath: Record<string, string> = {
-  'artificial intelligence': '/news/tech',
-  finance: '/news/finance',
-  nysc: '/news/nysc',
-  'africa tech': '/news/africa',
+  'artificial intelligence': '/news/category/artificial-intelligence',
+  finance: '/news/category/finance',
+  nysc: '/news/category/nysc',
+  'africa tech': '/news/category/africa-tech',
+  naija: '/news/category/naija',
   'beginner guides': '/blog/category/beginner-guides',
   'career growth': '/earn/category/career-growth',
   freelancing: '/earn/category/freelancing',
@@ -56,7 +50,7 @@ export function getQuickLinkHref(slug: string, contentType: ContentType) {
     case 'earn':
       return `/earn/category/${slug}`
     case 'news':
-      return newsSlugToPath[slug] ?? '/news'
+      return `/news/category/${slug}`
     default:
       return '/'
   }

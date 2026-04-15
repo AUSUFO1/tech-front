@@ -59,6 +59,12 @@ export function CompactNewsletterForm({
   const submitLocked = isSubmitting || !hasEmail || (turnstileRequired && !turnstileToken);
 
   useEffect(() => {
+    if (window.turnstile) {
+      setTurnstileReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!turnstileRequired || !turnstileReady) return;
     if (!window.turnstile || !turnstileContainerRef.current) return;
 
@@ -141,7 +147,7 @@ export function CompactNewsletterForm({
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
-          onLoad={() => setTurnstileReady(true)}
+          onReady={() => setTurnstileReady(true)}
         />
       ) : null}
       <form className={className} onSubmit={handleSubmit}>

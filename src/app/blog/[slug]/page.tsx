@@ -81,7 +81,7 @@ export default async function BlogDetailPage({params}: Props) {
       <AppImage
         src={post.coverImageUrl}
         alt={post.coverImageAlt ?? post.title}
-        className="mt-8 h-auto w-full bg-card-background object-contain sm:h-[420px] sm:object-cover"
+        className="mt-8 h-auto max-h-[42rem] w-full bg-card-background object-contain"
         width={1400}
         height={840}
         sizes="100vw"

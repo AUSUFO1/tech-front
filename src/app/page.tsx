@@ -72,7 +72,7 @@ function EditorialCard({item, hrefBase}: {item: FeaturedNewsItem | BlogItem; hre
         <AppImage
           src={item.coverImageUrl}
           alt={item.title}
-          className="aspect-[4/3] w-full bg-card-background object-contain sm:h-[220px] sm:aspect-auto sm:object-cover"
+          className="aspect-[4/3] w-full bg-card-background object-contain md:h-[220px] md:aspect-auto md:object-contain"
           width={1200}
           height={780}
           sizes="(max-width: 768px) 100vw, 50vw"

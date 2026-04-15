@@ -27,7 +27,7 @@ export default async function AboutPage() {
       <section className="mx-auto w-full max-w-[1360px] border-b border-border px-5 py-12 sm:px-8 lg:px-16 lg:py-16">
         <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">About Techfront</p>
         <h1 className="mt-5 max-w-[980px] font-display text-[2.1rem] font-bold leading-[1.03] tracking-[-0.05em] text-primary-text sm:text-[3rem]">
-          A modern newsroom for tech careers, opportunities, and stories that move your life forward.
+          A newsroom for tech careers, opportunities, and stories that move your life forward.
         </h1>
         <p className="mt-8 max-w-[900px] text-[1.2rem] leading-9 text-muted-text">
           Techfront exists to help readers move forward with clear information on jobs, opportunities, practical guides, and the

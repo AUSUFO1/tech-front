@@ -78,6 +78,12 @@ export function NewsletterSubscribePanel() {
   const turnstileRequired = Boolean(turnstileSiteKey);
 
   useEffect(() => {
+    if (window.turnstile) {
+      setTurnstileReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!turnstileRequired) return;
 
     const mediaQuery = window.matchMedia("(max-width: 480px)");
@@ -176,7 +182,7 @@ export function NewsletterSubscribePanel() {
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
-          onLoad={() => setTurnstileReady(true)}
+          onReady={() => setTurnstileReady(true)}
         />
       ) : null}
       <h2 className="font-display text-[2.1rem] font-bold leading-[0.96] tracking-[-0.05em] text-primary-text sm:text-[3.35rem]">

@@ -24,7 +24,6 @@ const legalLinks = [
   { label: "Editorial Policy", href: "/editorial-policy" },
   { label: "Corrections Policy", href: "/corrections-policy" },
   { label: "Accessibility", href: "/accessibility" },
-  { label: "Newsletter", href: "/newsletter" },
 ];
 
 const socialLinks = [

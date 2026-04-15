@@ -60,6 +60,12 @@ export function ArticleComments({postType, postSlug}: ArticleCommentsProps) {
   const turnstileRequired = Boolean(turnstileSiteKey)
 
   useEffect(() => {
+    if (window.turnstile) {
+      setTurnstileReady(true)
+    }
+  }, [])
+
+  useEffect(() => {
     let active = true
     const fetchComments = async () => {
       setLoading(true)
@@ -177,7 +183,7 @@ export function ArticleComments({postType, postSlug}: ArticleCommentsProps) {
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
-          onLoad={() => setTurnstileReady(true)}
+          onReady={() => setTurnstileReady(true)}
         />
       ) : null}
       <h2 className="font-display text-[2rem] font-bold tracking-[-0.05em] text-primary-text">Comments</h2>
