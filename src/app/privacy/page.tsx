@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { contactEmail } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | GizPulse",
@@ -82,8 +83,8 @@ export default function PrivacyPage() {
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">10. Contact</h2>
           <p className="mt-3">
             For privacy questions or requests, contact{" "}
-            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
-              support@gizpulse.com
+            <a className="text-primary-green underline-offset-4 hover:underline" href={`mailto:${contactEmail}`}>
+              {contactEmail}
             </a>
             .
           </p>

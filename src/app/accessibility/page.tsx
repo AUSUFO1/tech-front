@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { contactEmail } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Accessibility | GizPulse",
@@ -35,11 +36,11 @@ export default function AccessibilityPage() {
           <ul className="mt-3 list-disc pl-6">
             <li>
               Email:{" "}
-              <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
-                support@gizpulse.com
+              <a className="text-primary-green underline-offset-4 hover:underline" href={`mailto:${contactEmail}`}>
+                {contactEmail}
               </a>
             </li>
-            <li>Postal address: GizPulse, Lagos, Nigeria</li>
+            <li>Postal address: GizPulse, Abuja, Nigeria.</li>
           </ul>
           <p className="mt-3">We try to respond within 5 business days.</p>
         </section>

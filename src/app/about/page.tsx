@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaRss, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { AppImage } from "@/components/AppImage";
 import { getAuthorsContent } from "@/lib/content";
+import { contactEmail, socialUrls } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "About | GizPulse",
@@ -10,12 +11,12 @@ export const metadata: Metadata = {
 };
 
 const socialLinks = [
-  { label: "Facebook", href: "#", icon: FaFacebookF },
-  { label: "Instagram", href: "#", icon: FaInstagram },
-  { label: "X", href: "#", icon: FaXTwitter },
-  { label: "LinkedIn", href: "#", icon: FaLinkedinIn },
-  { label: "YouTube", href: "#", icon: FaYoutube },
-  { label: "RSS", href: "/rss.xml", icon: FaRss },
+  { label: "Facebook", href: socialUrls.facebook, icon: FaFacebookF },
+  { label: "Instagram", href: socialUrls.instagram, icon: FaInstagram },
+  { label: "X", href: socialUrls.x, icon: FaXTwitter },
+  { label: "LinkedIn", href: socialUrls.linkedin, icon: FaLinkedinIn },
+  { label: "YouTube", href: socialUrls.youtube, icon: FaYoutube },
+  { label: "RSS", href: socialUrls.rss, icon: FaRss },
 ];
 
 export default async function AboutPage() {
@@ -48,8 +49,12 @@ export default async function AboutPage() {
           {featuredAuthors.length > 0 ? (
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {featuredAuthors.map((member) => (
-                <article key={member._id} className="bg-card-background p-4">
-                  <Link href={`/authors/${member.slug}`} className="block">
+                <Link
+                  key={member._id}
+                  href={`/authors/${member.slug}`}
+                  className="block bg-card-background p-4 transition-transform hover:-translate-y-1"
+                >
+                  <article>
                     <AppImage
                       src={member.imageUrl}
                       alt={member.name}
@@ -58,15 +63,13 @@ export default async function AboutPage() {
                       height={1120}
                       sizes="(max-width: 1280px) 50vw, 33vw"
                     />
-                  </Link>
-                  <h3 className="mt-4 font-display text-[1.8rem] font-bold leading-none tracking-[-0.04em] text-primary-text">
-                    <Link href={`/authors/${member.slug}`} className="transition-colors hover:text-primary-green">
+                    <h3 className="mt-4 font-display text-[1.8rem] font-bold leading-none tracking-[-0.04em] text-primary-text transition-colors hover:text-primary-green">
                       {member.name}
-                    </Link>
-                  </h3>
-                  <p className="mt-2 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">{member.title}</p>
-                  <p className="mt-3 line-clamp-5 text-[0.98rem] leading-7 text-muted-text">{member.bio}</p>
-                </article>
+                    </h3>
+                    <p className="mt-2 text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">{member.title}</p>
+                    <p className="mt-3 line-clamp-5 text-[0.98rem] leading-7 text-muted-text">{member.bio}</p>
+                  </article>
+                </Link>
               ))}
             </div>
           ) : (
@@ -103,8 +106,8 @@ export default async function AboutPage() {
                 <p className="text-[0.78rem] font-bold uppercase tracking-[0.14em] text-primary-green">Support</p>
                 <p className="mt-2">
                   For questions, updates, partnerships, or general support, email{" "}
-                  <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
-                    support@gizpulse.com
+                  <a className="text-primary-green underline-offset-4 hover:underline" href={`mailto:${contactEmail}`}>
+                    {contactEmail}
                   </a>
                   .
                 </p>
@@ -113,8 +116,8 @@ export default async function AboutPage() {
                 <p className="text-[0.78rem] font-bold uppercase tracking-[0.14em] text-primary-green">PR & Story Pitches</p>
                 <p className="mt-2">
                   Send story tips, press releases, or editorial pitches to{" "}
-                  <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
-                    support@gizpulse.com
+                  <a className="text-primary-green underline-offset-4 hover:underline" href={`mailto:${contactEmail}`}>
+                    {contactEmail}
                   </a>
                   .
                 </p>

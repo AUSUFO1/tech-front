@@ -20,6 +20,16 @@ function formatDate(date?: string) {
   return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(date))
 }
 
+function formatTime(date?: string) {
+  if (!date) return 'No time'
+  return new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'Africa/Lagos',
+    timeZoneName: 'short',
+  }).format(new Date(date))
+}
+
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -34,7 +44,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
     title: item.title,
     excerpt: item.excerpt,
     coverImageUrl: item.coverImageUrl,
-    publishedAt: item.deadline,
+    publishedAt: item.publishedAt,
     pathname: `/opportunities/${slug}`,
     seo: item.seo,
   })
@@ -52,7 +62,7 @@ export default async function OpportunityDetailPage({params}: Props) {
     description: item.seo?.metaDescription || item.excerpt,
     pathname: `/opportunities/${item.slug}`,
     image: item.seo?.ogImageUrl || item.coverImageUrl,
-    publishedAt: item.deadline,
+    publishedAt: item.publishedAt,
     organizationName: item.organization,
     location: item.location,
   })
@@ -71,6 +81,8 @@ export default async function OpportunityDetailPage({params}: Props) {
               {item.categoryTitle ?? item.opportunityType}
             </Link>
             <span>{item.location}</span>
+            <time dateTime={item.publishedAt}>Published {formatDate(item.publishedAt)}</time>
+            <time dateTime={item.publishedAt}>{formatTime(item.publishedAt)}</time>
             <span>Deadline {formatDate(item.deadline)}</span>
             <ViewTracker postType="opportunities" postSlug={item.slug} initialViews={item.views ?? 0} />
             <span>{formatComments(item.commentCount)}</span>

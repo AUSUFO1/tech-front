@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { contactEmail } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Corrections Policy | GizPulse",
@@ -71,8 +72,8 @@ export default function CorrectionsPolicyPage() {
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Contact</h2>
           <p className="mt-3">
             Correction requests may be sent to{" "}
-            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
-              support@gizpulse.com
+            <a className="text-primary-green underline-offset-4 hover:underline" href={`mailto:${contactEmail}`}>
+              {contactEmail}
             </a>
             .
           </p>

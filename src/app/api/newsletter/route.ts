@@ -1,7 +1,7 @@
 import {createHash} from 'crypto'
 import {createClient} from '@sanity/client'
 import {NextResponse} from 'next/server'
-import {resend, resendFromEmail} from '@/lib/resend'
+import {resend, resendFromEmail, resendReplyToEmail} from '@/lib/resend'
 import {apiVersion, dataset, projectId} from '@/sanity/env'
 
 const AVAILABLE_CHANNELS = new Map([
@@ -176,6 +176,7 @@ export async function POST(request: Request) {
       await resend.emails.send({
         from: resendFromEmail,
         to: email,
+        replyTo: resendReplyToEmail,
         subject,
         html: buildWelcomeEmail(name, channels),
       })

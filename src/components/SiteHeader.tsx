@@ -8,6 +8,7 @@ import { FaFacebookF, FaInstagram, FaLinkedinIn, FaRss, FaXTwitter, FaYoutube } 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { QuickLink } from "@/lib/content-types";
 import { getQuickLinkHref } from "@/lib/link-mapping";
+import { socialUrls } from "@/lib/site-config";
 
 const navItems = [
   { label: "BLOG", href: "/blog" },
@@ -27,12 +28,12 @@ const legalLinks = [
 ];
 
 const socialLinks = [
-  { label: "Facebook", href: "#", icon: FaFacebookF },
-  { label: "Instagram", href: "#", icon: FaInstagram },
-  { label: "X", href: "#", icon: FaXTwitter },
-  { label: "LinkedIn", href: "#", icon: FaLinkedinIn },
-  { label: "YouTube", href: "#", icon: FaYoutube },
-  { label: "RSS", href: "#", icon: FaRss },
+  { label: "Facebook", href: socialUrls.facebook, icon: FaFacebookF },
+  { label: "Instagram", href: socialUrls.instagram, icon: FaInstagram },
+  { label: "X", href: socialUrls.x, icon: FaXTwitter },
+  { label: "LinkedIn", href: socialUrls.linkedin, icon: FaLinkedinIn },
+  { label: "YouTube", href: socialUrls.youtube, icon: FaYoutube },
+  { label: "RSS", href: socialUrls.rss, icon: FaRss },
 ];
 
 type MenuTriggerProps = {

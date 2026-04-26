@@ -68,6 +68,7 @@ export type OpportunityItem = {
   excerpt: string
   views: number
   commentCount?: number
+  publishedAt: string
   slug: string
   organization: string
   location: string

@@ -81,7 +81,7 @@ export default async function JobDetailPage({params}: Props) {
             <Link href="/jobs" className="text-primary-green hover:opacity-90">
               {job.employmentType}
             </Link>
-            <time dateTime={job.publishedAt}>{formatDate(job.publishedAt)}</time>
+            <time dateTime={job.publishedAt}>Published {formatDate(job.publishedAt)}</time>
             <time dateTime={job.publishedAt}>{formatTime(job.publishedAt)}</time>
             <ViewTracker postType="jobs" postSlug={job.slug} initialViews={job.views ?? 0} />
             <span>{formatComments(job.commentCount)}</span>
