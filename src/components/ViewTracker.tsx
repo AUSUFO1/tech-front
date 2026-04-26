@@ -15,6 +15,25 @@ function formatViews(value: number) {
   return `${value.toLocaleString()} views`
 }
 
+function getStoredViewState(storageKey: string) {
+  try {
+    const saved = window.localStorage.getItem(storageKey)
+    if (!saved) return null
+
+    const parsed = JSON.parse(saved) as Partial<StoredViewState>
+    const timestamp = Number(parsed.timestamp)
+    const views = Number(parsed.views)
+
+    if (!Number.isFinite(timestamp) || !Number.isFinite(views)) {
+      return null
+    }
+
+    return {timestamp, views} satisfies StoredViewState
+  } catch {
+    return null
+  }
+}
+
 export function ViewTracker({
   postType,
   postSlug,
@@ -27,23 +46,21 @@ export function ViewTracker({
   const [views, setViews] = useState(initialViews)
 
   useEffect(() => {
-    const storageKey = `techfront:view:${postType}:${postSlug}`
+    const storageKey = `gizpulse:view:${postType}:${postSlug}`
+    const storedState = getStoredViewState(storageKey)
 
-    try {
-      const saved = window.localStorage.getItem(storageKey)
-      if (saved) {
-        const parsed = JSON.parse(saved) as Partial<StoredViewState>
-        const timestamp = Number(parsed.timestamp)
-        const storedViews = Number(parsed.views)
+    if (storedState && Date.now() - storedState.timestamp < VIEW_TTL_MS) {
+      if (storedState.views >= initialViews) {
+        const timer = window.setTimeout(() => {
+          setViews(storedState.views)
+        }, 0)
 
-        if (Number.isFinite(timestamp) && Date.now() - timestamp < VIEW_TTL_MS) {
-          if (Number.isFinite(storedViews) && storedViews >= initialViews) {
-            setViews(storedViews)
-          }
-          return
+        return () => {
+          window.clearTimeout(timer)
         }
       }
-    } catch {}
+      return
+    }
 
     let cancelled = false
 
@@ -77,7 +94,7 @@ export function ViewTracker({
     return () => {
       cancelled = true
     }
-  }, [postSlug, postType])
+  }, [initialViews, postSlug, postType])
 
   return <span>{formatViews(views)}</span>
 }

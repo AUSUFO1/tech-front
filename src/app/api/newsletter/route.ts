@@ -5,7 +5,7 @@ import {resend, resendFromEmail} from '@/lib/resend'
 import {apiVersion, dataset, projectId} from '@/sanity/env'
 
 const AVAILABLE_CHANNELS = new Map([
-  ['techfront-weekly', 'Techfront Weekly'],
+  ['gizpulse-weekly', 'GizPulse Weekly'],
   ['jobs-alerts', 'Jobs Alerts'],
   ['opportunity-radar', 'Opportunity Radar'],
 ])
@@ -79,10 +79,10 @@ function buildWelcomeEmail(name: string | undefined, channels: string[]) {
     <div style="margin:0;padding:32px;background:#f8fafc;font-family:Inter,Arial,sans-serif;color:#0f172a;">
       <div style="max-width:640px;margin:0 auto;background:#ffffff;padding:40px 32px;border:1px solid #e2e8f0;">
         <p style="margin:0 0 12px;font-family:Sora,Inter,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:0.22em;text-transform:uppercase;color:#16a34a;">
-          Techfront
+          GizPulse
         </p>
         <h1 style="margin:0 0 18px;font-family:Sora,Inter,Arial,sans-serif;font-size:40px;line-height:0.98;font-weight:800;letter-spacing:-0.06em;">
-          Welcome to Techfront Weekly
+          Welcome to GizPulse Weekly
         </h1>
         <p style="margin:0 0 16px;font-size:16px;line-height:1.8;color:#475569;">
           Hi ${introName}, your subscription is in. We will keep you close to practical jobs, opportunities, and useful tech stories.
@@ -170,7 +170,7 @@ export async function POST(request: Request) {
     const subject =
       channels.length === 1
         ? `You are subscribed to ${AVAILABLE_CHANNELS.get(channels[0])}`
-        : 'You are subscribed to Techfront newsletters'
+        : 'You are subscribed to GizPulse newsletters'
 
     try {
       await resend.emails.send({

@@ -19,6 +19,16 @@ function formatDate(date?: string) {
   return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(date))
 }
 
+function formatTime(date?: string) {
+  if (!date) return 'No time'
+  return new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'Africa/Lagos',
+    timeZoneName: 'short',
+  }).format(new Date(date))
+}
+
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -28,7 +38,7 @@ type Props = {params: Promise<{slug: string}>}
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const item = await getJobBySlug(slug)
-  if (!item) return {title: 'Jobs | Techfront'}
+  if (!item) return {title: 'Jobs | GizPulse'}
   return buildArticleMetadata({
     title: item.title,
     excerpt: item.excerpt,
@@ -71,7 +81,8 @@ export default async function JobDetailPage({params}: Props) {
             <Link href="/jobs" className="text-primary-green hover:opacity-90">
               {job.employmentType}
             </Link>
-            <span>{formatDate(job.publishedAt)}</span>
+            <time dateTime={job.publishedAt}>{formatDate(job.publishedAt)}</time>
+            <time dateTime={job.publishedAt}>{formatTime(job.publishedAt)}</time>
             <ViewTracker postType="jobs" postSlug={job.slug} initialViews={job.views ?? 0} />
             <span>{formatComments(job.commentCount)}</span>
           </div>

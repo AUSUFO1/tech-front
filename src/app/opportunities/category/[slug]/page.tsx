@@ -14,8 +14,8 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
 
   return {
     metadataBase: getMetadataBase(),
-    title: category ? `${category.title} | Opportunities | Techfront` : 'Opportunities Category | Techfront',
-    description: category?.description || 'Browse Techfront opportunities in this category.',
+    title: category ? `${category.title} | Opportunities | GizPulse` : 'Opportunities Category | GizPulse',
+    description: category?.description || 'Browse GizPulse opportunities in this category.',
     alternates: {canonical: `/opportunities/category/${slug}`},
   }
 }

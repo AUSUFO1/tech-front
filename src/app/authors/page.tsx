@@ -21,7 +21,7 @@ export default async function AuthorsPage({
           Authors
         </h1>
         <p className="mt-4 max-w-3xl text-[1.08rem] leading-8 text-muted-text">
-          Meet the writers and editors shaping Techfront coverage.
+          Meet the writers and editors shaping GizPulse coverage.
         </p>
       </section>
 

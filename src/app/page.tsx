@@ -2,7 +2,7 @@ import Link from 'next/link'
 import {ChevronRight} from 'lucide-react'
 import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
-import {CompactNewsletterForm} from '@/components/CompactNewsletterForm'
+import {HomeNewsletterSignup} from '@/components/HomeNewsletterSignup'
 import {getHomepageContent} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
 import {type BlogItem, type FeaturedNewsItem, type JobItem, type OpportunityItem, type QuickLink} from '@/lib/content-types'
@@ -65,7 +65,15 @@ function SectionHeader({title, href}: SectionHeaderProps) {
   )
 }
 
-function EditorialCard({item, hrefBase}: {item: FeaturedNewsItem | BlogItem; hrefBase: '/news' | '/blog'}) {
+function EditorialCard({
+  item,
+  hrefBase,
+  priority = false,
+}: {
+  item: FeaturedNewsItem | BlogItem
+  hrefBase: '/news' | '/blog'
+  priority?: boolean
+}) {
   return (
     <article className="bg-card-background pb-2">
       <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
@@ -75,7 +83,8 @@ function EditorialCard({item, hrefBase}: {item: FeaturedNewsItem | BlogItem; hre
           className="aspect-[4/3] w-full bg-card-background object-contain md:h-[220px] md:aspect-auto md:object-contain"
           width={1200}
           height={780}
-          sizes="(max-width: 768px) 100vw, 50vw"
+          sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 520px"
+          priority={priority}
         />
       </Link>
       <h3 className="mt-5 font-display text-[1.7rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text">
@@ -240,7 +249,7 @@ export default async function Home() {
       <section className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
         <div className="grid gap-6 sm:grid-cols-2">
           {featuredNews.slice(0, 4).map((story) => (
-            <EditorialCard key={story._id} item={story} hrefBase="/news" />
+            <EditorialCard key={story._id} item={story} hrefBase="/news" priority={story._id === featuredNews[0]?._id} />
           ))}
         </div>
 
@@ -344,7 +353,7 @@ export default async function Home() {
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <h2 className="font-display text-[2.4rem] font-bold leading-[0.96] tracking-[-0.06em] sm:text-[3.2rem] lg:text-[4rem]">
-              Sign up for Techfront Weekly
+              Sign up for GizPulse Weekly
             </h2>
             <p className="mt-5 max-w-2xl text-[1rem] leading-8 text-white/90">
               Subscribe for jobs, opportunities, guides, and the most useful tech stories in one clean weekly digest.
@@ -357,15 +366,7 @@ export default async function Home() {
           </div>
 
           <div className="w-full max-w-[34rem]">
-            <CompactNewsletterForm
-              buttonLabel="Subscribe Now"
-              className="flex flex-col gap-4 sm:flex-row"
-              inputClassName="h-13 w-full rounded-[8px] border !border-white bg-transparent px-4 text-[0.82rem] font-semibold uppercase tracking-[0.12em] text-white placeholder:text-white/75 focus:outline-none"
-              buttonClassName="inline-flex h-13 items-center justify-center whitespace-nowrap rounded-[8px] bg-white px-6 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-primary-green"
-              helperTextClassName="text-[0.8rem] text-white/80"
-              successClassName="text-[0.84rem] text-white"
-              errorClassName="text-[0.84rem] text-white/80"
-            />
+            <HomeNewsletterSignup />
           </div>
         </div>
       </section>

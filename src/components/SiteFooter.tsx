@@ -42,10 +42,10 @@ export function SiteFooter() {
       <div className="mx-auto grid w-full max-w-[1360px] gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-16">
         <div>
           <Link href="/" className="font-display text-[2.6rem] font-bold tracking-[-0.08em] text-white">
-            Techfront
+            GizPulse
           </Link>
           <p className="mt-6 text-[0.95rem] leading-7 text-white/95">
-            Techfront 2026.
+            GizPulse 2026.
             <br />
             All rights reserved.
           </p>
@@ -71,7 +71,7 @@ export function SiteFooter() {
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="max-w-2xl text-[0.95rem] leading-7 text-white/90">
-                Techfront covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.
+                GizPulse covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.
               </p>
               <div className="flex items-center gap-4 text-white">
                 {socialLinks.map((link) => {

@@ -24,7 +24,7 @@ export const newsletterSubscriber = defineType({
       of: [{type: 'string'}],
       options: {
         list: [
-          {title: 'Techfront Weekly', value: 'techfront-weekly'},
+          {title: 'GizPulse Weekly', value: 'gizpulse-weekly'},
           {title: 'Jobs Alerts', value: 'jobs-alerts'},
           {title: 'Opportunity Radar', value: 'opportunity-radar'},
         ],

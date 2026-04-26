@@ -116,7 +116,7 @@ export const seoField = defineField({
       name: 'canonicalUrl',
       title: 'Canonical URL',
       type: 'url',
-      description: 'Optional. Leave blank for Techfront to use the page URL automatically.',
+      description: 'Optional. Leave blank for GizPulse to use the page URL automatically.',
     }),
     defineField({
       name: 'noIndex',

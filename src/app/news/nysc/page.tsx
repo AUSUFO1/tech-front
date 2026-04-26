@@ -8,8 +8,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: getMetadataBase(),
-    title: category ? `${category.title} | News | Techfront` : 'News Category | Techfront',
-    description: category?.description || 'Browse Techfront news stories in this category.',
+    title: category ? `${category.title} | News | GizPulse` : 'News Category | GizPulse',
+    description: category?.description || 'Browse GizPulse news stories in this category.',
     alternates: {canonical: '/news/nysc'},
   }
 }

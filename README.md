@@ -1,6 +1,6 @@
-# Techfront
+# GizPulse
 
-Techfront is a modern tech media platform for ambitious readers in Nigeria and beyond. It combines news, jobs, opportunities, guides, and newsletter growth in a single editorial product.
+GizPulse is a modern tech media platform for ambitious readers in Nigeria and beyond. It combines news, jobs, opportunities, guides, and newsletter growth in a single editorial product.
 
 Core brand line:
 
@@ -45,7 +45,7 @@ Color tokens:
 - Gold Accent: `#F59E0B`
 - Border: `#E2E8F0`
 
-Dark mode tokens are defined in [`src/styles/globals.css`](C:/Users/USER/techfront/src/styles/globals.css).
+Dark mode tokens are defined in [`src/styles/globals.css`](C:/Users/USER/gizpulse/src/styles/globals.css).
 
 ## Current Product Areas
 
@@ -100,7 +100,7 @@ CMS:
 Right now the app is mixed:
 
 - interaction systems are real: newsletter, comments, Sanity Studio
-- a large part of content rendering is still driven by mock data in [`src/lib/mock-content.ts`](C:/Users/USER/techfront/src/lib/mock-content.ts) and [`src/lib/mock-authors.ts`](C:/Users/USER/techfront/src/lib/mock-authors.ts)
+- a large part of content rendering is still driven by mock data in [`src/lib/mock-content.ts`](C:/Users/USER/gizpulse/src/lib/mock-content.ts) and [`src/lib/mock-authors.ts`](C:/Users/USER/gizpulse/src/lib/mock-authors.ts)
 
 This is acceptable during build-out, but before public launch the important public pages should read from Sanity instead of mock content.
 

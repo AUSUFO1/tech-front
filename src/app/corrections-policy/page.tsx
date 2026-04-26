@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Corrections Policy | Techfront",
-  description: "Techfront Corrections Policy",
+  title: "Corrections Policy | GizPulse",
+  description: "GizPulse Corrections Policy",
 };
 
 export default function CorrectionsPolicyPage() {
@@ -18,7 +18,7 @@ export default function CorrectionsPolicyPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Our Commitment</h2>
           <p className="mt-3">
-            Techfront aims to publish accurate and useful information. When we make a factual mistake, or when a meaningful clarification
+            GizPulse aims to publish accurate and useful information. When we make a factual mistake, or when a meaningful clarification
             is required, we aim to correct the record promptly and transparently.
           </p>
         </section>
@@ -47,7 +47,7 @@ export default function CorrectionsPolicyPage() {
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Updates vs Corrections</h2>
           <p className="mt-3">
             Not every change is a correction. Some stories evolve because new verified information becomes available after publication. In
-            such cases, Techfront may update the article to reflect the latest position. Corrections are used where previously published
+            such cases, GizPulse may update the article to reflect the latest position. Corrections are used where previously published
             information was materially wrong or misleading.
           </p>
           <p className="mt-3">
@@ -71,8 +71,8 @@ export default function CorrectionsPolicyPage() {
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Contact</h2>
           <p className="mt-3">
             Correction requests may be sent to{" "}
-            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@techfront.com">
-              support@techfront.com
+            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
+              support@gizpulse.com
             </a>
             .
           </p>

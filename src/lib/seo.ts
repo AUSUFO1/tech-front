@@ -20,7 +20,7 @@ function getSiteUrl() {
     process.env.NEXT_PUBLIC_SITE_URL ??
     (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : undefined)
 
-  return envUrl
+  return envUrl?.replace(/\/$/, '')
 }
 
 export function buildArticleMetadata({title, excerpt, coverImageUrl, publishedAt, pathname, seo}: SeoInput): Metadata {
@@ -33,7 +33,7 @@ export function buildArticleMetadata({title, excerpt, coverImageUrl, publishedAt
 
   return {
     metadataBase,
-    title: `${resolvedTitle} | Techfront`,
+    title: `${resolvedTitle} | GizPulse`,
     description,
     alternates: {
       canonical,
@@ -72,6 +72,7 @@ type StructuredDataInput = {
   image?: string
   publishedAt?: string
   authorName?: string
+  authorPath?: string
   organizationName?: string
   employmentType?: string
   location?: string
@@ -83,7 +84,7 @@ export function buildStructuredData(input: StructuredDataInput) {
   const url = siteUrl ? `${siteUrl}${input.pathname}` : input.pathname
   const publisher = {
     '@type': 'Organization',
-    name: 'Techfront',
+    name: 'GizPulse',
     ...(siteUrl ? {url: siteUrl} : {}),
   }
 
@@ -98,7 +99,7 @@ export function buildStructuredData(input: StructuredDataInput) {
       employmentType: input.employmentType,
       hiringOrganization: {
         '@type': 'Organization',
-        name: input.organizationName ?? 'Techfront',
+        name: input.organizationName ?? 'GizPulse',
       },
       jobLocationType: input.location?.toLowerCase() === 'remote' ? 'TELECOMMUTE' : undefined,
       applicantLocationRequirements: input.location
@@ -125,6 +126,7 @@ export function buildStructuredData(input: StructuredDataInput) {
       ? {
           '@type': 'Person',
           name: input.authorName,
+          ...(input.authorPath && siteUrl ? {url: `${siteUrl}${input.authorPath}`} : {}),
         }
       : undefined,
     publisher,

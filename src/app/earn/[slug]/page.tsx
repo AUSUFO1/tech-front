@@ -19,6 +19,16 @@ function formatDate(date?: string) {
   return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(date))
 }
 
+function formatTime(date?: string) {
+  if (!date) return 'No time'
+  return new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'Africa/Lagos',
+    timeZoneName: 'short',
+  }).format(new Date(date))
+}
+
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -30,7 +40,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const latestBlog = await getBlogContent()
   const earnPosts = latestBlog.filter((item) => ['Freelancing', 'Career Growth'].includes(item.categoryTitle))
   const item = earnPosts.find((post) => post.slug === slug)
-  if (!item) return {title: 'Earn | Techfront'}
+  if (!item) return {title: 'Earn | GizPulse'}
   return buildArticleMetadata({
     title: item.title,
     excerpt: item.excerpt,
@@ -57,6 +67,7 @@ export default async function EarnDetailPage({params}: Props) {
     image: post.seo?.ogImageUrl || post.coverImageUrl,
     publishedAt: post.publishedAt,
     authorName: post.authorName,
+    authorPath: `/authors/${post.authorSlug || post.authorName.toLowerCase().replaceAll(' ', '-')}`,
   })
 
   return (
@@ -74,7 +85,8 @@ export default async function EarnDetailPage({params}: Props) {
         <Link href={`/authors/${post.authorSlug || post.authorName.toLowerCase().replaceAll(' ', '-')}`} className="hover:text-primary-green">
           Published by {post.authorName}
         </Link>
-        <span>{formatDate(post.publishedAt)}</span>
+        <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+        <time dateTime={post.publishedAt}>{formatTime(post.publishedAt)}</time>
         <ViewTracker postType="earn" postSlug={post.slug} initialViews={post.views ?? 0} />
         <span>{formatComments(post.commentCount)}</span>
       </div>

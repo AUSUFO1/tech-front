@@ -3,8 +3,8 @@ import Image from "next/image";
 import { NewsletterSubscribePanel } from "@/components/NewsletterSubscribePanel";
 
 export const metadata: Metadata = {
-  title: "Newsletter | Techfront",
-  description: "Subscribe to Techfront newsletters for jobs, opportunities, guides, and weekly tech updates.",
+  title: "Newsletter | GizPulse",
+  description: "Subscribe to GizPulse newsletters for jobs, opportunities, guides, and weekly tech updates.",
 };
 
 const highlights = [
@@ -24,7 +24,7 @@ export default function NewsletterPage() {
           <div className="absolute bottom-0 left-1/3 h-32 w-32 rounded-full bg-gold-accent/10 blur-3xl" />
           <div className="max-w-[40rem]">
             <p className="text-[0.78rem] font-bold uppercase tracking-[0.18em] text-primary-green">
-              Techfront Newsletter
+              GizPulse Newsletter
             </p>
             <h1 className="mt-4 font-display text-[2.7rem] font-bold leading-[0.92] tracking-[-0.07em] text-primary-text sm:text-[4.1rem] lg:text-[5.3rem]">
               Subscribe to
@@ -42,7 +42,7 @@ export default function NewsletterPage() {
             <div className="newsletter-float relative">
               <Image
                 src="/images/newsletter-envelope.png"
-                alt="Techfront newsletter envelope artwork"
+                alt="GizPulse newsletter envelope artwork"
                 width={520}
                 height={520}
                 className="h-auto w-full max-w-[13rem] object-contain drop-shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:max-w-[19rem] lg:max-w-[22rem]"

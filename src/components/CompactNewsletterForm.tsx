@@ -47,6 +47,7 @@ export function CompactNewsletterForm({
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [turnstileReady, setTurnstileReady] = useState(false);
+  const [turnstileActivated, setTurnstileActivated] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [status, setStatus] = useState<{ type: "idle" | "success" | "error"; message: string }>({
     type: "idle",
@@ -60,12 +61,13 @@ export function CompactNewsletterForm({
 
   useEffect(() => {
     if (window.turnstile) {
+      setTurnstileActivated(true);
       setTurnstileReady(true);
     }
   }, []);
 
   useEffect(() => {
-    if (!turnstileRequired || !turnstileReady) return;
+    if (!turnstileRequired || !turnstileActivated || !turnstileReady) return;
     if (!window.turnstile || !turnstileContainerRef.current) return;
 
     if (turnstileWidgetIdRef.current && window.turnstile?.remove) {
@@ -89,11 +91,18 @@ export function CompactNewsletterForm({
         turnstileWidgetIdRef.current = null;
       }
     };
-  }, [turnstileReady, turnstileRequired]);
+  }, [turnstileActivated, turnstileReady, turnstileRequired]);
+
+  const activateTurnstile = () => {
+    if (turnstileRequired && !turnstileActivated) {
+      setTurnstileActivated(true);
+    }
+  };
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    activateTurnstile();
     if (submitLocked) return;
 
     setIsSubmitting(true);
@@ -107,7 +116,7 @@ export function CompactNewsletterForm({
         },
         body: JSON.stringify({
           email,
-          channels: ["techfront-weekly"],
+          channels: ["gizpulse-weekly"],
           turnstileToken,
         }),
       });
@@ -143,7 +152,7 @@ export function CompactNewsletterForm({
 
   return (
     <div className="space-y-3">
-      {turnstileRequired ? (
+      {turnstileRequired && turnstileActivated ? (
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
@@ -156,6 +165,7 @@ export function CompactNewsletterForm({
           name="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          onFocus={activateTurnstile}
           placeholder="Email address"
           className={inputClassName}
           aria-label="Email address"
@@ -164,13 +174,15 @@ export function CompactNewsletterForm({
         <button
           type="submit"
           disabled={submitLocked}
+          onMouseEnter={activateTurnstile}
+          onFocus={activateTurnstile}
           className={`${buttonClassName} ${submitLocked ? "cursor-not-allowed opacity-45" : ""}`}
         >
           {isSubmitting ? "Subscribing..." : turnstileRequired && !turnstileToken ? "Complete Verification" : buttonLabel}
         </button>
       </form>
 
-      {turnstileRequired ? (
+      {turnstileRequired && turnstileActivated ? (
         <div className="space-y-2">
           <div className="w-full overflow-hidden">
             <div className="newsletter-turnstile-wrap newsletter-turnstile-wrap--compact">

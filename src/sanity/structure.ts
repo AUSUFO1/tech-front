@@ -2,7 +2,7 @@ import type {StructureResolver} from 'sanity/structure'
 
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Techfront Content')
+    .title('GizPulse Content')
     .items([
       S.documentTypeListItem('category').title('Categories'),
       S.documentTypeListItem('author').title('Authors'),

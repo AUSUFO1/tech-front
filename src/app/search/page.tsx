@@ -63,7 +63,7 @@ export default async function SearchPage({
           Search
         </h1>
         <p className="mt-4 max-w-3xl text-[1.1rem] leading-8 text-muted-text">
-          Find guides, jobs, opportunities, and news across Techfront.
+          Find guides, jobs, opportunities, and news across GizPulse.
         </p>
       </section>
 

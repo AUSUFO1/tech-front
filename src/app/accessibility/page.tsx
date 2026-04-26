@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Accessibility | Techfront",
-  description: "Techfront Accessibility Statement",
+  title: "Accessibility | GizPulse",
+  description: "GizPulse Accessibility Statement",
 };
 
 export default function AccessibilityPage() {
@@ -17,7 +17,7 @@ export default function AccessibilityPage() {
 
       <div className="mt-8 space-y-7 text-[1rem] leading-8 text-muted-text">
         <p>
-          Techfront is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user
+          GizPulse is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user
           experience for everyone and strive to comply with relevant accessibility standards.
         </p>
 
@@ -31,15 +31,15 @@ export default function AccessibilityPage() {
 
         <section>
           <h2 className="font-display text-[1.6rem] font-bold tracking-[-0.04em] text-primary-text">Accessibility Feedback</h2>
-          <p className="mt-3">We welcome your feedback about accessibility barriers on any Techfront page.</p>
+          <p className="mt-3">We welcome your feedback about accessibility barriers on any GizPulse page.</p>
           <ul className="mt-3 list-disc pl-6">
             <li>
               Email:{" "}
-              <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@techfront.com">
-                support@techfront.com
+              <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
+                support@gizpulse.com
               </a>
             </li>
-            <li>Postal address: Techfront, Lagos, Nigeria</li>
+            <li>Postal address: GizPulse, Lagos, Nigeria</li>
           </ul>
           <p className="mt-3">We try to respond within 5 business days.</p>
         </section>

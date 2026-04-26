@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Techfront",
-  description: "Techfront Privacy Policy",
+  title: "Privacy Policy | GizPulse",
+  description: "GizPulse Privacy Policy",
 };
 
 export default function PrivacyPage() {
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">1. Who We Are</h2>
           <p className="mt-3">
-            Techfront is a digital media platform publishing technology news, guides, job listings, and opportunities for readers in
+            GizPulse is a digital media platform publishing technology news, guides, job listings, and opportunities for readers in
             Nigeria and globally.
           </p>
         </section>
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
         </section>
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">8. Children&apos;s Privacy</h2>
-          <p className="mt-3">Techfront is not intended for children under 13, and we do not knowingly collect their personal data.</p>
+          <p className="mt-3">GizPulse is not intended for children under 13, and we do not knowingly collect their personal data.</p>
         </section>
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">9. Changes to This Policy</h2>
@@ -82,8 +82,8 @@ export default function PrivacyPage() {
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">10. Contact</h2>
           <p className="mt-3">
             For privacy questions or requests, contact{" "}
-            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@techfront.com">
-              support@techfront.com
+            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
+              support@gizpulse.com
             </a>
             .
           </p>

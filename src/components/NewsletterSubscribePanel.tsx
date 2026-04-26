@@ -31,8 +31,8 @@ declare global {
 
 const channels: Channel[] = [
   {
-    id: "techfront-weekly",
-    title: "Techfront Weekly",
+    id: "gizpulse-weekly",
+    title: "GizPulse Weekly",
     description: "Top story, curated jobs, and practical growth signals every Sunday.",
   },
   {
@@ -51,7 +51,7 @@ const turnstileSiteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY ?
 
 export function NewsletterSubscribePanel() {
   const [selected, setSelected] = useState<Record<string, boolean>>({
-    "techfront-weekly": true,
+    "gizpulse-weekly": true,
     "jobs-alerts": true,
     "opportunity-radar": true,
   });
@@ -186,10 +186,10 @@ export function NewsletterSubscribePanel() {
         />
       ) : null}
       <h2 className="font-display text-[2.1rem] font-bold leading-[0.96] tracking-[-0.05em] text-primary-text sm:text-[3.35rem]">
-        Your inbox, upgraded by Techfront.
+        Your inbox, upgraded by GizPulse.
       </h2>
       <p className="mt-4 max-w-[52rem] text-[1rem] leading-7 text-muted-text sm:text-[1.12rem] sm:leading-8">
-        Tech, career growth, and opportunities. Choose your channels and let Techfront do the filtering.
+        Tech, career growth, and opportunities. Choose your channels and let GizPulse do the filtering.
       </p>
 
       <div className="mt-7 grid gap-4 lg:grid-cols-3">

@@ -113,7 +113,7 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
             className="shrink-0 font-display text-[2.05rem] font-bold tracking-[-0.07em] !text-primary-green sm:text-[2.45rem]"
             onClick={handleMenuClose}
           >
-            Techfront
+            GizPulse
           </Link>
 
           <nav className="hidden items-center gap-8 lg:flex">
@@ -250,7 +250,7 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
 
               <div className="mt-8 border-t border-border pt-6">
                 <p className="max-w-[18rem] text-[0.92rem] leading-7 text-muted-text">
-                  Techfront covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.
+                  GizPulse covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.
                 </p>
               </div>
             </aside>

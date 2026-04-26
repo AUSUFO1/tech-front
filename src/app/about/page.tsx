@@ -5,8 +5,8 @@ import { AppImage } from "@/components/AppImage";
 import { getAuthorsContent } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "About | Techfront",
-  description: "About Techfront",
+  title: "About | GizPulse",
+  description: "About GizPulse",
 };
 
 const socialLinks = [
@@ -25,12 +25,12 @@ export default async function AboutPage() {
   return (
     <main className="bg-background text-primary-text">
       <section className="mx-auto w-full max-w-[1360px] border-b border-border px-5 py-12 sm:px-8 lg:px-16 lg:py-16">
-        <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">About Techfront</p>
+        <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">About GizPulse</p>
         <h1 className="mt-5 max-w-[980px] font-display text-[2.1rem] font-bold leading-[1.03] tracking-[-0.05em] text-primary-text sm:text-[3rem]">
           A newsroom for tech careers, opportunities, and stories that move your life forward.
         </h1>
         <p className="mt-8 max-w-[900px] text-[1.2rem] leading-9 text-muted-text">
-          Techfront exists to help readers move forward with clear information on jobs, opportunities, practical guides, and the
+          GizPulse exists to help readers move forward with clear information on jobs, opportunities, practical guides, and the
           stories shaping technology in Nigeria and globally.
         </p>
         <p className="mt-8 font-display text-[2rem] font-bold tracking-[-0.04em] text-primary-green sm:text-[2.4rem]">
@@ -103,8 +103,8 @@ export default async function AboutPage() {
                 <p className="text-[0.78rem] font-bold uppercase tracking-[0.14em] text-primary-green">Support</p>
                 <p className="mt-2">
                   For questions, updates, partnerships, or general support, email{" "}
-                  <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@techfront.com">
-                    support@techfront.com
+                  <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
+                    support@gizpulse.com
                   </a>
                   .
                 </p>
@@ -113,8 +113,8 @@ export default async function AboutPage() {
                 <p className="text-[0.78rem] font-bold uppercase tracking-[0.14em] text-primary-green">PR & Story Pitches</p>
                 <p className="mt-2">
                   Send story tips, press releases, or editorial pitches to{" "}
-                  <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@techfront.com">
-                    support@techfront.com
+                  <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
+                    support@gizpulse.com
                   </a>
                   .
                 </p>

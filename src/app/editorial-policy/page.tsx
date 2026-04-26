@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Editorial Policy | Techfront",
-  description: "Techfront Editorial Policy",
+  title: "Editorial Policy | GizPulse",
+  description: "GizPulse Editorial Policy",
 };
 
 export default function EditorialPolicyPage() {
@@ -18,7 +18,7 @@ export default function EditorialPolicyPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Our Editorial Mission</h2>
           <p className="mt-3">
-            Techfront publishes news, guides, jobs, and opportunities for ambitious readers in Nigeria and across the world. Our goal
+            GizPulse publishes news, guides, jobs, and opportunities for ambitious readers in Nigeria and across the world. Our goal
             is to produce useful, clear, and responsible coverage that helps readers make better career, learning, and industry
             decisions.
           </p>
@@ -40,7 +40,7 @@ export default function EditorialPolicyPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Independence and Fairness</h2>
           <p className="mt-3">
-            Techfront makes editorial decisions independently. We do not accept payment in exchange for favorable news coverage, and we
+            GizPulse makes editorial decisions independently. We do not accept payment in exchange for favorable news coverage, and we
             aim to distinguish clearly between editorial content, sponsored material, and promotional content whenever such distinctions
             are relevant.
           </p>
@@ -70,7 +70,7 @@ export default function EditorialPolicyPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Jobs and Opportunities Content</h2>
           <p className="mt-3">
-            Techfront publishes jobs, scholarships, grants, fellowships, and related opportunities for informational purposes. We aim to
+            GizPulse publishes jobs, scholarships, grants, fellowships, and related opportunities for informational purposes. We aim to
             present these listings accurately, but deadlines, eligibility rules, compensation, and application requirements may change
             after publication. Readers should verify important details with the official organization before acting.
           </p>
@@ -79,8 +79,8 @@ export default function EditorialPolicyPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Authors and Accountability</h2>
           <p className="mt-3">
-            Techfront aims to publish under clear bylines wherever possible. Author pages identify the individual contributor or
-            the editorial desk responsible for the work. Where a story is published under an editorial byline, Techfront remains
+            GizPulse aims to publish under clear bylines wherever possible. Author pages identify the individual contributor or
+            the editorial desk responsible for the work. Where a story is published under an editorial byline, GizPulse remains
             accountable for its accuracy, sourcing, updates, and corrections.
           </p>
         </section>
@@ -98,8 +98,8 @@ export default function EditorialPolicyPage() {
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Contact</h2>
           <p className="mt-3">
             For editorial questions, corrections, or policy-related concerns, contact{" "}
-            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@techfront.com">
-              support@techfront.com
+            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
+              support@gizpulse.com
             </a>
             .
           </p>

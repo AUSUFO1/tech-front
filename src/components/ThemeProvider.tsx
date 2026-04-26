@@ -40,7 +40,7 @@ export function ThemeProvider({
 }>) {
   const [resolvedTheme, setResolvedTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = window.localStorage.getItem("techfront-theme") as Theme | null;
+      const savedTheme = window.localStorage.getItem("gizpulse-theme") as Theme | null;
       if (savedTheme) {
         return savedTheme;
       }
@@ -57,12 +57,12 @@ export function ThemeProvider({
 
   useEffect(() => {
     applyTheme(resolvedTheme);
-    document.cookie = `techfront-theme=${resolvedTheme}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    document.cookie = `gizpulse-theme=${resolvedTheme}; Path=/; Max-Age=31536000; SameSite=Lax`;
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const handleChange = () => {
-      const storedTheme = window.localStorage.getItem("techfront-theme") as Theme | null;
+      const storedTheme = window.localStorage.getItem("gizpulse-theme") as Theme | null;
       if (storedTheme) {
         return;
       }
@@ -82,8 +82,8 @@ export function ThemeProvider({
   const value = useMemo<ThemeContextValue>(() => ({
     resolvedTheme,
     setTheme: (theme: Theme) => {
-      window.localStorage.setItem("techfront-theme", theme);
-      document.cookie = `techfront-theme=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`;
+      window.localStorage.setItem("gizpulse-theme", theme);
+      document.cookie = `gizpulse-theme=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`;
       setResolvedTheme(theme);
       applyTheme(theme);
     },

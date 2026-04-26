@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of Use | Techfront",
-  description: "Techfront Terms of Use",
+  title: "Terms of Use | GizPulse",
+  description: "GizPulse Terms of Use",
 };
 
 export default function TermsPage() {
@@ -16,7 +16,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">User Agreement</h2>
           <p className="mt-3">
-            These Terms govern your use of Techfront websites, applications, and services. By using the platform, you agree to these
+            These Terms govern your use of GizPulse websites, applications, and services. By using the platform, you agree to these
             Terms and our{" "}
             <Link href="/privacy" className="text-primary-green underline-offset-4 hover:underline">
               Privacy Policy
@@ -36,7 +36,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Content and Licensing</h2>
           <p className="mt-3">
-            Techfront owns or licenses platform content except user-submitted materials. By submitting content, you grant Techfront a
+            GizPulse owns or licenses platform content except user-submitted materials. By submitting content, you grant GizPulse a
             non-exclusive right to host, display, and distribute it for platform operation.
           </p>
         </section>
@@ -44,7 +44,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Jobs and Opportunity Disclaimer</h2>
           <p className="mt-3">
-            Listings and opportunities are published for informational purposes only. Techfront does not guarantee employment,
+            Listings and opportunities are published for informational purposes only. GizPulse does not guarantee employment,
             acceptance, funding, or specific outcomes.
           </p>
         </section>
@@ -52,7 +52,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Disclaimer and Liability</h2>
           <p className="mt-3">
-            Services are provided on an &quot;as is&quot; basis. To the maximum extent permitted by law, Techfront disclaims warranties and is not
+            Services are provided on an &quot;as is&quot; basis. To the maximum extent permitted by law, GizPulse disclaims warranties and is not
             liable for indirect or consequential damages.
           </p>
         </section>
@@ -66,8 +66,8 @@ export default function TermsPage() {
           <h2 className="font-display text-[1.65rem] font-bold tracking-[-0.04em] text-primary-text">Contact</h2>
           <p className="mt-3">
             For legal or terms-related questions, contact{" "}
-            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@techfront.com">
-              support@techfront.com
+            <a className="text-primary-green underline-offset-4 hover:underline" href="mailto:support@gizpulse.com">
+              support@gizpulse.com
             </a>
             .
           </p>

@@ -34,7 +34,7 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: getMetadataBase(),
-  title: "Techfront",
+  title: "GizPulse",
   description: "Stay Ahead. Stay Informed. Earn with Tech.",
 };
 
@@ -45,7 +45,7 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const { isEnabled: isDraftMode } = await draftMode();
-  const savedTheme = cookieStore.get("techfront-theme")?.value;
+  const savedTheme = cookieStore.get("gizpulse-theme")?.value;
   const serverTheme = savedTheme === "dark" ? "dark" : "light";
   const metadataBase = getMetadataBase();
   const siteUrl = metadataBase?.toString().replace(/\/$/, "");
@@ -53,14 +53,14 @@ export default async function RootLayout({
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "Techfront",
+      name: "GizPulse",
       ...(siteUrl ? { url: siteUrl } : {}),
       slogan: "Stay Ahead. Stay Informed. Earn with Tech.",
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "Techfront",
+      name: "GizPulse",
       ...(siteUrl ? { url: siteUrl } : {}),
       ...(siteUrl
         ? {

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import {usePathname, useSearchParams} from 'next/navigation'
-import {useMemo} from 'react'
+import {useMemo, useSyncExternalStore} from 'react'
 import {FaFacebookF, FaLinkedinIn, FaWhatsapp, FaXTwitter} from 'react-icons/fa6'
 import {Link2} from 'lucide-react'
 import {getTopicHref} from '@/lib/link-mapping'
@@ -12,14 +12,22 @@ type ShareActionsProps = {
   topics?: string[]
 }
 
+function subscribe() {
+  return () => {}
+}
+
 export function ShareActions({title, topics = []}: ShareActionsProps) {
   const pathname = usePathname() ?? ''
   const searchParams = useSearchParams()
+  const origin = useSyncExternalStore(
+    subscribe,
+    () => window.location.origin,
+    () => ''
+  )
   const pageUrl = useMemo(() => {
-    if (typeof window === 'undefined') return ''
     const query = searchParams?.toString()
-    return `${window.location.origin}${pathname}${query ? `?${query}` : ''}`
-  }, [pathname, searchParams])
+    return origin ? `${origin}${pathname}${query ? `?${query}` : ''}` : ''
+  }, [origin, pathname, searchParams])
 
   const encodedTitle = encodeURIComponent(title)
   const encodedUrl = encodeURIComponent(pageUrl)

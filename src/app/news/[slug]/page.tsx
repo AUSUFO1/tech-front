@@ -20,6 +20,16 @@ function formatDate(date?: string) {
   return new Intl.DateTimeFormat('en-US', {month: 'long', day: 'numeric', year: 'numeric'}).format(new Date(date))
 }
 
+function formatTime(date?: string) {
+  if (!date) return 'No time'
+  return new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'Africa/Lagos',
+    timeZoneName: 'short',
+  }).format(new Date(date))
+}
+
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -29,7 +39,7 @@ type Props = {params: Promise<{slug: string}>}
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const item = await getNewsBySlug(slug)
-  if (!item) return {title: 'News | Techfront'}
+  if (!item) return {title: 'News | GizPulse'}
   return buildArticleMetadata({
     title: item.title,
     excerpt: item.excerpt,
@@ -56,6 +66,7 @@ export default async function NewsDetailPage({params}: Props) {
     image: story.seo?.ogImageUrl || story.coverImageUrl,
     publishedAt: story.publishedAt,
     authorName: story.authorName,
+    authorPath: `/authors/${story.authorSlug || story.authorName.toLowerCase().replaceAll(' ', '-')}`,
   })
 
   return (
@@ -75,7 +86,8 @@ export default async function NewsDetailPage({params}: Props) {
             <Link href={`/authors/${story.authorSlug || story.authorName.toLowerCase().replaceAll(' ', '-')}`} className="hover:text-primary-green">
               Published by {story.authorName}
             </Link>
-            <span>{formatDate(story.publishedAt)}</span>
+            <time dateTime={story.publishedAt}>{formatDate(story.publishedAt)}</time>
+            <time dateTime={story.publishedAt}>{formatTime(story.publishedAt)}</time>
             <ViewTracker postType="news" postSlug={story.slug} initialViews={story.views ?? 0} />
             <span>{formatComments(story.commentCount)}</span>
           </div>

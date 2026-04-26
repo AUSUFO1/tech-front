@@ -32,7 +32,7 @@ ${entries
     <loc>${baseUrl}/news/${escapeXml(entry.slug)}</loc>
     <news:news>
       <news:publication>
-        <news:name>Techfront</news:name>
+        <news:name>GizPulse</news:name>
         <news:language>en</news:language>
       </news:publication>
       <news:publication_date>${entry.publishedAt}</news:publication_date>

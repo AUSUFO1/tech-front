@@ -29,7 +29,7 @@ type Props = {params: Promise<{slug: string}>}
 export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const item = await getOpportunityBySlug(slug)
-  if (!item) return {title: 'Opportunities | Techfront'}
+  if (!item) return {title: 'Opportunities | GizPulse'}
   return buildArticleMetadata({
     title: item.title,
     excerpt: item.excerpt,

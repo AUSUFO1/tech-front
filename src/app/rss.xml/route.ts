@@ -64,9 +64,9 @@ export async function GET(request: Request) {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>Techfront</title>
+    <title>GizPulse</title>
     <link>${origin}</link>
-    <description>Techfront covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.</description>
+    <description>GizPulse covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.</description>
     <language>en</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     ${items
