@@ -38,6 +38,23 @@ export const metadata: Metadata = {
   description: "Stay Ahead. Stay Informed. Earn with Tech.",
 };
 
+const themeInitScript = `
+  (() => {
+    try {
+      const storedTheme = window.localStorage.getItem('gizpulse-theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme === 'dark' || storedTheme === 'light'
+        ? storedTheme
+        : prefersDark
+          ? 'dark'
+          : 'light';
+      const root = document.documentElement;
+      root.classList.toggle('dark', theme === 'dark');
+      root.style.colorScheme = theme;
+    } catch {}
+  })();
+`;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -84,7 +101,9 @@ export default async function RootLayout({
       }`}
       style={{ colorScheme: serverTheme }}
     >
-      <head />
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body>
         {isDraftMode ? (
           <div className="bg-[#1f7a41] px-4 py-2 text-center text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-white">
