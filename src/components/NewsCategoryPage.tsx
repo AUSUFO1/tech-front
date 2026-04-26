@@ -93,7 +93,7 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
             </div>
           ) : null}
 
-          {paginated.items.map((story) => (
+          {paginated.items.map((story, index) => (
             <article key={story._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[240px_minmax(0,1fr)] sm:gap-5">
               <Link href={`/news/${story.slug}`} className="block overflow-hidden">
                 <AppImage
@@ -103,6 +103,7 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
                   width={900}
                   height={620}
                   sizes="(max-width: 640px) 100vw, 240px"
+                  priority={index === 0}
                 />
               </Link>
 

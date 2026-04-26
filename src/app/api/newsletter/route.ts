@@ -173,18 +173,27 @@ export async function POST(request: Request) {
         : 'You are subscribed to GizPulse newsletters'
 
     try {
-      await resend.emails.send({
+      const {error} = await resend.emails.send({
         from: resendFromEmail,
         to: email,
         replyTo: resendReplyToEmail,
         subject,
         html: buildWelcomeEmail(name, channels),
       })
+
+      if (error) {
+        console.error('Newsletter welcome email failed', error)
+
+        return NextResponse.json(
+          {ok: true, message: 'Subscription successful, but we could not deliver the welcome email yet.'},
+          {status: 201}
+        )
+      }
     } catch (error) {
       console.error('Newsletter welcome email failed', error)
 
       return NextResponse.json(
-        {ok: true, message: 'Subscription successful. Your welcome email may take a little longer to arrive.'},
+        {ok: true, message: 'Subscription successful, but we could not deliver the welcome email yet.'},
         {status: 201}
       )
     }

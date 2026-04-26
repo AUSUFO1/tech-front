@@ -84,6 +84,9 @@ a {
 
 .newsletter-turnstile-wrap {
   width: min(100%, 300px);
+  min-height: 65px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .newsletter-turnstile-wrap--compact {

@@ -12,7 +12,45 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('job').title('Jobs'),
       S.documentTypeListItem('opportunity').title('Opportunities'),
       S.divider(),
-      S.documentTypeListItem('newsletterSubscriber').title('Newsletter Subscribers'),
+      S.listItem()
+        .title('Newsletter Subscribers')
+        .child(
+          S.list()
+            .title('Newsletter Subscribers')
+            .items([
+              S.listItem()
+                .title('Active')
+                .schemaType('newsletterSubscriber')
+                .child(
+                  S.documentList()
+                    .title('Active Subscribers')
+                    .schemaType('newsletterSubscriber')
+                    .filter('_type == "newsletterSubscriber" && !(_id in path("drafts.**")) && status == "active"')
+                    .defaultOrdering([{field: 'createdAt', direction: 'desc'}])
+                ),
+              S.listItem()
+                .title('Unsubscribed')
+                .schemaType('newsletterSubscriber')
+                .child(
+                  S.documentList()
+                    .title('Unsubscribed Subscribers')
+                    .schemaType('newsletterSubscriber')
+                    .filter('_type == "newsletterSubscriber" && !(_id in path("drafts.**")) && status == "unsubscribed"')
+                    .defaultOrdering([{field: 'createdAt', direction: 'desc'}])
+                ),
+              S.divider(),
+              S.listItem()
+                .title('All Subscribers')
+                .schemaType('newsletterSubscriber')
+                .child(
+                  S.documentList()
+                    .title('All Subscribers')
+                    .schemaType('newsletterSubscriber')
+                    .filter('_type == "newsletterSubscriber" && !(_id in path("drafts.**"))')
+                    .defaultOrdering([{field: 'createdAt', direction: 'desc'}])
+                ),
+            ])
+        ),
       S.listItem()
         .title('Comments')
         .child(

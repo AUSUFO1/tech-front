@@ -40,7 +40,15 @@ export default async function AuthorDetailPage({
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 pt-6 sm:px-8 lg:px-16 lg:pb-16">
       <section className="grid gap-6 border-b border-border py-8 md:grid-cols-[220px_minmax(0,1fr)] md:items-center lg:py-10">
-        <AppImage src={author.imageUrl} alt={author.name} className="h-[220px] w-[220px] object-cover" width={440} height={440} sizes="220px" />
+        <AppImage
+          src={author.imageUrl}
+          alt={author.name}
+          className="h-[220px] w-[220px] object-cover"
+          width={440}
+          height={440}
+          sizes="220px"
+          priority
+        />
         <div>
           <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">{author.title}</p>
           <h1 className="mt-3 font-display text-[2.7rem] font-bold leading-[0.94] tracking-[-0.06em] text-primary-text sm:text-[3.4rem]">

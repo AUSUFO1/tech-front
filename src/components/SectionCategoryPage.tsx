@@ -122,7 +122,7 @@ export async function SectionCategoryPage({section, slug, page}: SectionCategory
           ) : null}
 
           {(section === 'blog' || section === 'earn') &&
-            paginatedBlogEarnItems.items.map((item) => (
+            paginatedBlogEarnItems.items.map((item, index) => (
               <article key={item._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[230px_minmax(0,1fr)] sm:gap-5">
                 <Link href={`/${section}/${item.slug}`} className="block overflow-hidden">
                   <AppImage
@@ -132,6 +132,7 @@ export async function SectionCategoryPage({section, slug, page}: SectionCategory
                     width={900}
                     height={620}
                     sizes="(max-width: 640px) 100vw, 230px"
+                    priority={index === 0}
                   />
                 </Link>
                 <div className="min-w-0">

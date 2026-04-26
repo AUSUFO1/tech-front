@@ -26,7 +26,7 @@ export default async function AuthorsPage({
       </section>
 
       <section className="grid gap-7 py-8 md:grid-cols-2 xl:grid-cols-3">
-        {paginated.items.map((author) => (
+        {paginated.items.map((author, index) => (
           <article key={author._id} className="bg-card-background p-4">
             <AppImage
               src={author.imageUrl}
@@ -35,6 +35,7 @@ export default async function AuthorsPage({
               width={900}
               height={1200}
               sizes="(max-width: 1280px) 50vw, 33vw"
+              priority={index === 0}
             />
             <h2 className="mt-4 font-display text-[2rem] font-bold leading-none tracking-[-0.05em] text-primary-text">
               <Link href={`/authors/${author.slug}`} className="transition-colors hover:text-primary-green">

@@ -55,7 +55,7 @@ export default async function Page({
 
       <section className="grid gap-8 pb-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
         <div className="border-t border-border">
-          {paginated.items.map((post) => (
+          {paginated.items.map((post, index) => (
             <article key={post._id} className="grid gap-4 border-b border-border py-5 sm:grid-cols-[230px_minmax(0,1fr)] sm:gap-5">
               <Link href={`/earn/${post.slug}`} className="block overflow-hidden">
                 <AppImage
@@ -65,6 +65,7 @@ export default async function Page({
                   width={900}
                   height={620}
                   sizes="(max-width: 640px) 100vw, 230px"
+                  priority={index === 0}
                 />
               </Link>
               <div className="min-w-0">

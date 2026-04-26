@@ -4,6 +4,9 @@ export const newsletterSubscriber = defineType({
   name: 'newsletterSubscriber',
   title: 'Newsletter Subscriber',
   type: 'document',
+  // Subscriber management is an operational workflow, not editorial drafting.
+  // liveEdit keeps status changes and deletions simple in Studio.
+  liveEdit: true,
   fields: [
     defineField({
       name: 'email',
