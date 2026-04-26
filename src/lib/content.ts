@@ -190,6 +190,10 @@ export type SitemapEntry = {
   lastModified: string
 }
 
+function getCategoryPath(contentType: QuickLink['contentType'], slug: string) {
+  return `/${contentType}/category/${slug}`
+}
+
 function toImageUrl(image?: SanityImageLike | null) {
   if (!image?.asset) return undefined
 
@@ -529,8 +533,7 @@ const recentNewsSitemapQuery = groq`
 *[
   _type == "news" &&
   defined(slug.current) &&
-  defined(publishedAt) &&
-  publishedAt >= dateTime(now()) - 60 * 60 * 48
+  defined(publishedAt)
 ] | order(publishedAt desc) {
   title,
   "slug": slug.current,
@@ -977,18 +980,43 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
   }
 }
 
+export async function getCategorySitemapEntries(): Promise<SitemapEntry[]> {
+  try {
+    const items = await sanityFetch<SanityCategory[]>(navigationCategoriesQuery)
+
+    return items.flatMap((item) => {
+      if (!item.slug || !item.contentType) return []
+
+      return [{
+        url: getCategoryPath(item.contentType, item.slug),
+        lastModified: new Date().toISOString(),
+      }]
+    })
+  } catch {
+    return []
+  }
+}
+
 export async function getRecentNewsSitemapEntries(): Promise<Array<{title: string; slug: string; publishedAt: string; lastModified: string}>> {
   try {
     const items = await sanityFetch<Array<{title?: string; slug?: string; publishedAt?: string; lastModified?: string}>>(recentNewsSitemapQuery)
-    return items.flatMap((item) => {
-      if (!item.slug || !item.title || !item.publishedAt) return []
-      return [{
-        title: item.title,
-        slug: item.slug,
-        publishedAt: item.publishedAt,
-        lastModified: item.lastModified ?? item.publishedAt,
-      }]
-    })
+    const cutoff = Date.now() - 48 * 60 * 60 * 1000
+
+    return items
+      .flatMap((item) => {
+        if (!item.slug || !item.title || !item.publishedAt) return []
+
+        const publishedAtTime = new Date(item.publishedAt).getTime()
+        if (!Number.isFinite(publishedAtTime) || publishedAtTime < cutoff) return []
+
+        return [{
+          title: item.title,
+          slug: item.slug,
+          publishedAt: item.publishedAt,
+          lastModified: item.lastModified ?? item.publishedAt,
+        }]
+      })
+      .slice(0, 1000)
   } catch {
     return []
   }

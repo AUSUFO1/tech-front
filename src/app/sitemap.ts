@@ -1,11 +1,14 @@
 import type {MetadataRoute} from 'next'
-import {getSitemapEntries} from '@/lib/content'
+import {getCategorySitemapEntries, getSitemapEntries} from '@/lib/content'
 import {getMetadataBase} from '@/lib/seo'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const metadataBase = getMetadataBase()
   const baseUrl = metadataBase?.toString().replace(/\/$/, '')
-  const dynamicEntries = await getSitemapEntries()
+  const [dynamicEntries, categoryEntries] = await Promise.all([
+    getSitemapEntries(),
+    getCategorySitemapEntries(),
+  ])
 
   if (!baseUrl) {
     return []
@@ -33,6 +36,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticEntries,
     ...dynamicEntries.map((entry) => ({
+      url: `${baseUrl}${entry.url}`,
+      lastModified: new Date(entry.lastModified),
+    })),
+    ...categoryEntries.map((entry) => ({
       url: `${baseUrl}${entry.url}`,
       lastModified: new Date(entry.lastModified),
     })),
