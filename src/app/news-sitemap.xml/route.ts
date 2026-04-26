@@ -1,4 +1,4 @@
-import {getRecentNewsSitemapEntries} from '@/lib/content'
+import {getNewsContent} from '@/lib/content'
 import {getMetadataBase} from '@/lib/seo'
 
 function escapeXml(value: string) {
@@ -13,7 +13,14 @@ function escapeXml(value: string) {
 export async function GET() {
   const metadataBase = getMetadataBase()
   const baseUrl = metadataBase?.toString().replace(/\/$/, '')
-  const entries = await getRecentNewsSitemapEntries()
+  const {featuredNews} = await getNewsContent()
+  const cutoff = Date.now() - 48 * 60 * 60 * 1000
+  const entries = featuredNews
+    .filter((entry) => {
+      const publishedAtTime = new Date(entry.publishedAt).getTime()
+      return Number.isFinite(publishedAtTime) && publishedAtTime >= cutoff
+    })
+    .slice(0, 1000)
 
   if (!baseUrl) {
     return new Response('', {
@@ -38,7 +45,7 @@ ${entries
       <news:publication_date>${entry.publishedAt}</news:publication_date>
       <news:title>${escapeXml(entry.title)}</news:title>
     </news:news>
-    <lastmod>${entry.lastModified}</lastmod>
+    <lastmod>${entry.publishedAt}</lastmod>
   </url>`
   )
   .join('\n')}
