@@ -2,6 +2,8 @@ import type {MetadataRoute} from 'next'
 import {getCategorySitemapEntries, getSitemapEntries} from '@/lib/content'
 import {getMetadataBase} from '@/lib/seo'
 
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const metadataBase = getMetadataBase()
   const baseUrl = metadataBase?.toString().replace(/\/$/, '')

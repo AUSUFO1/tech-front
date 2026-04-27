@@ -1,6 +1,8 @@
 import {getNewsContent} from '@/lib/content'
 import {getMetadataBase} from '@/lib/seo'
 
+export const dynamic = 'force-dynamic'
+
 function escapeXml(value: string) {
   return value
     .replace(/&/g, '&amp;')
