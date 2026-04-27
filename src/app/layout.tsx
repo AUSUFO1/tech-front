@@ -36,6 +36,9 @@ export const metadata: Metadata = {
   metadataBase: getMetadataBase(),
   title: "GizPulse",
   description: "Stay Ahead. Stay Informed. Earn with Tech.",
+  verification: {
+    google: "7seV0Jxw35LazMMbf_N1uctTE_5tPKMBlyNTUCZGfyY",
+  },
 };
 
 const themeInitScript = `
