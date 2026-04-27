@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Inter, JetBrains_Mono, Sora, Source_Serif_4 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeaderServer } from "@/components/SiteHeaderServer";
 import { StructuredData } from "@/components/StructuredData";
@@ -63,6 +64,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const googleAnalyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const cookieStore = await cookies();
   const { isEnabled: isDraftMode } = await draftMode();
   const savedTheme = cookieStore.get("gizpulse-theme")?.value;
@@ -122,6 +124,7 @@ export default async function RootLayout({
           <div className="pt-[92px]">{children}</div>
           <SiteFooter />
         </ThemeProvider>
+        {googleAnalyticsId ? <GoogleAnalytics measurementId={googleAnalyticsId} /> : null}
         <Analytics />
         <SpeedInsights />
       </body>
