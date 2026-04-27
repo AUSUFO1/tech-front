@@ -49,6 +49,11 @@ type SectionHeaderProps = {
   href: string
 }
 
+type TopFeatureItem = {
+  item: FeaturedNewsItem | BlogItem
+  hrefBase: '/news' | '/blog'
+}
+
 function SectionHeader({title, href}: SectionHeaderProps) {
   return (
     <div className="flex items-center justify-between gap-4">
@@ -106,6 +111,81 @@ function EditorialCard({
         <span>{formatDate(item.publishedAt)}</span>
         <span>{formatViews(item.views)}</span>
         <span>{formatComments(item.commentCount)}</span>
+      </div>
+    </article>
+  )
+}
+
+function DesktopLeadCard({item, hrefBase}: TopFeatureItem) {
+  return (
+    <article className="flex h-full flex-col bg-card-background">
+      <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
+        <AppImage
+          src={item.coverImageUrl}
+          alt={item.title}
+          className="aspect-[16/10] w-full bg-card-background object-contain"
+          width={1600}
+          height={1000}
+          sizes="(min-width: 1280px) 640px, 100vw"
+          priority
+        />
+      </Link>
+      <div className="flex flex-1 flex-col px-5 pb-5 pt-5">
+        <h3 className="font-display text-[2.35rem] font-bold leading-[0.98] tracking-[-0.06em] text-primary-text">
+          <Link
+            href={`${hrefBase}/${item.slug}`}
+            className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+          >
+            {item.title}
+          </Link>
+        </h3>
+        <p className="mt-4 line-clamp-3 max-w-3xl text-[1.02rem] leading-8 text-muted-text">{item.excerpt}</p>
+        <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+          <CategoryTagLink
+            href={item.categorySlug ? getQuickLinkHref(item.categorySlug, hrefBase === '/news' ? 'news' : 'blog') : getCategoryHrefFromLabel(item.categoryTitle, hrefBase === '/news' ? 'news' : 'blog')}
+            label={item.categoryTitle}
+            className="inline-flex rounded-[5px] bg-primary-green px-2.5 py-1 text-white transition-opacity hover:opacity-90"
+          />
+          <span>Published by {item.authorName}</span>
+          <span>{formatDate(item.publishedAt)}</span>
+          <span>{formatViews(item.views)}</span>
+          <span>{formatComments(item.commentCount)}</span>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function DesktopSupportingCard({item, hrefBase}: TopFeatureItem) {
+  return (
+    <article className="flex h-full flex-col bg-card-background">
+      <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
+        <AppImage
+          src={item.coverImageUrl}
+          alt={item.title}
+          className="aspect-[16/10] w-full bg-card-background object-contain"
+          width={1200}
+          height={780}
+          sizes="(min-width: 1280px) 320px, 100vw"
+        />
+      </Link>
+      <div className="flex flex-1 flex-col px-4 pb-4 pt-4">
+        <h3 className="font-display text-[1.4rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text">
+          <Link
+            href={`${hrefBase}/${item.slug}`}
+            className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+          >
+            {item.title}
+          </Link>
+        </h3>
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.66rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+          <CategoryTagLink
+            href={item.categorySlug ? getQuickLinkHref(item.categorySlug, hrefBase === '/news' ? 'news' : 'blog') : getCategoryHrefFromLabel(item.categoryTitle, hrefBase === '/news' ? 'news' : 'blog')}
+            label={item.categoryTitle}
+            className="inline-flex rounded-[5px] bg-primary-green px-2 py-1 text-white transition-opacity hover:opacity-90"
+          />
+          <span>{formatDate(item.publishedAt)}</span>
+        </div>
       </div>
     </article>
   )
@@ -178,6 +258,7 @@ function OpportunityPreview({item}: {item: OpportunityItem}) {
 
 export default async function Home() {
   const {featuredNews, latestBlog, latestJobs, latestNews, latestOpportunities, quickLinks} = await getHomepageContent()
+  const homeBlog = latestBlog.filter((post) => !isEarnCategory(post.categoryTitle)).slice(0, 6)
   const featuredStoryIds = new Set(featuredNews.slice(0, 4).map((story) => story._id))
   const topUpdates: TopUpdateItem[] = [
     ...latestNews
@@ -218,9 +299,14 @@ export default async function Home() {
     .sort((a, b) => b.views - a.views)
     .slice(0, 6)
   const moreLatestNews = latestNews.slice(5, 10)
-  const homeBlog = latestBlog.filter((post) => !isEarnCategory(post.categoryTitle)).slice(0, 6)
   const homeJobs = latestJobs.slice(0, 3)
   const homeOpportunities = latestOpportunities.slice(0, 3)
+  const desktopLeadItem = featuredNews[0]
+  const desktopStackItems = featuredNews.slice(1, 3)
+  const desktopSupportingItems: TopFeatureItem[] = [
+    ...featuredNews.slice(3, 6).map((item) => ({item, hrefBase: '/news' as const})),
+    ...homeBlog.slice(0, 3).map((item) => ({item, hrefBase: '/blog' as const})),
+  ].slice(0, 3)
 
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col gap-10 px-5 py-6 sm:px-8 lg:px-16 lg:gap-14 lg:py-8">
@@ -247,10 +333,32 @@ export default async function Home() {
       </section>
 
       <section className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid gap-6 xl:hidden sm:grid-cols-2">
           {featuredNews.slice(0, 4).map((story) => (
             <EditorialCard key={story._id} item={story} hrefBase="/news" priority={story._id === featuredNews[0]?._id} />
           ))}
+        </div>
+
+        <div className="hidden xl:block">
+          {desktopLeadItem ? (
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(280px,0.8fr)]">
+              <DesktopLeadCard item={desktopLeadItem} hrefBase="/news" />
+
+              <div className="grid gap-6">
+                {desktopStackItems.map((story) => (
+                  <DesktopSupportingCard key={story._id} item={story} hrefBase="/news" />
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {desktopSupportingItems.length > 0 ? (
+            <div className="mt-6 grid gap-6 xl:grid-cols-3">
+              {desktopSupportingItems.map(({item, hrefBase}) => (
+                <DesktopSupportingCard key={`${hrefBase}-${item._id}`} item={item} hrefBase={hrefBase} />
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <aside className="bg-[#fbf7df] px-5 py-6 dark:bg-card-background sm:px-6 sm:py-7">
