@@ -38,6 +38,69 @@ export const richBodyField = defineField({
   of: [
     defineArrayMember({type: 'block'}),
     defineArrayMember({
+      name: 'tableBlock',
+      title: 'Table',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'caption',
+          title: 'Caption',
+          type: 'string',
+        }),
+        defineField({
+          name: 'headerRow',
+          title: 'First Row Is Header',
+          type: 'boolean',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'rows',
+          title: 'Rows',
+          type: 'array',
+          of: [
+            defineArrayMember({
+              type: 'object',
+              name: 'tableRow',
+              fields: [
+                defineField({
+                  name: 'cells',
+                  title: 'Cells',
+                  type: 'array',
+                  of: [{type: 'string'}],
+                  validation: (Rule) => Rule.required().min(1),
+                }),
+              ],
+              preview: {
+                select: {
+                  cells: 'cells',
+                },
+                prepare(selection) {
+                  const cells = Array.isArray(selection.cells) ? selection.cells : []
+                  return {
+                    title: cells.join(' | '),
+                  }
+                },
+              },
+            }),
+          ],
+          validation: (Rule) => Rule.required().min(1),
+        }),
+      ],
+      preview: {
+        select: {
+          caption: 'caption',
+          rows: 'rows',
+        },
+        prepare(selection) {
+          const rows = Array.isArray(selection.rows) ? selection.rows.length : 0
+          return {
+            title: selection.caption || 'Table',
+            subtitle: `${rows} row${rows === 1 ? '' : 's'}`,
+          }
+        },
+      },
+    }),
+    defineArrayMember({
       type: 'image',
       options: {hotspot: true},
       fields: [

@@ -57,7 +57,20 @@ type PortableTextImage = {
   asset?: unknown
 }
 
-export type PortableContentNode = PortableTextBlock | PortableTextImage
+type PortableTextTableRow = {
+  _key?: string
+  cells?: string[]
+}
+
+type PortableTextTable = {
+  _type: 'tableBlock'
+  _key?: string
+  caption?: string
+  headerRow?: boolean
+  rows?: PortableTextTableRow[]
+}
+
+export type PortableContentNode = PortableTextBlock | PortableTextImage | PortableTextTable
 
 export type SeoFields = {
   metaTitle?: string

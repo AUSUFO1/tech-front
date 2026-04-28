@@ -214,6 +214,53 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
       continue
     }
 
+    if (node._type === 'tableBlock' && node.rows?.length) {
+      const rows = node.rows.filter((row) => Array.isArray(row.cells) && row.cells.length > 0)
+
+      if (rows.length > 0) {
+        const [header, ...bodyRows] = rows
+        const hasHeader = node.headerRow !== false
+        const headerCells = hasHeader ? header.cells ?? [] : []
+        const dataRows = hasHeader ? bodyRows : rows
+
+        rendered.push(
+          <figure key={node._key ?? `table-${index}`} className="space-y-3">
+            <div className="overflow-x-auto border border-border bg-card-background">
+              <table className="min-w-full border-collapse text-left text-[0.96rem] leading-7 text-muted-text">
+                {hasHeader && headerCells.length > 0 ? (
+                  <thead className="bg-black/4 text-primary-text dark:bg-white/6">
+                    <tr>
+                      {headerCells.map((cell, cellIndex) => (
+                        <th key={`head-${cellIndex}`} className="border-b border-border px-4 py-3 font-bold">
+                          {cell}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                ) : null}
+                <tbody>
+                  {dataRows.map((row, rowIndex) => (
+                    <tr key={row._key ?? `row-${rowIndex}`} className="align-top">
+                      {(row.cells ?? []).map((cell, cellIndex) => (
+                        <td key={`cell-${rowIndex}-${cellIndex}`} className="border-t border-border px-4 py-3">
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {node.caption ? (
+              <figcaption className="text-[0.86rem] leading-6 text-muted-text">{node.caption}</figcaption>
+            ) : null}
+          </figure>
+        )
+      }
+
+      continue
+    }
+
     const text = getBlockText(node)
     if (!text) continue
     const blockNode = node._type === 'block' ? node : null
