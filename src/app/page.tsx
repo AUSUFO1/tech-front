@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     siteName: 'GizPulse',
     images: [
       {
-        url: '/images/gizpulse-og-home.png',
+        url: '/images/gizpulse-og-home.jpeg',
         width: 1200,
         height: 630,
         alt: 'GizPulse homepage preview',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: homepageTitle,
     description: homepageDescription,
-    images: ['/images/gizpulse-og-home.png'],
+    images: ['/images/gizpulse-og-home.jpeg'],
   },
 }
 
