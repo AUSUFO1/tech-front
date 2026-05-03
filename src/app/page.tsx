@@ -9,9 +9,9 @@ import {isEarnCategory} from '@/lib/content-sections'
 import {type BlogItem, type FeaturedNewsItem, type JobItem, type OpportunityItem, type QuickLink} from '@/lib/content-types'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 
-const homepageTitle = 'GizPulse | Tech News, Lifestyle, Jobs, Opportunities and Career Growth'
+const homepageTitle = 'GizPulse | Tech News, Jobs, Opportunities and Career Growth'
 const homepageDescription =
-  'GizPulse covers tech news, lifestyle, jobs, scholarships, opportunities, guides, and practical career growth insights for ambitious readers in Nigeria and beyond.'
+  'GizPulse covers tech news, jobs, scholarships, opportunities, guides, and practical career growth insights for ambitious readers worldwide.'
 
 export const metadata: Metadata = {
   title: homepageTitle,
@@ -380,7 +380,7 @@ export default async function Home() {
         <h1>GizPulse: Tech News, Jobs, Opportunities and Career Growth</h1>
         <p>
           GizPulse covers tech news, jobs, scholarships, opportunities, guides, and practical career growth insights for
-          ambitious readers in Nigeria and beyond.
+          ambitious readers worldwide.
         </p>
       </section>
 

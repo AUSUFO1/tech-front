@@ -72,7 +72,8 @@ export function SiteFooter() {
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="max-w-2xl text-[0.95rem] leading-7 text-white/90">
-                GizPulse covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.
+                GizPulse covers tech news, jobs, scholarships, opportunities, guides, and practical career growth insights for
+                ambitious readers worldwide.
               </p>
               <div className="flex items-center gap-4 text-white">
                 {socialLinks.map((link) => {
