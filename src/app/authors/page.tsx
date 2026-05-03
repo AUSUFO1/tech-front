@@ -1,8 +1,16 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {AppImage} from '@/components/AppImage'
 import {StandardPagination} from '@/components/StandardPagination'
 import {getAuthorsContent} from '@/lib/content'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
+import {buildPageMetadata} from '@/lib/seo'
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Authors | GizPulse',
+  description: 'Meet the writers and editors shaping GizPulse coverage across news, jobs, opportunities, and guides.',
+  pathname: '/authors',
+})
 
 export default async function AuthorsPage({
   searchParams,

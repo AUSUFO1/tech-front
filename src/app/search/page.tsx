@@ -1,5 +1,14 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {getSearchContent} from '@/lib/content'
+import {buildPageMetadata} from '@/lib/seo'
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Search | GizPulse',
+  description: 'Search across GizPulse news, jobs, guides, and opportunities.',
+  pathname: '/search',
+  noIndex: true,
+})
 
 type SearchResult = {
   id: string

@@ -1,7 +1,7 @@
 import type {Metadata} from 'next'
 import {SectionCategoryPage} from '@/components/SectionCategoryPage'
 import {getCategoryBySlug} from '@/lib/content'
-import {getMetadataBase} from '@/lib/seo'
+import {buildPageMetadata} from '@/lib/seo'
 
 type Props = {
   params: Promise<{slug: string}>
@@ -12,12 +12,11 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   const {slug} = await params
   const category = await getCategoryBySlug(slug, 'jobs')
 
-  return {
-    metadataBase: getMetadataBase(),
+  return buildPageMetadata({
     title: category ? `${category.title} | Jobs | GizPulse` : 'Jobs Category | GizPulse',
     description: category?.description || 'Browse GizPulse jobs in this category.',
-    alternates: {canonical: `/jobs/category/${slug}`},
-  }
+    pathname: `/jobs/category/${slug}`,
+  })
 }
 
 export default async function Page({params, searchParams}: Props) {

@@ -428,7 +428,7 @@ const homepageQuery = groq`
     body,
     seo
   },
-  "latestOpportunities": *[_type == "opportunity"] | order(coalesce(deadline, _createdAt) asc)[0...10] {
+  "latestOpportunities": *[_type == "opportunity"] | order(coalesce(publishedAt, _createdAt) desc)[0...10] {
     _id,
     title,
     excerpt,
@@ -668,7 +668,7 @@ const jobBySlugQuery = groq`
 `
 
 const allOpportunitiesQuery = groq`
-*[_type == "opportunity"] | order(coalesce(deadline, _createdAt) asc) {
+*[_type == "opportunity"] | order(coalesce(publishedAt, _createdAt) desc) {
   _id,
   title,
   excerpt,

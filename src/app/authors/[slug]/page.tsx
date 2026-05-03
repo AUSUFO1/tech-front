@@ -1,9 +1,11 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {notFound} from 'next/navigation'
 import {AppImage} from '@/components/AppImage'
 import {StandardPagination} from '@/components/StandardPagination'
 import {getAuthorBySlug, getAuthoredItems} from '@/lib/content'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
+import {buildPageMetadata} from '@/lib/seo'
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -18,13 +20,35 @@ function formatViews(views?: number) {
   return `${(views ?? 0).toLocaleString()} views`
 }
 
+type Props = {
+  params: Promise<{slug: string}>
+  searchParams?: Promise<{page?: string}>
+}
+
+export async function generateMetadata({params}: Props): Promise<Metadata> {
+  const {slug} = await params
+  const author = await getAuthorBySlug(slug)
+
+  if (!author) {
+    return buildPageMetadata({
+      title: 'Author | GizPulse',
+      description: 'Browse GizPulse author archives.',
+      pathname: `/authors/${slug}`,
+    })
+  }
+
+  return buildPageMetadata({
+    title: `${author.name} | GizPulse`,
+    description: author.bio || `${author.name} writes for GizPulse.`,
+    pathname: `/authors/${slug}`,
+    image: author.imageUrl,
+  })
+}
+
 export default async function AuthorDetailPage({
   params,
   searchParams,
-}: {
-  params: Promise<{slug: string}>
-  searchParams?: Promise<{page?: string}>
-}) {
+}: Props) {
   const {slug} = await params
   const paramsValue = (await searchParams) ?? {}
   const currentPage = getCurrentPage(paramsValue.page)

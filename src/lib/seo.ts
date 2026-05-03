@@ -59,6 +59,46 @@ export function buildArticleMetadata({title, excerpt, coverImageUrl, publishedAt
   }
 }
 
+type PageMetadataInput = {
+  title: string
+  description: string
+  pathname: string
+  image?: string
+  noIndex?: boolean
+}
+
+export function buildPageMetadata({title, description, pathname, image, noIndex}: PageMetadataInput): Metadata {
+  const siteUrl = getSiteUrl()
+  const metadataBase = siteUrl ? new URL(siteUrl) : undefined
+  const canonical = siteUrl ? `${siteUrl}${pathname}` : pathname
+
+  return {
+    metadataBase,
+    title,
+    description,
+    alternates: {
+      canonical,
+    },
+    robots: {
+      index: !noIndex,
+      follow: true,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'website',
+      images: image ? [{url: image}] : undefined,
+    },
+    twitter: {
+      card: image ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  }
+}
+
 export function getMetadataBase() {
   const siteUrl = getSiteUrl()
   return siteUrl ? new URL(siteUrl) : undefined

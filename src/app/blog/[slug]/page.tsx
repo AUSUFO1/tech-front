@@ -112,7 +112,15 @@ export default async function BlogDetailPage({params}: Props) {
         </article>
       ) : null}
 
-      <ShareActions title={post.title} topics={[post.categoryTitle]} />
+      <ShareActions
+        title={post.title}
+        topics={[post.categoryTitle]}
+        topicHrefs={{
+          [post.categoryTitle]: post.categorySlug
+            ? getQuickLinkHref(post.categorySlug, 'blog')
+            : getCategoryHrefFromLabel(post.categoryTitle, 'blog'),
+        }}
+      />
 
       <InlineNewsletter />
       <ArticleComments postType="blog" postSlug={post.slug} />

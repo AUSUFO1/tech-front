@@ -114,7 +114,15 @@ export default async function NewsDetailPage({params}: Props) {
             </article>
           ) : null}
 
-          <ShareActions title={story.title} topics={[story.categoryTitle]} />
+          <ShareActions
+            title={story.title}
+            topics={[story.categoryTitle]}
+            topicHrefs={{
+              [story.categoryTitle]: story.categorySlug
+                ? getQuickLinkHref(story.categorySlug, 'news')
+                : getCategoryHrefFromLabel(story.categoryTitle, 'news'),
+            }}
+          />
           <InlineNewsletter />
           <ArticleComments postType="news" postSlug={story.slug} />
 

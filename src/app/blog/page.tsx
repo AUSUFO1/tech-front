@@ -1,3 +1,4 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
@@ -7,6 +8,13 @@ import {getBlogContent, getNewsContent} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
+import {buildPageMetadata} from '@/lib/seo'
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Blog & Guides | GizPulse',
+  description: 'Browse GizPulse guides, explainers, tutorials, and practical blog posts for ambitious tech readers.',
+  pathname: '/blog',
+})
 
 function formatDate(date?: string) {
   if (!date) return 'No date'

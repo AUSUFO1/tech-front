@@ -1,3 +1,4 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {ChevronRight} from 'lucide-react'
 import {AppImage} from '@/components/AppImage'
@@ -7,6 +8,39 @@ import {getHomepageContent} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
 import {type BlogItem, type FeaturedNewsItem, type JobItem, type OpportunityItem, type QuickLink} from '@/lib/content-types'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
+
+const homepageTitle = 'GizPulse | Tech News, Lifestyle, Jobs, Opportunities and Career Growth'
+const homepageDescription =
+  'GizPulse covers tech news, lifestyle, jobs, scholarships, opportunities, guides, and practical career growth insights for ambitious readers in Nigeria and beyond.'
+
+export const metadata: Metadata = {
+  title: homepageTitle,
+  description: homepageDescription,
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: homepageTitle,
+    description: homepageDescription,
+    url: '/',
+    type: 'website',
+    siteName: 'GizPulse',
+    images: [
+      {
+        url: '/images/gizpulse-og-home.png',
+        width: 1200,
+        height: 630,
+        alt: 'GizPulse homepage preview',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: homepageTitle,
+    description: homepageDescription,
+    images: ['/images/gizpulse-og-home.png'],
+  },
+}
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
@@ -33,9 +67,15 @@ type TopUpdateItem = {
   _id: string
   title: string
   href: string
-  label: string
+  label: 'News' | 'Blog' | 'Earn' | 'Jobs' | 'Opportunity'
   date?: string
   views: number
+  timestamp: number
+}
+
+function getTimestamp(date?: string) {
+  const parsed = date ? new Date(date).getTime() : Number.NaN
+  return Number.isFinite(parsed) ? parsed : 0
 }
 
 function getSectionGridClass(count: number) {
@@ -259,9 +299,10 @@ function OpportunityPreview({item}: {item: OpportunityItem}) {
 export default async function Home() {
   const {featuredNews, latestBlog, latestJobs, latestNews, latestOpportunities, quickLinks} = await getHomepageContent()
   const homeBlog = latestBlog.filter((post) => !isEarnCategory(post.categoryTitle)).slice(0, 6)
+  const homeEarn = latestBlog.filter((post) => isEarnCategory(post.categoryTitle)).slice(0, 6)
   const featuredStoryIds = new Set(featuredNews.slice(0, 4).map((story) => story._id))
-  const topUpdates: TopUpdateItem[] = [
-    ...latestNews
+  const topUpdatePools: Record<'News' | 'Blog' | 'Earn' | 'Jobs' | 'Opportunity', TopUpdateItem[]> = {
+    News: latestNews
       .filter((story) => !featuredStoryIds.has(story._id))
       .map((story) => ({
         _id: story._id,
@@ -270,35 +311,60 @@ export default async function Home() {
         label: 'News',
         date: story.publishedAt,
         views: story.views,
+        timestamp: getTimestamp(story.publishedAt),
       })),
-    ...latestBlog.map((post) => ({
+    Blog: homeBlog.map((post) => ({
       _id: post._id,
       title: post.title,
       href: `/blog/${post.slug}`,
       label: 'Blog',
       date: post.publishedAt,
       views: post.views,
+      timestamp: getTimestamp(post.publishedAt),
     })),
-    ...latestJobs.map((job) => ({
+    Earn: homeEarn.map((post) => ({
+      _id: post._id,
+      title: post.title,
+      href: `/earn/${post.slug}`,
+      label: 'Earn',
+      date: post.publishedAt,
+      views: post.views,
+      timestamp: getTimestamp(post.publishedAt),
+    })),
+    Jobs: latestJobs.map((job) => ({
       _id: job._id,
       title: job.title,
       href: `/jobs/${job.slug}`,
       label: 'Jobs',
       date: job.publishedAt,
       views: job.views,
+      timestamp: getTimestamp(job.publishedAt),
     })),
-    ...latestOpportunities.map((item) => ({
+    Opportunity: latestOpportunities.map((item) => ({
       _id: item._id,
       title: item.title,
       href: `/opportunities/${item.slug}`,
       label: 'Opportunity',
-      date: item.deadline,
+      date: item.publishedAt,
       views: item.views,
+      timestamp: getTimestamp(item.publishedAt),
     })),
+  }
+  const guaranteedTopUpdates = Object.values(topUpdatePools)
+    .map((items) => items[0])
+    .filter((item): item is TopUpdateItem => Boolean(item))
+  const guaranteedIds = new Set(guaranteedTopUpdates.map((item) => item._id))
+  const topUpdates = [
+    ...guaranteedTopUpdates,
+    ...Object.values(topUpdatePools)
+      .flatMap((items) => items.slice(1))
+      .filter((item) => !guaranteedIds.has(item._id))
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, Math.max(0, 6 - guaranteedTopUpdates.length)),
   ]
-    .sort((a, b) => b.views - a.views)
+    .sort((a, b) => b.timestamp - a.timestamp)
     .slice(0, 6)
-  const moreLatestNews = latestNews.slice(5, 10)
+  const moreLatestNews = latestNews.filter((story) => !featuredStoryIds.has(story._id)).slice(0, 6)
   const homeJobs = latestJobs.slice(0, 3)
   const homeOpportunities = latestOpportunities.slice(0, 3)
   const desktopLeadItem = featuredNews[0]
@@ -310,6 +376,14 @@ export default async function Home() {
 
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col gap-10 px-5 py-6 sm:px-8 lg:px-16 lg:gap-14 lg:py-8">
+      <section className="sr-only">
+        <h1>GizPulse: Tech News, Jobs, Opportunities and Career Growth</h1>
+        <p>
+          GizPulse covers tech news, jobs, scholarships, opportunities, guides, and practical career growth insights for
+          ambitious readers in Nigeria and beyond.
+        </p>
+      </section>
+
       <section className="flex flex-col gap-3">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
           <h2 className="shrink-0 font-display text-[1.3rem] font-bold tracking-[-0.04em] text-primary-text sm:text-[1.45rem]">
@@ -489,4 +563,3 @@ export default async function Home() {
     </main>
   )
 }
-

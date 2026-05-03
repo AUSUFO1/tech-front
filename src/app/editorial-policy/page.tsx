@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { buildPageMetadata } from "@/lib/seo";
 import { contactEmail } from "@/lib/site-config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Editorial Policy | GizPulse",
-  description: "GizPulse Editorial Policy",
-};
+  description: "Read the GizPulse editorial policy covering sourcing, accuracy, independence, and publishing standards.",
+  pathname: "/editorial-policy",
+});
 
 export default function EditorialPolicyPage() {
   return (

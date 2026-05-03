@@ -12,7 +12,7 @@ const directSlugToPath: Record<string, string> = {
 const topicToPath: Record<string, string> = {
   'artificial intelligence': '/news/category/artificial-intelligence',
   finance: '/news/category/finance',
-  nysc: '/news/category/nysc',
+  nysc: '/blog/category/nysc',
   'africa tech': '/news/category/africa-tech',
   naija: '/news/category/naija',
   'beginner guides': '/blog/category/beginner-guides',

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 import { contactEmail } from "@/lib/site-config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Accessibility | GizPulse",
-  description: "GizPulse Accessibility Statement",
-};
+  description: "Read the GizPulse accessibility statement and how we work to improve access across the site.",
+  pathname: "/accessibility",
+});
 
 export default function AccessibilityPage() {
   return (

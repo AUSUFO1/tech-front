@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { buildPageMetadata } from "@/lib/seo";
 import { contactEmail } from "@/lib/site-config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Terms of Use | GizPulse",
-  description: "GizPulse Terms of Use",
-};
+  description: "Read the terms governing your use of GizPulse websites, content, and services.",
+  pathname: "/terms",
+});
 
 export default function TermsPage() {
   return (

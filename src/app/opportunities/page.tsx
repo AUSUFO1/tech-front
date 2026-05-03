@@ -1,3 +1,4 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
@@ -5,6 +6,13 @@ import {StandardPagination} from '@/components/StandardPagination'
 import {getNewsContent, getOpportunitiesContent} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
+import {buildPageMetadata} from '@/lib/seo'
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Opportunities | GizPulse',
+  description: 'Browse scholarships, bootcamps, fellowships, grants, and other fresh opportunities on GizPulse.',
+  pathname: '/opportunities',
+})
 
 function formatDate(date?: string) {
   if (!date) return 'No date'

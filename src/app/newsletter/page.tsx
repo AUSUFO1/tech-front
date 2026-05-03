@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { NewsletterSubscribePanel } from "@/components/NewsletterSubscribePanel";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Newsletter | GizPulse",
   description: "Subscribe to GizPulse newsletters for jobs, opportunities, guides, and weekly tech updates.",
-};
+  pathname: "/newsletter",
+});
 
 const highlights = [
   "Jobs",

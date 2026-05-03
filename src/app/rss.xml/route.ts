@@ -53,7 +53,7 @@ export async function GET(request: Request) {
       title: item.title,
       description: item.excerpt,
       url: `${origin}/opportunities/${item.slug}`,
-      publishedAt: item.deadline,
+      publishedAt: item.publishedAt,
       category: "Opportunities",
     })),
   ]

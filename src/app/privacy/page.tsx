@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 import { contactEmail } from "@/lib/site-config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Privacy Policy | GizPulse",
-  description: "GizPulse Privacy Policy",
-};
+  description: "Review the GizPulse privacy policy and how we collect, use, and protect user information.",
+  pathname: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

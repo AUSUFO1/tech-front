@@ -113,7 +113,15 @@ export default async function EarnDetailPage({params}: Props) {
         </article>
       ) : null}
 
-      <ShareActions title={post.title} topics={[post.categoryTitle]} />
+      <ShareActions
+        title={post.title}
+        topics={[post.categoryTitle]}
+        topicHrefs={{
+          [post.categoryTitle]: post.categorySlug
+            ? getQuickLinkHref(post.categorySlug, 'earn')
+            : getCategoryHrefFromLabel(post.categoryTitle, 'earn'),
+        }}
+      />
 
       <InlineNewsletter />
       <ArticleComments postType="earn" postSlug={post.slug} />

@@ -10,13 +10,14 @@ import {getTopicHref} from '@/lib/link-mapping'
 type ShareActionsProps = {
   title: string
   topics?: string[]
+  topicHrefs?: Record<string, string>
 }
 
 function subscribe() {
   return () => {}
 }
 
-export function ShareActions({title, topics = []}: ShareActionsProps) {
+export function ShareActions({title, topics = [], topicHrefs = {}}: ShareActionsProps) {
   const pathname = usePathname() ?? ''
   const searchParams = useSearchParams()
   const origin = useSyncExternalStore(
@@ -54,7 +55,7 @@ export function ShareActions({title, topics = []}: ShareActionsProps) {
           <div className="mt-4 flex flex-wrap gap-2">
             {topics.map((topic) => (
               (() => {
-                const href = getTopicHref(topic)
+                const href = topicHrefs[topic] ?? getTopicHref(topic)
 
                 if (href) {
                   return (

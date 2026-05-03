@@ -1,3 +1,4 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
@@ -6,6 +7,13 @@ import {StandardPagination} from '@/components/StandardPagination'
 import {getBlogContent, getNewsContent} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
+import {buildPageMetadata} from '@/lib/seo'
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Earn With Tech | GizPulse',
+  description: 'Explore GizPulse guides on freelancing, career growth, and practical ways to earn with tech.',
+  pathname: '/earn',
+})
 
 function formatDate(date?: string) {
   if (!date) return 'No date'

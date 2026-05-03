@@ -3,12 +3,14 @@ import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaRss, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { AppImage } from "@/components/AppImage";
 import { getAuthorsContent } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 import { contactEmail, socialUrls } from "@/lib/site-config";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "About | GizPulse",
-  description: "About GizPulse",
-};
+  description: "Learn more about GizPulse, our mission, editorial focus, and the team behind the platform.",
+  pathname: "/about",
+});
 
 const socialLinks = [
   { label: "Facebook", href: socialUrls.facebook, icon: FaFacebookF },

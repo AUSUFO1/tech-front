@@ -1,9 +1,17 @@
+import type {Metadata} from 'next'
 import Link from 'next/link'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {SectionSearchBar} from '@/components/SectionSearchBar'
 import {StandardPagination} from '@/components/StandardPagination'
 import {getJobsContent, getNewsContent} from '@/lib/content'
 import {getCurrentPage, paginateItems} from '@/lib/pagination'
+import {buildPageMetadata} from '@/lib/seo'
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Jobs | GizPulse',
+  description: 'Find fresh tech jobs, remote roles, and hiring updates curated for ambitious readers on GizPulse.',
+  pathname: '/jobs',
+})
 
 function formatDate(date?: string) {
   if (!date) return 'No date'
