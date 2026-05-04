@@ -247,9 +247,6 @@ function HomeJobSpotlight({item}: {item: JobContentItem}) {
           <div className="absolute inset-0 bg-gradient-to-t from-[#07111f]/88 via-[#07111f]/42 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-7">
             <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-primary-green">Jobs Spotlight</p>
-            <h3 className="mt-3 max-w-2xl font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.06em] text-white">
-              {item.title}
-            </h3>
             <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white/78">
               <span>{item.company}</span>
               <span>{formatDate(item.publishedAt)}</span>
@@ -265,10 +262,16 @@ function HomeJobSpotlight({item}: {item: JobContentItem}) {
                 href={item.categorySlug ? getQuickLinkHref(item.categorySlug, 'jobs') : '/jobs'}
                 label={item.categoryTitle ?? item.employmentType}
               />
-              {item.remote ? <span>Remote</span> : null}
-              <span>{item.location}</span>
             </div>
-            <p className="mt-5 line-clamp-4 text-[0.98rem] leading-7 text-muted-text">{item.excerpt}</p>
+            <h3 className="mt-5 font-display text-[1.85rem] font-bold leading-[1] tracking-[-0.06em] text-primary-text">
+              <Link
+                href={`/jobs/${item.slug}`}
+                className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+              >
+                {item.title}
+              </Link>
+            </h3>
+            <p className="mt-4 text-[0.92rem] leading-7 text-muted-text">{item.remote ? 'Remote' : item.location}</p>
           </div>
 
           <div className="mt-7 border-t border-border pt-5">
