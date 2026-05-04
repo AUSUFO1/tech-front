@@ -109,7 +109,7 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body>
+      <body className="flex min-h-screen flex-col">
         {isDraftMode ? (
           <div className="bg-[#1f7a41] px-4 py-2 text-center text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-white">
             Preview Mode Active.
@@ -121,7 +121,7 @@ export default async function RootLayout({
         <StructuredData data={siteStructuredData} />
         <ThemeProvider>
           <SiteHeaderServer />
-          <div className="pt-[92px]">{children}</div>
+          <div className="flex-1 pt-[92px]">{children}</div>
           <SiteFooter />
         </ThemeProvider>
         {googleAnalyticsId ? <GoogleAnalytics measurementId={googleAnalyticsId} /> : null}

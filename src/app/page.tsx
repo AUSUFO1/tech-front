@@ -4,7 +4,7 @@ import {ChevronRight} from 'lucide-react'
 import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {HomeNewsletterSignup} from '@/components/HomeNewsletterSignup'
-import {getHomepageContent} from '@/lib/content'
+import {getHomepageContent, type JobContentItem} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
 import {type BlogItem, type FeaturedNewsItem, type JobItem, type OpportunityItem, type QuickLink} from '@/lib/content-types'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
@@ -231,6 +231,67 @@ function DesktopSupportingCard({item, hrefBase}: TopFeatureItem) {
   )
 }
 
+function HomeJobSpotlight({item}: {item: JobContentItem}) {
+  return (
+    <article className="overflow-hidden rounded-[24px] border border-border bg-card-background">
+      <div className="grid gap-0 xl:grid-cols-[minmax(0,1.24fr)_minmax(320px,0.88fr)]">
+        <Link href={`/jobs/${item.slug}`} className="group relative block overflow-hidden bg-[#06101c]">
+          <AppImage
+            src={item.coverImageUrl}
+            alt={item.coverImageAlt || item.title}
+            className="h-full w-full bg-[#06101c] object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+            width={1400}
+            height={1000}
+            sizes="(max-width: 1279px) 100vw, 760px"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#07111f]/88 via-[#07111f]/42 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-7">
+            <p className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-primary-green">Jobs Spotlight</p>
+            <h3 className="mt-3 max-w-2xl font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.06em] text-white">
+              {item.title}
+            </h3>
+            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white/78">
+              <span>{item.company}</span>
+              <span>{formatDate(item.publishedAt)}</span>
+              <span>{formatViews(item.views)}</span>
+            </div>
+          </div>
+        </Link>
+
+        <div className="flex flex-col justify-between bg-card-background px-7 py-7">
+          <div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+              <CategoryTagLink
+                href={item.categorySlug ? getQuickLinkHref(item.categorySlug, 'jobs') : '/jobs'}
+                label={item.categoryTitle ?? item.employmentType}
+              />
+              {item.remote ? <span>Remote</span> : null}
+              <span>{item.location}</span>
+            </div>
+            <p className="mt-5 line-clamp-4 text-[0.98rem] leading-7 text-muted-text">{item.excerpt}</p>
+          </div>
+
+          <div className="mt-7 border-t border-border pt-5">
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                href={`/jobs/${item.slug}`}
+                className="inline-flex items-center rounded-full bg-primary-green px-5 py-3 text-[0.72rem] font-bold uppercase tracking-[0.16em] text-white transition-opacity hover:opacity-90"
+              >
+                View Job
+              </Link>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+                <span>{formatDate(item.publishedAt)}</span>
+                <span>{formatViews(item.views)}</span>
+                <span>{formatComments(item.commentCount)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  )
+}
+
 function JobPreview({item}: {item: JobItem}) {
   return (
     <article className="border-b border-border bg-card-background pb-5 pt-4 sm:pt-5">
@@ -367,6 +428,7 @@ export default async function Home() {
   const moreLatestNews = latestNews.filter((story) => !featuredStoryIds.has(story._id)).slice(0, 6)
   const homeJobs = latestJobs.slice(0, 3)
   const homeOpportunities = latestOpportunities.slice(0, 3)
+  const spotlightJob = latestJobs[0]
   const desktopLeadItem = featuredNews[0]
   const desktopStackItems = featuredNews.slice(1, 3)
   const desktopSupportingItems: TopFeatureItem[] = [
@@ -413,7 +475,7 @@ export default async function Home() {
           ))}
         </div>
 
-        <div className="hidden xl:block">
+        <div className="hidden xl:flex xl:flex-col xl:gap-6">
           {desktopLeadItem ? (
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(280px,0.8fr)]">
               <DesktopLeadCard item={desktopLeadItem} hrefBase="/news" />
@@ -427,12 +489,14 @@ export default async function Home() {
           ) : null}
 
           {desktopSupportingItems.length > 0 ? (
-            <div className="mt-6 grid gap-6 xl:grid-cols-3">
+            <div className="grid gap-6 xl:grid-cols-3">
               {desktopSupportingItems.map(({item, hrefBase}) => (
                 <DesktopSupportingCard key={`${hrefBase}-${item._id}`} item={item} hrefBase={hrefBase} />
               ))}
             </div>
           ) : null}
+
+          {spotlightJob ? <HomeJobSpotlight item={spotlightJob} /> : null}
         </div>
 
         <aside className="bg-[#fbf7df] px-5 py-6 dark:bg-card-background sm:px-6 sm:py-7">
