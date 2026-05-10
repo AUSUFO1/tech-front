@@ -40,6 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...dynamicEntries.map((entry) => ({
       url: `${baseUrl}${entry.url}`,
       lastModified: new Date(entry.lastModified),
+      ...(entry.images?.length ? {images: entry.images} : {}),
     })),
     ...categoryEntries.map((entry) => ({
       url: `${baseUrl}${entry.url}`,

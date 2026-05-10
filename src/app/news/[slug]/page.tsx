@@ -11,7 +11,7 @@ import {SanityBodyContent} from '@/components/SanityBodyContent'
 import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
-import {getNewsBySlug, getNewsContent} from '@/lib/content'
+import {getContentImageUrls, getNewsBySlug, getNewsContent} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
@@ -58,12 +58,13 @@ export default async function NewsDetailPage({params}: Props) {
   const sameCategory = featuredNews.filter((item) => item.slug !== story.slug && item.categoryTitle === story.categoryTitle)
   const fallback = featuredNews.filter((item) => item.slug !== story.slug && item.categoryTitle !== story.categoryTitle)
   const related = [...sameCategory, ...fallback].slice(0, 3)
+  const structuredDataImages = getContentImageUrls(story.body, story.seo?.ogImageUrl || story.coverImageUrl)
   const structuredData = buildStructuredData({
     kind: 'news',
     title: story.title,
     description: story.seo?.metaDescription || story.excerpt,
     pathname: `/news/${story.slug}`,
-    image: story.seo?.ogImageUrl || story.coverImageUrl,
+    image: structuredDataImages,
     publishedAt: story.publishedAt,
     authorName: story.authorName,
     authorPath: `/authors/${story.authorSlug || story.authorName.toLowerCase().replaceAll(' ', '-')}`,

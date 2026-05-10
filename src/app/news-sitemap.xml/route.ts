@@ -1,4 +1,4 @@
-import {getNewsContent} from '@/lib/content'
+import {getContentImageUrls, getNewsContent} from '@/lib/content'
 import {getMetadataBase} from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
@@ -34,10 +34,18 @@ export async function GET() {
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${entries
   .map(
-    (entry) => `  <url>
+    (entry) => {
+      const images = getContentImageUrls(entry.body, entry.coverImageUrl)
+      const imageXml = images
+        .map((imageUrl) => `    <image:image>
+      <image:loc>${escapeXml(imageUrl)}</image:loc>
+    </image:image>`)
+        .join('\n')
+
+      return `  <url>
     <loc>${baseUrl}/news/${escapeXml(entry.slug)}</loc>
     <news:news>
       <news:publication>
@@ -47,8 +55,9 @@ ${entries
       <news:publication_date>${entry.publishedAt}</news:publication_date>
       <news:title>${escapeXml(entry.title)}</news:title>
     </news:news>
-    <lastmod>${entry.publishedAt}</lastmod>
+${imageXml ? `${imageXml}\n` : ''}    <lastmod>${entry.publishedAt}</lastmod>
   </url>`
+    }
   )
   .join('\n')}
 </urlset>`

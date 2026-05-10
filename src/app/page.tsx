@@ -4,9 +4,9 @@ import {ChevronRight} from 'lucide-react'
 import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {HomeNewsletterSignup} from '@/components/HomeNewsletterSignup'
-import {getHomepageContent, type JobContentItem} from '@/lib/content'
+import {getHomepageContent, type JobContentItem, type OpportunityContentItem} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
-import {type BlogItem, type FeaturedNewsItem, type JobItem, type OpportunityItem, type QuickLink} from '@/lib/content-types'
+import {type BlogItem, type FeaturedNewsItem, type JobItem, type QuickLink} from '@/lib/content-types'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 
 const homepageTitle = 'GizPulse | Tech News, Jobs, Opportunities and Career Growth'
@@ -324,37 +324,50 @@ function JobPreview({item}: {item: JobItem}) {
   )
 }
 
-function OpportunityPreview({item}: {item: OpportunityItem}) {
+function OpportunityPreview({item}: {item: OpportunityContentItem}) {
   return (
-    <article className="border-b border-border bg-card-background pb-5 pt-4 sm:pt-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.organization}</p>
-          <h3 className="mt-3 font-display text-[1.55rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
-            <Link
-              href={`/opportunities/${item.slug}`}
-              className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
-            >
-              {item.title}
-            </Link>
-          </h3>
-        </div>
-        <div className="text-right text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-green">
-          <p>Deadline</p>
-          <p className="mt-2 text-primary-text">{formatDate(item.deadline)}</p>
-        </div>
-      </div>
-      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
-        <CategoryTagLink
-          href={item.categorySlug ? getQuickLinkHref(item.categorySlug, 'opportunities') : getCategoryHrefFromLabel(item.opportunityType, 'opportunities')}
-          label={item.categoryTitle ?? item.opportunityType}
+    <article className="overflow-hidden bg-card-background">
+      <Link href={`/opportunities/${item.slug}`} className="block overflow-hidden">
+        <AppImage
+          src={item.coverImageUrl}
+          alt={item.coverImageAlt || item.title}
+          className="aspect-[16/10] w-full bg-card-background object-contain"
+          width={1200}
+          height={780}
+          sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 420px"
         />
-        <span>{item.location}</span>
-      </div>
-      <p className="mt-4 line-clamp-3 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
-      <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-        <span>{formatViews(item.views)}</span>
-        <span>{formatComments(item.commentCount)}</span>
+      </Link>
+      <div className="border-b border-border pb-5 pt-4 sm:pt-5">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.organization}</p>
+            <h3 className="mt-3 font-display text-[1.55rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
+              <Link
+                href={`/opportunities/${item.slug}`}
+                className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
+              >
+                {item.title}
+              </Link>
+            </h3>
+          </div>
+          <div className="shrink-0 text-right text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+            <p>Deadline</p>
+            <p className="mt-2 text-primary-text">{formatDate(item.deadline)}</p>
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+          <CategoryTagLink
+            href={item.categorySlug ? getQuickLinkHref(item.categorySlug, 'opportunities') : getCategoryHrefFromLabel(item.opportunityType, 'opportunities')}
+            label={item.categoryTitle ?? item.opportunityType}
+          />
+          <span>{item.location}</span>
+        </div>
+        <p className="mt-4 line-clamp-3 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
+        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+          <span>{formatViews(item.views)}</span>
+          <span>{formatComments(item.commentCount)}</span>
+        </div>
       </div>
     </article>
   )

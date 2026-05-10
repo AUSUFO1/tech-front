@@ -11,7 +11,7 @@ import {SanityBodyContent} from '@/components/SanityBodyContent'
 import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
-import {getJobBySlug, getJobsContent} from '@/lib/content'
+import {getContentImageUrls, getJobBySlug, getJobsContent} from '@/lib/content'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
 function formatDate(date?: string) {
@@ -55,12 +55,13 @@ export default async function JobDetailPage({params}: Props) {
   if (!job) notFound()
 
   const related = latestJobs.filter((item) => item.slug !== job.slug).slice(0, 3)
+  const structuredDataImages = getContentImageUrls(job.body, job.seo?.ogImageUrl || job.coverImageUrl)
   const structuredData = buildStructuredData({
     kind: 'job',
     title: job.title,
     description: job.seo?.metaDescription || job.excerpt,
     pathname: `/jobs/${job.slug}`,
-    image: job.seo?.ogImageUrl || job.coverImageUrl,
+    image: structuredDataImages,
     publishedAt: job.publishedAt,
     organizationName: job.company,
     employmentType: job.employmentType,

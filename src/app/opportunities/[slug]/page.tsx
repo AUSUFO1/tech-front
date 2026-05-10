@@ -11,7 +11,7 @@ import {SanityBodyContent} from '@/components/SanityBodyContent'
 import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
-import {getOpportunitiesContent, getOpportunityBySlug} from '@/lib/content'
+import {getContentImageUrls, getOpportunitiesContent, getOpportunityBySlug} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
@@ -56,12 +56,13 @@ export default async function OpportunityDetailPage({params}: Props) {
   if (!item) notFound()
 
   const related = latestOpportunities.filter((entry) => entry.slug !== item.slug).slice(0, 3)
+  const structuredDataImages = getContentImageUrls(item.body, item.seo?.ogImageUrl || item.coverImageUrl)
   const structuredData = buildStructuredData({
     kind: 'opportunity',
     title: item.title,
     description: item.seo?.metaDescription || item.excerpt,
     pathname: `/opportunities/${item.slug}`,
-    image: item.seo?.ogImageUrl || item.coverImageUrl,
+    image: structuredDataImages,
     publishedAt: item.publishedAt,
     organizationName: item.organization,
     location: item.location,

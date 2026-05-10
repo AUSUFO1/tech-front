@@ -10,7 +10,7 @@ import {SanityBodyContent} from '@/components/SanityBodyContent'
 import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
-import {getBlogContent} from '@/lib/content'
+import {getBlogContent, getContentImageUrls} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
  
@@ -59,12 +59,13 @@ export default async function EarnDetailPage({params}: Props) {
   if (!post) notFound()
 
   const related = earnPosts.filter((item) => item.slug !== post.slug).slice(0, 3)
+  const structuredDataImages = getContentImageUrls(post.body, post.seo?.ogImageUrl || post.coverImageUrl)
   const structuredData = buildStructuredData({
     kind: 'article',
     title: post.title,
     description: post.seo?.metaDescription || post.excerpt,
     pathname: `/earn/${post.slug}`,
-    image: post.seo?.ogImageUrl || post.coverImageUrl,
+    image: structuredDataImages,
     publishedAt: post.publishedAt,
     authorName: post.authorName,
     authorPath: `/authors/${post.authorSlug || post.authorName.toLowerCase().replaceAll(' ', '-')}`,

@@ -109,7 +109,7 @@ type StructuredDataInput = {
   title: string
   description?: string
   pathname: string
-  image?: string
+  image?: string | string[]
   publishedAt?: string
   authorName?: string
   authorPath?: string
@@ -122,6 +122,7 @@ type StructuredDataInput = {
 export function buildStructuredData(input: StructuredDataInput) {
   const siteUrl = getSiteUrl()
   const url = siteUrl ? `${siteUrl}${input.pathname}` : input.pathname
+  const images = Array.from(new Set(Array.isArray(input.image) ? input.image : input.image ? [input.image] : []))
   const publisher = {
     '@type': 'Organization',
     name: 'GizPulse',
@@ -148,6 +149,7 @@ export function buildStructuredData(input: StructuredDataInput) {
             name: input.location,
           }
         : undefined,
+      image: images.length > 0 ? images : undefined,
       url,
     }
   }
@@ -159,7 +161,7 @@ export function buildStructuredData(input: StructuredDataInput) {
     '@type': articleType,
     headline: input.title,
     description: input.description,
-    image: input.image ? [input.image] : undefined,
+    image: images.length > 0 ? images : undefined,
     datePublished: input.publishedAt,
     dateModified: input.publishedAt,
     author: input.authorName

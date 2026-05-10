@@ -201,6 +201,7 @@ type AuthorListItem = {
 export type SitemapEntry = {
   url: string
   lastModified: string
+  images?: string[]
 }
 
 function getCategoryPath(contentType: QuickLink['contentType'], slug: string) {
@@ -215,6 +216,19 @@ function toImageUrl(image?: SanityImageLike | null) {
   } catch {
     return undefined
   }
+}
+
+export function getContentImageUrls(body?: PortableContentNode[], coverImageUrl?: string) {
+  const urls = [
+    coverImageUrl,
+    ...(body ?? []).flatMap((node) => {
+      if (node._type !== 'image') return []
+      const imageUrl = toImageUrl(node)
+      return imageUrl ? [imageUrl] : []
+    }),
+  ].filter((url): url is string => Boolean(url))
+
+  return Array.from(new Set(urls))
 }
 
 function mapQuickLinks(items?: SanityCategory[]): QuickLink[] {
@@ -526,20 +540,28 @@ const sitemapContentQuery = groq`
 {
   "news": *[_type == "news" && defined(slug.current)] | order(publishedAt desc) {
     "slug": slug.current,
-    "lastModified": coalesce(_updatedAt, publishedAt)
+    "lastModified": coalesce(_updatedAt, publishedAt),
+    coverImage,
+    body
   },
   "blog": *[_type == "blog" && defined(slug.current)] | order(publishedAt desc) {
     "slug": slug.current,
     "lastModified": coalesce(_updatedAt, publishedAt),
-    "categoryTitle": category->title
+    "categoryTitle": category->title,
+    coverImage,
+    body
   },
   "jobs": *[_type == "job" && defined(slug.current)] | order(publishedAt desc) {
     "slug": slug.current,
-    "lastModified": coalesce(_updatedAt, publishedAt)
+    "lastModified": coalesce(_updatedAt, publishedAt),
+    coverImage,
+    body
   },
   "opportunities": *[_type == "opportunity" && defined(slug.current)] | order(coalesce(deadline, _createdAt) desc) {
     "slug": slug.current,
-    "lastModified": coalesce(_updatedAt, deadline, _createdAt)
+    "lastModified": coalesce(_updatedAt, deadline, _createdAt),
+    coverImage,
+    body
   }
 }
 `
@@ -974,22 +996,48 @@ export async function getSearchContent(): Promise<{
 export async function getSitemapEntries(): Promise<SitemapEntry[]> {
   try {
     const data = await sanityFetch<{
-      news?: Array<{slug?: string; lastModified?: string}>
-      blog?: Array<{slug?: string; lastModified?: string; categoryTitle?: string}>
-      jobs?: Array<{slug?: string; lastModified?: string}>
-      opportunities?: Array<{slug?: string; lastModified?: string}>
+      news?: Array<{slug?: string; lastModified?: string; coverImage?: SanityImageLike; body?: PortableContentNode[]}>
+      blog?: Array<{slug?: string; lastModified?: string; categoryTitle?: string; coverImage?: SanityImageLike; body?: PortableContentNode[]}>
+      jobs?: Array<{slug?: string; lastModified?: string; coverImage?: SanityImageLike; body?: PortableContentNode[]}>
+      opportunities?: Array<{slug?: string; lastModified?: string; coverImage?: SanityImageLike; body?: PortableContentNode[]}>
     }>(sitemapContentQuery)
 
     return [
-      ...(data.news ?? []).flatMap((item) => item.slug ? [{url: `/news/${item.slug}`, lastModified: item.lastModified ?? new Date().toISOString()}] : []),
+      ...(data.news ?? []).flatMap((item) =>
+        item.slug
+          ? [{
+              url: `/news/${item.slug}`,
+              lastModified: item.lastModified ?? new Date().toISOString(),
+              images: getContentImageUrls(item.body, toImageUrl(item.coverImage)),
+            }]
+          : []
+      ),
       ...(data.blog ?? []).flatMap((item) => {
         if (!item.slug) return []
         const isEarn = ['Freelancing', 'Career Growth'].includes(item.categoryTitle ?? '')
-        return [{url: `${isEarn ? '/earn' : '/blog'}/${item.slug}`, lastModified: item.lastModified ?? new Date().toISOString()}]
+        return [{
+          url: `${isEarn ? '/earn' : '/blog'}/${item.slug}`,
+          lastModified: item.lastModified ?? new Date().toISOString(),
+          images: getContentImageUrls(item.body, toImageUrl(item.coverImage)),
+        }]
       }),
-      ...(data.jobs ?? []).flatMap((item) => item.slug ? [{url: `/jobs/${item.slug}`, lastModified: item.lastModified ?? new Date().toISOString()}] : []),
+      ...(data.jobs ?? []).flatMap((item) =>
+        item.slug
+          ? [{
+              url: `/jobs/${item.slug}`,
+              lastModified: item.lastModified ?? new Date().toISOString(),
+              images: getContentImageUrls(item.body, toImageUrl(item.coverImage)),
+            }]
+          : []
+      ),
       ...(data.opportunities ?? []).flatMap((item) =>
-        item.slug ? [{url: `/opportunities/${item.slug}`, lastModified: item.lastModified ?? new Date().toISOString()}] : []
+        item.slug
+          ? [{
+              url: `/opportunities/${item.slug}`,
+              lastModified: item.lastModified ?? new Date().toISOString(),
+              images: getContentImageUrls(item.body, toImageUrl(item.coverImage)),
+            }]
+          : []
       ),
     ]
   } catch {

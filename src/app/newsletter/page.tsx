@@ -19,7 +19,7 @@ export default function NewsletterPage() {
   return (
     <main className="bg-background text-primary-text">
       <section className="mx-auto w-full max-w-[1360px] px-5 py-8 sm:px-8 lg:px-16 lg:py-10">
-        <div className="relative overflow-hidden px-5 py-10 sm:px-8 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-10 lg:py-12">
+        <div className="relative grid overflow-hidden px-5 py-10 min-[560px]:grid-cols-[minmax(0,1.08fr)_minmax(12rem,0.72fr)] min-[560px]:items-center min-[560px]:gap-6 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-12">
           <div className="absolute inset-x-0 top-0 h-px bg-transparent" />
           <div className="absolute -left-16 top-12 h-40 w-40 rounded-full bg-gold-accent/12 blur-3xl" />
           <div className="absolute right-10 top-10 h-52 w-52 rounded-full bg-primary-green/10 blur-3xl" />
@@ -38,7 +38,7 @@ export default function NewsletterPage() {
             </p>
           </div>
 
-          <div className="relative flex items-center justify-center lg:justify-end">
+          <div className="relative mt-7 flex items-center justify-center min-[560px]:mt-0 min-[560px]:justify-end">
             <div className="absolute right-6 top-8 h-44 w-44 rounded-full bg-gold-accent/18 blur-3xl" />
             <div className="absolute bottom-6 left-10 h-32 w-32 rounded-full bg-primary-green/10 blur-3xl" />
             <div className="newsletter-float relative">
@@ -47,7 +47,7 @@ export default function NewsletterPage() {
                 alt="GizPulse newsletter envelope artwork"
                 width={520}
                 height={520}
-                className="h-auto w-full max-w-[13rem] object-contain drop-shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:max-w-[19rem] lg:max-w-[22rem]"
+                className="h-auto w-full max-w-[12rem] object-contain drop-shadow-[0_30px_80px_rgba(0,0,0,0.45)] min-[560px]:max-w-[15rem] sm:max-w-[19rem] lg:max-w-[22rem]"
                 priority
               />
             </div>

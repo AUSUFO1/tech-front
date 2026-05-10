@@ -10,7 +10,7 @@ import {SanityBodyContent} from '@/components/SanityBodyContent'
 import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
-import {getBlogBySlug, getBlogContent} from '@/lib/content'
+import {getBlogBySlug, getBlogContent, getContentImageUrls} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
@@ -58,12 +58,13 @@ export default async function BlogDetailPage({params}: Props) {
   const related = latestBlog
     .filter((item) => !isEarnCategory(item.categoryTitle) && item.slug !== post.slug && item.categoryTitle === post.categoryTitle)
     .slice(0, 3)
+  const structuredDataImages = getContentImageUrls(post.body, post.seo?.ogImageUrl || post.coverImageUrl)
   const structuredData = buildStructuredData({
     kind: 'article',
     title: post.title,
     description: post.seo?.metaDescription || post.excerpt,
     pathname: `/blog/${post.slug}`,
-    image: post.seo?.ogImageUrl || post.coverImageUrl,
+    image: structuredDataImages,
     publishedAt: post.publishedAt,
     authorName: post.authorName,
     authorPath: `/authors/${post.authorSlug || post.authorName.toLowerCase().replaceAll(' ', '-')}`,
