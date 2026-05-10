@@ -19,10 +19,6 @@ function formatDate(date?: string) {
   return new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric'}).format(new Date(date))
 }
 
-function formatViews(views?: number) {
-  return `${(views ?? 0).toLocaleString()} views`
-}
-
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -85,7 +81,6 @@ export default async function Page({
                   label={item.categoryTitle ?? item.opportunityType}
                 />
                 <span>{item.location}</span>
-                <span>{formatViews(item.views)}</span>
                 <span>{formatComments(item.commentCount)}</span>
               </div>
             </article>

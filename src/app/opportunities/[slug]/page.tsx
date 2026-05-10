@@ -13,6 +13,7 @@ import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
 import {getContentImageUrls, getOpportunitiesContent, getOpportunityBySlug} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
+import {formatReadTime} from '@/lib/read-time'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
 function formatDate(date?: string) {
@@ -85,9 +86,10 @@ export default async function OpportunityDetailPage({params}: Props) {
             <time dateTime={item.publishedAt}>Published {formatDate(item.publishedAt)}</time>
             <time dateTime={item.publishedAt}>{formatTime(item.publishedAt)}</time>
             <span>Deadline {formatDate(item.deadline)}</span>
-            <ViewTracker postType="opportunities" postSlug={item.slug} initialViews={item.views ?? 0} />
+            <span>{formatReadTime({title: item.title, excerpt: item.excerpt, body: item.body})}</span>
             <span>{formatComments(item.commentCount)}</span>
           </div>
+          <ViewTracker postType="opportunities" postSlug={item.slug} initialViews={item.views ?? 0} />
 
           <AppImage
             src={item.coverImageUrl}

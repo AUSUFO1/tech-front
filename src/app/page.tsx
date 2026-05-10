@@ -51,10 +51,6 @@ function formatDate(date?: string) {
   }).format(new Date(date))
 }
 
-function formatViews(views?: number) {
-  return `${(views ?? 0).toLocaleString()} views`
-}
-
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -69,7 +65,6 @@ type TopUpdateItem = {
   href: string
   label: 'News' | 'Blog' | 'Earn' | 'Jobs' | 'Opportunity'
   date?: string
-  views: number
   timestamp: number
 }
 
@@ -149,7 +144,6 @@ function EditorialCard({
         />
         <span>Published by {item.authorName}</span>
         <span>{formatDate(item.publishedAt)}</span>
-        <span>{formatViews(item.views)}</span>
         <span>{formatComments(item.commentCount)}</span>
       </div>
     </article>
@@ -188,7 +182,6 @@ function DesktopLeadCard({item, hrefBase}: TopFeatureItem) {
           />
           <span>Published by {item.authorName}</span>
           <span>{formatDate(item.publishedAt)}</span>
-          <span>{formatViews(item.views)}</span>
           <span>{formatComments(item.commentCount)}</span>
         </div>
       </div>
@@ -250,7 +243,6 @@ function HomeJobSpotlight({item}: {item: JobContentItem}) {
             <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-white/78">
               <span>{item.company}</span>
               <span>{formatDate(item.publishedAt)}</span>
-              <span>{formatViews(item.views)}</span>
             </div>
           </div>
         </Link>
@@ -284,7 +276,6 @@ function HomeJobSpotlight({item}: {item: JobContentItem}) {
               </Link>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                 <span>{formatDate(item.publishedAt)}</span>
-                <span>{formatViews(item.views)}</span>
                 <span>{formatComments(item.commentCount)}</span>
               </div>
             </div>
@@ -317,7 +308,6 @@ function JobPreview({item}: {item: JobItem}) {
       <p className="mt-4 line-clamp-3 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
       <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
         <span>{formatDate(item.publishedAt)}</span>
-        <span>{formatViews(item.views)}</span>
         <span>{formatComments(item.commentCount)}</span>
       </div>
     </article>
@@ -365,7 +355,6 @@ function OpportunityPreview({item}: {item: OpportunityContentItem}) {
         </div>
         <p className="mt-4 line-clamp-3 text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
         <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-4 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-          <span>{formatViews(item.views)}</span>
           <span>{formatComments(item.commentCount)}</span>
         </div>
       </div>
@@ -387,7 +376,6 @@ export default async function Home() {
         href: `/news/${story.slug}`,
         label: 'News',
         date: story.publishedAt,
-        views: story.views,
         timestamp: getTimestamp(story.publishedAt),
       })),
     Blog: homeBlog.map((post) => ({
@@ -396,7 +384,6 @@ export default async function Home() {
       href: `/blog/${post.slug}`,
       label: 'Blog',
       date: post.publishedAt,
-      views: post.views,
       timestamp: getTimestamp(post.publishedAt),
     })),
     Earn: homeEarn.map((post) => ({
@@ -405,7 +392,6 @@ export default async function Home() {
       href: `/earn/${post.slug}`,
       label: 'Earn',
       date: post.publishedAt,
-      views: post.views,
       timestamp: getTimestamp(post.publishedAt),
     })),
     Jobs: latestJobs.map((job) => ({
@@ -414,7 +400,6 @@ export default async function Home() {
       href: `/jobs/${job.slug}`,
       label: 'Jobs',
       date: job.publishedAt,
-      views: job.views,
       timestamp: getTimestamp(job.publishedAt),
     })),
     Opportunity: latestOpportunities.map((item) => ({
@@ -423,7 +408,6 @@ export default async function Home() {
       href: `/opportunities/${item.slug}`,
       label: 'Opportunity',
       date: item.publishedAt,
-      views: item.views,
       timestamp: getTimestamp(item.publishedAt),
     })),
   }
@@ -547,7 +531,6 @@ export default async function Home() {
                   </h3>
                   <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                     <span>{formatDate(item.date)}</span>
-                    <span>{formatViews(item.views)}</span>
                   </div>
                 </article>
               ))}
@@ -602,7 +585,6 @@ export default async function Home() {
                 </h3>
                 <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                   <span>Published by {story.authorName}</span>
-                  <span>{formatViews(story.views)}</span>
                   <span>{formatComments(story.commentCount)}</span>
                 </div>
               </article>

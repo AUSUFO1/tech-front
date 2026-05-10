@@ -13,6 +13,7 @@ import {ViewTracker} from '@/components/ViewTracker'
 import {getBlogBySlug, getBlogContent, getContentImageUrls} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
+import {formatReadTime} from '@/lib/read-time'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
 function formatDate(date?: string) {
@@ -55,9 +56,13 @@ export default async function BlogDetailPage({params}: Props) {
   const [post, latestBlog] = await Promise.all([getBlogBySlug(slug), getBlogContent()])
   if (!post || isEarnCategory(post.categoryTitle)) notFound()
 
-  const related = latestBlog
-    .filter((item) => !isEarnCategory(item.categoryTitle) && item.slug !== post.slug && item.categoryTitle === post.categoryTitle)
-    .slice(0, 3)
+  const sameCategory = latestBlog.filter(
+    (item) => !isEarnCategory(item.categoryTitle) && item.slug !== post.slug && item.categoryTitle === post.categoryTitle
+  )
+  const fallback = latestBlog.filter(
+    (item) => !isEarnCategory(item.categoryTitle) && item.slug !== post.slug && item.categoryTitle !== post.categoryTitle
+  )
+  const related = [...sameCategory, ...fallback].slice(0, 3)
   const structuredDataImages = getContentImageUrls(post.body, post.seo?.ogImageUrl || post.coverImageUrl)
   const structuredData = buildStructuredData({
     kind: 'article',
@@ -87,9 +92,10 @@ export default async function BlogDetailPage({params}: Props) {
         </Link>
         <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
         <time dateTime={post.publishedAt}>{formatTime(post.publishedAt)}</time>
-        <ViewTracker postType="blog" postSlug={post.slug} initialViews={post.views ?? 0} />
+        <span>{formatReadTime({title: post.title, excerpt: post.excerpt, body: post.body})}</span>
         <span>{formatComments(post.commentCount)}</span>
       </div>
+      <ViewTracker postType="blog" postSlug={post.slug} initialViews={post.views ?? 0} />
 
       <AppImage
         src={post.coverImageUrl}

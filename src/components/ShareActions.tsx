@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import {usePathname, useSearchParams} from 'next/navigation'
+import {usePathname} from 'next/navigation'
 import {useMemo, useSyncExternalStore} from 'react'
 import {FaFacebookF, FaLinkedinIn, FaWhatsapp, FaXTwitter} from 'react-icons/fa6'
 import {Link2} from 'lucide-react'
@@ -19,24 +19,56 @@ function subscribe() {
 
 export function ShareActions({title, topics = [], topicHrefs = {}}: ShareActionsProps) {
   const pathname = usePathname() ?? ''
-  const searchParams = useSearchParams()
   const origin = useSyncExternalStore(
     subscribe,
     () => window.location.origin,
     () => ''
   )
   const pageUrl = useMemo(() => {
-    const query = searchParams?.toString()
-    return origin ? `${origin}${pathname}${query ? `?${query}` : ''}` : ''
-  }, [origin, pathname, searchParams])
+    return origin ? `${origin}${pathname}` : ''
+  }, [origin, pathname])
+  const trackedUrls = useMemo(() => {
+    if (!pageUrl) {
+      return {
+        facebook: '',
+        x: '',
+        linkedin: '',
+        whatsapp: '',
+        native: '',
+        copy: '',
+      }
+    }
+
+    const buildTrackedUrl = (source: string) => {
+      const url = new URL(pageUrl)
+      url.searchParams.set('utm_source', source)
+      url.searchParams.set('utm_medium', 'social')
+      url.searchParams.set('utm_campaign', 'share_button')
+      return url.toString()
+    }
+
+    return {
+      facebook: buildTrackedUrl('facebook'),
+      x: buildTrackedUrl('x'),
+      linkedin: buildTrackedUrl('linkedin'),
+      whatsapp: buildTrackedUrl('whatsapp'),
+      native: buildTrackedUrl('native_share'),
+      copy: buildTrackedUrl('copy_link'),
+    }
+  }, [pageUrl])
 
   const encodedTitle = encodeURIComponent(title)
-  const encodedUrl = encodeURIComponent(pageUrl)
+  const encodedUrls = {
+    facebook: encodeURIComponent(trackedUrls.facebook),
+    x: encodeURIComponent(trackedUrls.x),
+    linkedin: encodeURIComponent(trackedUrls.linkedin),
+    whatsapp: encodeURIComponent(trackedUrls.whatsapp),
+  }
 
   const handleNativeShare = async () => {
     if (typeof navigator === 'undefined' || !navigator.share) return
     try {
-      await navigator.share({title, url: pageUrl})
+      await navigator.share({title, url: trackedUrls.native || pageUrl})
     } catch {
       // ignore
     }
@@ -44,7 +76,7 @@ export function ShareActions({title, topics = [], topicHrefs = {}}: ShareActions
 
   const handleCopy = async () => {
     if (!pageUrl) return
-    await navigator.clipboard.writeText(pageUrl)
+    await navigator.clipboard.writeText(trackedUrls.copy || pageUrl)
   }
 
   return (
@@ -86,16 +118,16 @@ export function ShareActions({title, topics = [], topicHrefs = {}}: ShareActions
       <div className="mt-6 border-t border-border pt-6">
         <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-text">Share This Story</p>
         <div className="mt-4 flex flex-wrap items-center gap-4 text-primary-text">
-          <a href={pageUrl ? `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` : '#'} target="_blank" rel="noreferrer" aria-label="Facebook" className="transition-colors hover:text-primary-green">
+          <a href={pageUrl ? `https://www.facebook.com/sharer/sharer.php?u=${encodedUrls.facebook}` : '#'} target="_blank" rel="noreferrer" aria-label="Facebook" className="transition-colors hover:text-primary-green">
             <FaFacebookF className="h-4 w-4" />
           </a>
-          <a href={pageUrl ? `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}` : '#'} target="_blank" rel="noreferrer" aria-label="X" className="transition-colors hover:text-primary-green">
+          <a href={pageUrl ? `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrls.x}` : '#'} target="_blank" rel="noreferrer" aria-label="X" className="transition-colors hover:text-primary-green">
             <FaXTwitter className="h-4 w-4" />
           </a>
-          <a href={pageUrl ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` : '#'} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="transition-colors hover:text-primary-green">
+          <a href={pageUrl ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrls.linkedin}` : '#'} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="transition-colors hover:text-primary-green">
             <FaLinkedinIn className="h-4 w-4" />
           </a>
-          <a href={pageUrl ? `https://wa.me/?text=${encodedTitle}%20${encodedUrl}` : '#'} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="transition-colors hover:text-primary-green">
+          <a href={pageUrl ? `https://wa.me/?text=${encodedTitle}%20${encodedUrls.whatsapp}` : '#'} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="transition-colors hover:text-primary-green">
             <FaWhatsapp className="h-4 w-4" />
           </a>
           <button type="button" onClick={handleCopy} aria-label="Copy link" className="transition-colors hover:text-primary-green">

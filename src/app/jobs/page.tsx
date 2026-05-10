@@ -18,10 +18,6 @@ function formatDate(date?: string) {
   return new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric'}).format(new Date(date))
 }
 
-function formatViews(views?: number) {
-  return `${(views ?? 0).toLocaleString()} views`
-}
-
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -80,7 +76,6 @@ export default async function Page({
               <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                 <CategoryTagLink href="/jobs" label={job.employmentType} />
                 <span>{formatDate(job.publishedAt)}</span>
-                <span>{formatViews(job.views)}</span>
                 <span>{formatComments(job.commentCount)}</span>
               </div>
             </article>

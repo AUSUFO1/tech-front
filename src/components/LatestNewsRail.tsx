@@ -6,10 +6,6 @@ function formatDate(date?: string) {
   return new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric'}).format(new Date(date))
 }
 
-function formatViews(views?: number) {
-  return `${(views ?? 0).toLocaleString()} views`
-}
-
 export async function LatestNewsRail() {
   const {latestNews} = await getNewsContent()
 
@@ -31,7 +27,6 @@ export async function LatestNewsRail() {
               </h3>
               <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.66rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                 <span>Published by {story.authorName}</span>
-                <span>{formatViews(story.views)}</span>
               </div>
             </article>
           ))}

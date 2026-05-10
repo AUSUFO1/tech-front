@@ -16,10 +16,6 @@ function formatDate(date?: string) {
   }).format(new Date(date))
 }
 
-function formatViews(views?: number) {
-  return `${(views ?? 0).toLocaleString()} views`
-}
-
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -125,7 +121,6 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
                   />
                   <span>{story.authorName}</span>
                   <span>{formatDate(story.publishedAt)}</span>
-                  <span>{formatViews(story.views)}</span>
                   <span>{formatComments(story.commentCount)}</span>
                 </div>
               </div>
@@ -161,7 +156,6 @@ export async function NewsCategoryPage({slug, page}: NewsCategoryPageProps) {
                   </h3>
                   <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.66rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                     <span>{story.authorName}</span>
-                    <span>{formatViews(story.views)}</span>
                     <span>{formatComments(story.commentCount)}</span>
                   </div>
                 </article>

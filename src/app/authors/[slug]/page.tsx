@@ -16,10 +16,6 @@ function formatDate(date?: string) {
   }).format(new Date(date))
 }
 
-function formatViews(views?: number) {
-  return `${(views ?? 0).toLocaleString()} views`
-}
-
 type Props = {
   params: Promise<{slug: string}>
   searchParams?: Promise<{page?: string}>
@@ -100,7 +96,6 @@ export default async function AuthorDetailPage({
             <p className="mt-3 max-w-4xl text-[1rem] leading-7 text-muted-text">{item.excerpt}</p>
             <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
               <span>{formatDate(item.publishedAt)}</span>
-              <span>{formatViews(item.views)}</span>
             </div>
           </article>
         ))}

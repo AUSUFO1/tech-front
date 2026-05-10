@@ -12,6 +12,7 @@ import {ShareActions} from '@/components/ShareActions'
 import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
 import {getContentImageUrls, getJobBySlug, getJobsContent} from '@/lib/content'
+import {formatReadTime} from '@/lib/read-time'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
 function formatDate(date?: string) {
@@ -84,9 +85,10 @@ export default async function JobDetailPage({params}: Props) {
             </Link>
             <time dateTime={job.publishedAt}>Published {formatDate(job.publishedAt)}</time>
             <time dateTime={job.publishedAt}>{formatTime(job.publishedAt)}</time>
-            <ViewTracker postType="jobs" postSlug={job.slug} initialViews={job.views ?? 0} />
+            <span>{formatReadTime({title: job.title, excerpt: job.excerpt, body: job.body})}</span>
             <span>{formatComments(job.commentCount)}</span>
           </div>
+          <ViewTracker postType="jobs" postSlug={job.slug} initialViews={job.views ?? 0} />
 
           <AppImage
             src={job.coverImageUrl}

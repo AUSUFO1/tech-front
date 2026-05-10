@@ -12,6 +12,7 @@ import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
 import {getBlogContent, getContentImageUrls} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
+import {formatReadTime} from '@/lib/read-time'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
  
 function formatDate(date?: string) {
@@ -88,9 +89,10 @@ export default async function EarnDetailPage({params}: Props) {
         </Link>
         <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
         <time dateTime={post.publishedAt}>{formatTime(post.publishedAt)}</time>
-        <ViewTracker postType="earn" postSlug={post.slug} initialViews={post.views ?? 0} />
+        <span>{formatReadTime({title: post.title, excerpt: post.excerpt, body: post.body})}</span>
         <span>{formatComments(post.commentCount)}</span>
       </div>
+      <ViewTracker postType="earn" postSlug={post.slug} initialViews={post.views ?? 0} />
 
       <AppImage
         src={post.coverImageUrl}

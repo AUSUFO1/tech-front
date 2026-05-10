@@ -13,6 +13,7 @@ import {StructuredData} from '@/components/StructuredData'
 import {ViewTracker} from '@/components/ViewTracker'
 import {getContentImageUrls, getNewsBySlug, getNewsContent} from '@/lib/content'
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
+import {formatReadTime} from '@/lib/read-time'
 import {buildArticleMetadata, buildStructuredData} from '@/lib/seo'
 
 function formatDate(date?: string) {
@@ -89,9 +90,10 @@ export default async function NewsDetailPage({params}: Props) {
             </Link>
             <time dateTime={story.publishedAt}>{formatDate(story.publishedAt)}</time>
             <time dateTime={story.publishedAt}>{formatTime(story.publishedAt)}</time>
-            <ViewTracker postType="news" postSlug={story.slug} initialViews={story.views ?? 0} />
+            <span>{formatReadTime({title: story.title, excerpt: story.excerpt, body: story.body})}</span>
             <span>{formatComments(story.commentCount)}</span>
           </div>
+          <ViewTracker postType="news" postSlug={story.slug} initialViews={story.views ?? 0} />
 
           <AppImage
             src={story.coverImageUrl}

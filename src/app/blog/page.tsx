@@ -25,10 +25,6 @@ function formatDate(date?: string) {
   }).format(new Date(date))
 }
 
-function formatViews(views?: number) {
-  return `${(views ?? 0).toLocaleString()} views`
-}
-
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -101,7 +97,6 @@ export default async function Page({
                   />
                   <span>{post.authorName}</span>
                   <span>{formatDate(post.publishedAt)}</span>
-                  <span>{formatViews(post.views)}</span>
                   <span>{formatComments(post.commentCount)}</span>
                 </div>
               </div>

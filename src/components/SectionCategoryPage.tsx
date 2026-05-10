@@ -22,10 +22,6 @@ function formatDate(date?: string) {
   return new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric'}).format(new Date(date))
 }
 
-function formatViews(views?: number) {
-  return `${(views ?? 0).toLocaleString()} views`
-}
-
 function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
@@ -152,7 +148,6 @@ export async function SectionCategoryPage({section, slug, page}: SectionCategory
                     />
                     <span>{item.authorName}</span>
                     <span>{formatDate(item.publishedAt)}</span>
-                    <span>{formatViews(item.views)}</span>
                     <span>{formatComments(item.commentCount)}</span>
                   </div>
                 </div>
@@ -181,7 +176,6 @@ export async function SectionCategoryPage({section, slug, page}: SectionCategory
                     label={item.categoryTitle ?? item.employmentType}
                   />
                   <span>{formatDate(item.publishedAt)}</span>
-                  <span>{formatViews(item.views)}</span>
                   <span>{formatComments(item.commentCount)}</span>
                 </div>
               </article>
@@ -209,7 +203,6 @@ export async function SectionCategoryPage({section, slug, page}: SectionCategory
                     label={item.categoryTitle ?? item.opportunityType}
                   />
                   <span>{item.location}</span>
-                  <span>{formatViews(item.views)}</span>
                   <span>{formatComments(item.commentCount)}</span>
                 </div>
               </article>
