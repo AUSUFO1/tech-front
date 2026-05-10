@@ -4,6 +4,13 @@ import {getMetadataBase} from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const metadataBase = getMetadataBase()
   const baseUrl = metadataBase?.toString().replace(/\/$/, '')
@@ -27,23 +34,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/newsletter',
     '/opportunities',
     '/privacy',
-    '/search',
     '/terms',
     '/accessibility',
+    '/corrections-policy',
+    '/editorial-policy',
   ].map((path) => ({
-    url: `${baseUrl}${path}`,
+    url: escapeXml(`${baseUrl}${path}`),
     lastModified: new Date(),
   }))
 
   return [
     ...staticEntries,
     ...dynamicEntries.map((entry) => ({
-      url: `${baseUrl}${entry.url}`,
+      url: escapeXml(`${baseUrl}${entry.url}`),
       lastModified: new Date(entry.lastModified),
-      ...(entry.images?.length ? {images: entry.images} : {}),
+      ...(entry.images?.length ? {images: entry.images.map(escapeXml)} : {}),
     })),
     ...categoryEntries.map((entry) => ({
-      url: `${baseUrl}${entry.url}`,
+      url: escapeXml(`${baseUrl}${entry.url}`),
       lastModified: new Date(entry.lastModified),
     })),
   ]

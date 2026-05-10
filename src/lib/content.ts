@@ -208,6 +208,14 @@ function getCategoryPath(contentType: QuickLink['contentType'], slug: string) {
   return `/${contentType}/category/${slug}`
 }
 
+function getCategorySitemapPath(item: SanityCategory) {
+  if (isEarnCategory(item.title)) {
+    return `/earn/category/${item.slug}`
+  }
+
+  return getCategoryPath(item.contentType, item.slug ?? '')
+}
+
 function toImageUrl(image?: SanityImageLike | null) {
   if (!image?.asset) return undefined
 
@@ -527,7 +535,7 @@ const searchQuery = groq`
     excerpt,
     "slug": slug.current
   },
-  "opportunities": *[_type == "opportunity"] | order(coalesce(deadline, _createdAt) desc) {
+  "opportunities": *[_type == "opportunity"] | order(coalesce(publishedAt, _createdAt) desc) {
     _id,
     title,
     excerpt,
@@ -557,9 +565,9 @@ const sitemapContentQuery = groq`
     coverImage,
     body
   },
-  "opportunities": *[_type == "opportunity" && defined(slug.current)] | order(coalesce(deadline, _createdAt) desc) {
+  "opportunities": *[_type == "opportunity" && defined(slug.current)] | order(coalesce(publishedAt, _createdAt) desc) {
     "slug": slug.current,
-    "lastModified": coalesce(_updatedAt, deadline, _createdAt),
+    "lastModified": coalesce(_updatedAt, publishedAt, _createdAt),
     coverImage,
     body
   }
@@ -1053,7 +1061,7 @@ export async function getCategorySitemapEntries(): Promise<SitemapEntry[]> {
       if (!item.slug || !item.contentType) return []
 
       return [{
-        url: getCategoryPath(item.contentType, item.slug),
+        url: getCategorySitemapPath(item),
         lastModified: new Date().toISOString(),
       }]
     })
