@@ -1,7 +1,8 @@
-import {getContentImageUrls, getNewsContent} from '@/lib/content'
+import {getRecentNewsSitemapEntries} from '@/lib/content'
 import {getMetadataBase} from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 function escapeXml(value: string) {
   return value
@@ -15,14 +16,7 @@ function escapeXml(value: string) {
 export async function GET() {
   const metadataBase = getMetadataBase()
   const baseUrl = metadataBase?.toString().replace(/\/$/, '')
-  const {featuredNews} = await getNewsContent()
-  const cutoff = Date.now() - 48 * 60 * 60 * 1000
-  const entries = featuredNews
-    .filter((entry) => {
-      const publishedAtTime = new Date(entry.publishedAt).getTime()
-      return Number.isFinite(publishedAtTime) && publishedAtTime >= cutoff
-    })
-    .slice(0, 1000)
+  const entries = await getRecentNewsSitemapEntries()
 
   if (!baseUrl) {
     return new Response('', {
@@ -38,15 +32,15 @@ export async function GET() {
 ${entries
   .map(
     (entry) => {
-      const images = getContentImageUrls(entry.body, entry.coverImageUrl)
-      const imageXml = images
-        .map((imageUrl) => `    <image:image>
-      <image:loc>${escapeXml(imageUrl)}</image:loc>
-    </image:image>`)
-        .join('\n')
+      const imageXml = entry.coverImageUrl
+        ? `    <image:image>
+      <image:loc>${escapeXml(entry.coverImageUrl)}</image:loc>
+    </image:image>
+`
+        : ''
 
       return `  <url>
-    <loc>${baseUrl}/news/${escapeXml(entry.slug)}</loc>
+    <loc>${escapeXml(`${baseUrl}/news/${entry.slug}`)}</loc>
     <news:news>
       <news:publication>
         <news:name>GizPulse</news:name>
@@ -55,7 +49,7 @@ ${entries
       <news:publication_date>${entry.publishedAt}</news:publication_date>
       <news:title>${escapeXml(entry.title)}</news:title>
     </news:news>
-${imageXml ? `${imageXml}\n` : ''}    <lastmod>${entry.publishedAt}</lastmod>
+${imageXml}    <lastmod>${entry.lastModified}</lastmod>
   </url>`
     }
   )

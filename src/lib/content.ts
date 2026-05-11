@@ -583,7 +583,8 @@ const recentNewsSitemapQuery = groq`
   title,
   "slug": slug.current,
   publishedAt,
-  "lastModified": coalesce(_updatedAt, publishedAt)
+  "lastModified": coalesce(_updatedAt, publishedAt),
+  "coverImageUrl": coverImage.asset->url
 }
 `
 
@@ -1070,9 +1071,9 @@ export async function getCategorySitemapEntries(): Promise<SitemapEntry[]> {
   }
 }
 
-export async function getRecentNewsSitemapEntries(): Promise<Array<{title: string; slug: string; publishedAt: string; lastModified: string}>> {
+export async function getRecentNewsSitemapEntries(): Promise<Array<{title: string; slug: string; publishedAt: string; lastModified: string; coverImageUrl?: string}>> {
   try {
-    const items = await sanityFetch<Array<{title?: string; slug?: string; publishedAt?: string; lastModified?: string}>>(recentNewsSitemapQuery)
+    const items = await sanityFetch<Array<{title?: string; slug?: string; publishedAt?: string; lastModified?: string; coverImageUrl?: string}>>(recentNewsSitemapQuery)
     const cutoff = Date.now() - 48 * 60 * 60 * 1000
 
     return items
@@ -1087,6 +1088,7 @@ export async function getRecentNewsSitemapEntries(): Promise<Array<{title: strin
           slug: item.slug,
           publishedAt: item.publishedAt,
           lastModified: item.lastModified ?? item.publishedAt,
+          coverImageUrl: item.coverImageUrl,
         }]
       })
       .slice(0, 1000)
