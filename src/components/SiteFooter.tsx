@@ -5,7 +5,7 @@ import { socialUrls } from "@/lib/site-config";
 
 const primaryLinks = [
   { label: "About Us", href: "/about" },
-  { label: "Contact", href: "/about#contact" },
+  { label: "Contact", href: "/contact" },
   { label: "Authors", href: "/authors" },
   { label: "Jobs", href: "/jobs" },
   { label: "Opportunities", href: "/opportunities" },

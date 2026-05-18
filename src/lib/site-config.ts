@@ -1,5 +1,9 @@
 export const contactEmail = 'hellogizpulse@gmail.com'
 
+export const contactPhones = ['+2348137844165', '+2348144879537'] as const
+
+export const publicationLocation = 'Abuja, Nigeria'
+
 export const socialUrls = {
   facebook: 'https://www.facebook.com/share/1DES3DgaLi/',
   instagram: 'https://www.instagram.com/gizpulse?igsh=cTk1MHpuZzFzNzd3&utm_source=ig_contact_invite',
