@@ -44,9 +44,9 @@ function getWhatsappHref(phone: string) {
 export default function ContactPage() {
   return (
     <main className="bg-background text-primary-text">
-      <section className="mx-auto w-full max-w-[1360px] border-b border-border px-5 py-12 sm:px-8 lg:px-16 lg:py-16">
+      <section className="mx-auto w-full max-w-[1360px] overflow-hidden border-b border-border px-5 py-12 sm:px-8 lg:px-16 lg:py-16">
         <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">Contact GizPulse</p>
-        <h1 className="mt-5 max-w-[980px] font-display text-[2.2rem] font-bold leading-[1.02] tracking-[-0.05em] text-primary-text sm:text-[3.35rem]">
+        <h1 className="mt-5 max-w-[980px] text-wrap font-display text-[2.2rem] font-bold leading-[1.02] tracking-[-0.05em] text-primary-text sm:text-[3.35rem]">
           Reach the GizPulse team for stories, corrections, partnerships, and support.
         </h1>
         <p className="mt-7 max-w-[820px] text-[1.08rem] leading-8 text-muted-text">
@@ -54,24 +54,24 @@ export default function ContactPage() {
         </p>
       </section>
 
-      <section className="border-b border-border">
+      <section className="overflow-hidden border-b border-border">
         <div className="mx-auto grid w-full max-w-[1360px] gap-8 px-5 py-12 sm:px-8 lg:grid-cols-[minmax(0,0.82fr)_minmax(300px,0.48fr)] lg:px-16 lg:py-14">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
             {inquiryTypes.map((item) => (
-              <article key={item.title} className="border border-border bg-card-background p-5">
-                <h2 className="font-display text-[1.55rem] font-bold leading-tight tracking-[-0.04em] text-primary-text">
+              <article key={item.title} className="min-w-0 border border-border bg-card-background p-5">
+                <h2 className="text-wrap font-display text-[1.45rem] font-bold leading-tight tracking-[-0.04em] text-primary-text sm:text-[1.55rem]">
                   {item.title}
                 </h2>
-                <p className="mt-3 text-[0.98rem] leading-7 text-muted-text">{item.body}</p>
+                <p className="mt-3 break-words text-[0.98rem] leading-7 text-muted-text">{item.body}</p>
               </article>
             ))}
           </div>
 
-          <aside className="border border-border bg-card-background p-6">
+          <aside className="min-w-0 border border-border bg-card-background p-5 sm:p-6">
             <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">Primary Contact</p>
             <a
               href={`mailto:${contactEmail}`}
-              className="mt-4 block break-words font-display text-[1.75rem] font-bold leading-tight tracking-[-0.04em] text-primary-text transition-colors hover:text-primary-green"
+              className="mt-4 block max-w-full overflow-wrap-anywhere font-display text-[1.42rem] font-bold leading-tight tracking-[-0.04em] text-primary-text transition-colors hover:text-primary-green sm:text-[1.75rem]"
             >
               {contactEmail}
             </a>
@@ -83,7 +83,7 @@ export default function ContactPage() {
                   <a
                     key={phone}
                     href={getWhatsappHref(phone)}
-                    className="inline-flex items-center gap-3 text-[1rem] font-semibold text-primary-text transition-colors hover:text-primary-green"
+                    className="inline-flex min-w-0 items-center gap-3 break-words text-[1rem] font-semibold text-primary-text transition-colors hover:text-primary-green"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -102,14 +102,14 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section>
+      <section className="overflow-hidden">
         <div className="mx-auto grid w-full max-w-[1360px] gap-8 px-5 py-12 sm:px-8 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-16 lg:py-14">
-          <div>
+          <div className="min-w-0">
             <p className="text-[0.74rem] font-bold uppercase tracking-[0.14em] text-primary-green">Find Us Online</p>
-            <h2 className="mt-2 font-display text-[2.8rem] font-bold leading-none tracking-[-0.05em] text-primary-text">Social Channels</h2>
+            <h2 className="mt-2 text-wrap font-display text-[2.45rem] font-bold leading-none tracking-[-0.05em] text-primary-text sm:text-[2.8rem]">Social Channels</h2>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <div className="flex flex-wrap gap-3">
               {socialLinks.map((link) => {
                 return (
@@ -129,7 +129,7 @@ export default function ContactPage() {
             </p>
             <Link
               href="/corrections-policy"
-              className="mt-6 inline-flex rounded-full bg-primary-green px-5 py-3 text-[0.72rem] font-bold uppercase tracking-[0.16em] !text-white transition-opacity hover:opacity-90"
+              className="mt-6 inline-flex max-w-full items-center justify-center rounded-full bg-primary-green px-5 py-3 text-center text-[0.68rem] font-bold uppercase tracking-[0.12em] !text-white transition-opacity hover:opacity-90 sm:text-[0.72rem] sm:tracking-[0.16em]"
             >
               Read Corrections Policy
             </Link>

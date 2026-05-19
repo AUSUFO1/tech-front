@@ -51,8 +51,17 @@ body {
   font-family: var(--font-inter), sans-serif;
 }
 
+html,
+body {
+  overflow-x: clip;
+}
+
 a {
   color: inherit;
+}
+
+.overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
 }
 
 .scrollbar-none {
