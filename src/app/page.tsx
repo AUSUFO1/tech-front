@@ -1,12 +1,13 @@
 import type {Metadata} from 'next'
 import Link from 'next/link'
-import {ChevronRight} from 'lucide-react'
+
 import {AppImage} from '@/components/AppImage'
 import {CategoryTagLink} from '@/components/CategoryTagLink'
 import {HomeNewsletterSignup} from '@/components/HomeNewsletterSignup'
+import {TrendingTicker} from '@/components/TrendingTicker'
 import {getHomepageContent, type JobContentItem, type OpportunityContentItem} from '@/lib/content'
 import {isEarnCategory} from '@/lib/content-sections'
-import {type BlogItem, type FeaturedNewsItem, type JobItem, type QuickLink} from '@/lib/content-types'
+import {type BlogItem, type FeaturedNewsItem, type JobItem} from "@/lib/content-types"
 import {getCategoryHrefFromLabel, getQuickLinkHref} from '@/lib/link-mapping'
 
 const homepageTitle = 'GizPulse | Tech News, Jobs, Opportunities and Career Growth'
@@ -91,13 +92,13 @@ type TopFeatureItem = {
 
 function SectionHeader({title, href}: SectionHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-4">
-      <h2 className="font-display text-[1.9rem] font-bold tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">
+    <div className="flex items-center justify-between gap-4 border-t-2 border-primary-green pt-4">
+      <h2 className="font-serif text-[1.6rem] font-bold tracking-[-0.02em] text-primary-text sm:text-[1.8rem]">
         {title}
       </h2>
       <Link
         href={href}
-        className="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-primary-text transition-colors hover:text-primary-green"
+        className="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-text transition-colors hover:text-primary-green"
       >
         Show All
       </Link>
@@ -115,19 +116,19 @@ function EditorialCard({
   priority?: boolean
 }) {
   return (
-    <article className="bg-card-background pb-2">
+    <article className="border-t border-border pt-5 pb-6">
       <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
         <AppImage
           src={item.coverImageUrl}
           alt={item.title}
-          className="aspect-[4/3] w-full bg-card-background object-contain md:h-[220px] md:aspect-auto md:object-contain"
+          className="aspect-[4/3] w-full object-cover md:h-[220px] md:aspect-auto md:object-cover"
           width={1200}
           height={780}
           sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 520px"
           priority={priority}
         />
       </Link>
-      <h3 className="mt-5 font-display text-[1.7rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text">
+      <h3 className="mt-4 font-serif text-[1.5rem] font-bold leading-[1.1] tracking-[-0.02em] text-primary-text">
         <Link
           href={`${hrefBase}/${item.slug}`}
           className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
@@ -135,8 +136,8 @@ function EditorialCard({
           {item.title}
         </Link>
       </h3>
-      <p className="mt-3 line-clamp-3 text-[0.98rem] leading-7 text-muted-text">{item.excerpt}</p>
-                <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
+      <p className="mt-2 line-clamp-2 text-[0.92rem] leading-6 text-muted-text">{item.excerpt}</p>
+                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
         <CategoryTagLink
           href={item.categorySlug ? getQuickLinkHref(item.categorySlug, hrefBase === '/news' ? 'news' : 'blog') : getCategoryHrefFromLabel(item.categoryTitle, hrefBase === '/news' ? 'news' : 'blog')}
           label={item.categoryTitle}
@@ -152,20 +153,20 @@ function EditorialCard({
 
 function DesktopLeadCard({item, hrefBase}: TopFeatureItem) {
   return (
-    <article className="flex h-full flex-col bg-card-background">
+    <article className="flex h-full flex-col">
       <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
         <AppImage
           src={item.coverImageUrl}
           alt={item.title}
-          className="aspect-[16/10] w-full bg-card-background object-contain"
+          className="aspect-[16/10] w-full object-cover"
           width={1600}
           height={1000}
           sizes="(min-width: 1280px) 640px, 100vw"
           priority
         />
       </Link>
-      <div className="flex flex-1 flex-col px-5 pb-5 pt-5">
-        <h3 className="font-display text-[2.35rem] font-bold leading-[0.98] tracking-[-0.06em] text-primary-text">
+      <div className="flex flex-1 flex-col pt-4">
+        <h3 className="font-serif text-[2.2rem] font-bold leading-[1.05] tracking-[-0.02em] text-primary-text">
           <Link
             href={`${hrefBase}/${item.slug}`}
             className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
@@ -191,19 +192,19 @@ function DesktopLeadCard({item, hrefBase}: TopFeatureItem) {
 
 function DesktopSupportingCard({item, hrefBase}: TopFeatureItem) {
   return (
-    <article className="flex h-full flex-col bg-card-background">
+    <article className="flex h-full flex-col border-t border-border pt-4">
       <Link href={`${hrefBase}/${item.slug}`} className="block overflow-hidden">
         <AppImage
           src={item.coverImageUrl}
           alt={item.title}
-          className="aspect-[16/10] w-full bg-card-background object-contain"
+          className="aspect-[16/10] w-full object-cover"
           width={1200}
           height={780}
           sizes="(min-width: 1280px) 320px, 100vw"
         />
       </Link>
-      <div className="flex flex-1 flex-col px-4 pb-4 pt-4">
-        <h3 className="font-display text-[1.4rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text">
+      <div className="flex flex-1 flex-col pt-3">
+        <h3 className="font-serif text-[1.25rem] font-bold leading-[1.1] tracking-[-0.01em] text-primary-text">
           <Link
             href={`${hrefBase}/${item.slug}`}
             className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
@@ -291,7 +292,7 @@ function JobPreview({item}: {item: JobItem}) {
     <article className="border-b border-border bg-card-background pb-5 pt-4 sm:pt-5">
       <div>
         <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.company}</p>
-        <h3 className="mt-3 font-display text-[1.55rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
+        <h3 className="mt-3 font-serif text-[1.3rem] font-bold leading-[1.15] tracking-[-0.01em] text-primary-text">
           <Link
             href={`/jobs/${item.slug}`}
             className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
@@ -316,22 +317,22 @@ function JobPreview({item}: {item: JobItem}) {
 
 function OpportunityPreview({item}: {item: OpportunityContentItem}) {
   return (
-    <article className="overflow-hidden bg-card-background">
+    <article className="group flex flex-col border-t border-border pt-4">
       <Link href={`/opportunities/${item.slug}`} className="block overflow-hidden">
         <AppImage
           src={item.coverImageUrl}
           alt={item.coverImageAlt || item.title}
-          className="aspect-[16/10] w-full bg-card-background object-contain"
+          className="aspect-[16/10] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           width={1200}
           height={780}
           sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 420px"
         />
       </Link>
-      <div className="border-b border-border pb-5 pt-4 sm:pt-5">
+      <div className="mt-4">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.organization}</p>
-            <h3 className="mt-3 font-display text-[1.55rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
+            <h3 className="mt-3 font-serif text-[1.3rem] font-bold leading-[1.15] tracking-[-0.01em] text-primary-text">
               <Link
                 href={`/opportunities/${item.slug}`}
                 className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
@@ -340,7 +341,7 @@ function OpportunityPreview({item}: {item: OpportunityContentItem}) {
               </Link>
             </h3>
           </div>
-          <div className="shrink-0 text-right text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+          <div className="shrink-0 rounded-[4px] border border-red-400 px-2 py-1 text-center">
             <p>Deadline</p>
             <p className="mt-2 text-primary-text">{formatDate(item.deadline)}</p>
           </div>
@@ -362,9 +363,106 @@ function OpportunityPreview({item}: {item: OpportunityContentItem}) {
   )
 }
 
+
+function BlogSection({ posts, href }: { posts: BlogItem[], href: string }) {
+  const hero = posts[0];
+  const stacked = posts.slice(1, 6);
+  const bottom = posts.slice(6, 8);
+  if (!hero) return null;
+  return (
+    <section className="flex flex-col gap-6">
+      <SectionHeader title="Blog & Guides" href={href} />
+      <div className="grid gap-0 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        {/* Hero card left */}
+        <div className="border-t border-border pt-5 pr-0 lg:pr-8">
+          <Link href={"/blog/" + hero.slug} className="block overflow-hidden">
+            <AppImage
+              src={hero.coverImageUrl}
+              alt={hero.title}
+              className="aspect-[16/10] w-full object-cover"
+              width={1200}
+              height={780}
+              sizes="(max-width: 1023px) 100vw, 55vw"
+              priority
+            />
+          </Link>
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em]">
+            <CategoryTagLink
+              href={hero.categorySlug ? getQuickLinkHref(hero.categorySlug, 'blog') : getCategoryHrefFromLabel(hero.categoryTitle, 'blog')}
+              label={hero.categoryTitle}
+              className="inline-flex rounded-[5px] bg-primary-green px-2.5 py-1 text-white transition-opacity hover:opacity-90"
+            />
+            <span className="text-muted-text">{formatDate(hero.publishedAt)}</span>
+          </div>
+          <h3 className="mt-3 font-serif text-[2rem] font-bold leading-[1.08] tracking-[-0.02em] text-primary-text lg:text-[2.4rem]">
+            <Link href={"/blog/" + hero.slug} className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current">
+              {hero.title}
+            </Link>
+          </h3>
+          <p className="mt-3 line-clamp-2 text-[0.95rem] leading-7 text-muted-text">{hero.excerpt}</p>
+          <p className="mt-3 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">By {hero.authorName}</p>
+        </div>
+        {/* Stacked cards right */}
+        <div className="flex flex-col divide-y divide-border border-t border-border mt-5 lg:mt-0 lg:border-t-0 lg:border-l lg:border-border lg:pl-8">
+          {stacked.map((post) => (
+            <div key={post._id} className="flex gap-4 py-4 first:pt-0 lg:first:pt-0">
+              <Link href={"/blog/" + post.slug} className="shrink-0 block overflow-hidden w-[160px] h-[120px]">
+                <AppImage
+                  src={post.coverImageUrl}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                  width={220}
+                  height={160}
+                  sizes="110px"
+                />
+              </Link>
+              <div className="flex-1 min-w-0">
+                <p className="text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary-green">{post.categoryTitle}</p>
+                <h4 className="mt-1 font-serif text-[1rem] font-bold leading-[1.2] tracking-[-0.01em] text-primary-text">
+                  <Link href={"/blog/" + post.slug} className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current">
+                    {post.title}
+                  </Link>
+                </h4>
+                <p className="mt-1 text-[0.68rem] font-bold uppercase tracking-[0.1em] text-muted-text">{formatDate(post.publishedAt)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Bottom row */}
+      {bottom.length > 0 && (
+        <div className="grid gap-6 border-t border-border pt-5 sm:grid-cols-2">
+          {bottom.map((post) => (
+            <article key={post._id} className="flex gap-4">
+              <Link href={"/blog/" + post.slug} className="shrink-0 block overflow-hidden w-[100px] h-[72px]">
+                <AppImage
+                  src={post.coverImageUrl}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                  width={200}
+                  height={144}
+                  sizes="100px"
+                />
+              </Link>
+              <div className="flex-1 min-w-0">
+                <p className="text-[0.62rem] font-bold uppercase tracking-[0.14em] text-primary-green">{post.categoryTitle}</p>
+                <h4 className="mt-1 font-serif text-[0.95rem] font-bold leading-[1.2] tracking-[-0.01em] text-primary-text">
+                  <Link href={"/blog/" + post.slug} className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current">
+                    {post.title}
+                  </Link>
+                </h4>
+                <p className="mt-1 text-[0.68rem] text-muted-text">{formatDate(post.publishedAt)}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
 export default async function Home() {
-  const {featuredNews, latestBlog, latestJobs, latestNews, latestOpportunities, quickLinks} = await getHomepageContent()
-  const homeBlog = latestBlog.filter((post) => !isEarnCategory(post.categoryTitle)).slice(0, 6)
+  const {featuredNews, latestBlog, latestJobs, latestNews, latestOpportunities, trending} = await getHomepageContent()
+  const homeBlog = latestBlog.filter((post) => !isEarnCategory(post.categoryTitle)).slice(0, 10)
   const homeEarn = latestBlog.filter((post) => isEarnCategory(post.categoryTitle)).slice(0, 6)
   const featuredStoryIds = new Set(featuredNews.slice(0, 4).map((story) => story._id))
   const topUpdatePools: Record<'News' | 'Blog' | 'Earn' | 'Jobs' | 'Opportunity', TopUpdateItem[]> = {
@@ -446,27 +544,7 @@ export default async function Home() {
         </p>
       </section>
 
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-          <h2 className="shrink-0 font-display text-[1.3rem] font-bold tracking-[-0.04em] text-primary-text sm:text-[1.45rem]">
-            Quick Links
-          </h2>
-          <div className="min-w-0 flex-1 overflow-x-auto scrollbar-none lg:overflow-visible">
-            <div className="flex min-w-max gap-3 pr-5 lg:min-w-0 lg:w-full lg:flex-wrap lg:pr-0">
-              {quickLinks.map((link) => (
-                <Link
-                  key={link._id}
-                  href={getCategoryHref(link)}
-                  className="inline-flex shrink-0 items-center rounded-[8px] border border-border bg-card-background px-4 py-2 text-[0.72rem] font-semibold text-primary-text transition-colors hover:border-primary-green hover:text-primary-green"
-                >
-                  {link.title}
-                  <ChevronRight className="ml-2 h-3.5 w-3.5" strokeWidth={2.1} />
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <TrendingTicker items={trending} />
 
       <section className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
         <div className="grid gap-6 xl:hidden sm:grid-cols-2">
@@ -499,9 +577,9 @@ export default async function Home() {
           {spotlightJob ? <HomeJobSpotlight item={spotlightJob} /> : null}
         </div>
 
-        <aside className="bg-[#fbf7df] px-5 py-6 dark:bg-card-background sm:px-6 sm:py-7">
+        <aside className="border-t-2 border-primary-green pt-4">
           <div className="flex items-start justify-between gap-4">
-            <h2 className="font-display text-[2.35rem] font-bold leading-none tracking-[-0.06em] text-primary-green sm:text-[2.75rem]">
+            <h2 className="font-serif text-[1.6rem] font-bold leading-none tracking-[-0.02em] text-primary-text">
               Top Updates
             </h2>
             <Link
@@ -512,16 +590,15 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="relative mt-7 pl-7">
-            <div className="absolute left-[10px] top-2 bottom-2 w-px bg-primary-green/45" />
-            <div className="flex flex-col gap-6">
-              {topUpdates.map((item) => (
-                <article key={item._id} className="relative border-b border-black/10 pb-5 last:border-b-0 last:pb-0 dark:border-white/10">
-                  <span className="absolute -left-[21px] top-1 h-[8px] w-[8px] rounded-full bg-primary-green" />
-                  <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+          <div className="mt-5 flex flex-col divide-y divide-border">
+            {topUpdates.map((item, i) => (
+                <article key={item._id} className="flex gap-4 py-4 first:pt-0">
+                  <span className="shrink-0 w-6 font-serif text-[1.4rem] font-bold leading-none text-primary-green">{i + 1}</span>
+                  <div>
+                  <p className="text-[0.62rem] font-bold uppercase tracking-[0.14em] text-muted-text">
                     {item.label}
                   </p>
-                  <h3 className="mt-3 font-display text-[1.35rem] font-bold leading-[1.04] tracking-[-0.05em] text-primary-text sm:text-[1.5rem]">
+                  <h3 className="mt-1.5 font-serif text-[1rem] font-bold leading-[1.2] tracking-[-0.01em] text-primary-text">
                     <Link
                       href={item.href}
                       className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
@@ -529,24 +606,15 @@ export default async function Home() {
                       {item.title}
                     </Link>
                   </h3>
-                  <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                    <span>{formatDate(item.date)}</span>
+                  <p className="mt-1 text-[0.68rem] font-bold uppercase tracking-[0.1em] text-muted-text">{formatDate(item.date)}</p>
                   </div>
                 </article>
               ))}
-            </div>
           </div>
         </aside>
       </section>
 
-      <section className="flex flex-col gap-6">
-        <SectionHeader title="Blog & Guides" href="/blog" />
-        <div className={getSectionGridClass(homeBlog.length)}>
-          {homeBlog.map((post) => (
-            <EditorialCard key={post._id} item={post} hrefBase="/blog" />
-          ))}
-        </div>
-      </section>
+      <BlogSection posts={homeBlog} href="/blog" />
 
       <section className="flex flex-col gap-6">
         <SectionHeader title="Jobs" href="/jobs" />
@@ -556,9 +624,9 @@ export default async function Home() {
           ))}
         </div>
 
-        <aside className="bg-[#fbf7df] px-5 py-6 dark:bg-card-background sm:px-6 sm:py-7">
+        <aside className="border-t-2 border-primary-green pt-4">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="font-display text-[2rem] font-bold leading-none tracking-[-0.06em] text-primary-green sm:text-[2.35rem]">
+            <h3 className="font-serif text-[1.6rem] font-bold leading-none tracking-[-0.02em] text-primary-text">
               More Latest News
             </h3>
             <Link
@@ -569,13 +637,15 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="mt-7 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {moreLatestNews.map((story) => (
-              <article key={story._id} className="border-b border-black/10 pb-5 last:border-b-0 last:pb-0 dark:border-white/10">
-                <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">
+          <div className="mt-5 flex flex-col divide-y divide-border">
+            {moreLatestNews.map((story, i) => (
+              <article key={story._id} className="flex gap-4 py-4 first:pt-0">
+                <span className="shrink-0 w-6 font-serif text-[1.4rem] font-bold leading-none text-primary-green">{i + 1}</span>
+                <div>
+                <p className="text-[0.62rem] font-bold uppercase tracking-[0.12em] text-muted-text">
                   {formatDate(story.publishedAt)}
                 </p>
-                <h3 className="mt-3 font-display text-[1.2rem] font-bold leading-[1.06] tracking-[-0.05em] text-primary-text">
+                <h3 className="mt-1.5 font-serif text-[1rem] font-bold leading-[1.2] tracking-[-0.01em] text-primary-text">
                   <Link
                     href={`/news/${story.slug}`}
                     className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
@@ -583,9 +653,7 @@ export default async function Home() {
                     {story.title}
                   </Link>
                 </h3>
-                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-text">
-                  <span>Published by {story.authorName}</span>
-                  <span>{formatComments(story.commentCount)}</span>
+                <p className="mt-1 text-[0.68rem] text-muted-text">By {story.authorName}</p>
                 </div>
               </article>
             ))}

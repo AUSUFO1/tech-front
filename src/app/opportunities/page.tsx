@@ -51,7 +51,7 @@ export default async function Page({
   return (
     <main className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-12 sm:px-8 lg:px-16 lg:pb-16">
       <section className="border-b border-border py-8 lg:py-10">
-        <h1 className="font-display text-[2.9rem] font-bold leading-[0.92] tracking-[-0.07em] text-primary-text sm:text-[4.4rem]">
+        <h1 className="font-serif text-[2.9rem] font-bold leading-[0.92] tracking-[-0.03em] text-primary-text sm:text-[4.4rem]">
           Opportunities
         </h1>
       </section>
@@ -66,7 +66,7 @@ export default async function Page({
                 <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">{item.organization}</p>
                 <p className="text-[0.72rem] font-bold uppercase tracking-[0.14em] text-primary-green">Deadline {formatDate(item.deadline)}</p>
               </div>
-              <h2 className="mt-3 font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.2rem]">
+              <h2 className="mt-3 font-serif text-[2rem] font-bold leading-[1.05] tracking-[-0.02em] text-primary-text sm:text-[2.2rem]">
                 <Link
                   href={`/opportunities/${item.slug}`}
                   className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"
@@ -102,7 +102,7 @@ export default async function Page({
                 <article key={story._id} className="relative border-b border-border pb-4 last:border-b-0 last:pb-0">
                   <span className="absolute -left-[21px] top-1 h-[8px] w-[8px] rounded-full bg-primary-green" />
                   <p className="text-[0.66rem] font-bold uppercase tracking-[0.14em] text-primary-green">{formatDate(story.publishedAt)}</p>
-                  <h3 className="mt-2 font-display text-[1.2rem] font-bold leading-[1.03] tracking-[-0.04em] text-primary-text">
+                  <h3 className="mt-2 font-serif text-[1.05rem] font-bold leading-[1.3] tracking-[0] text-primary-text">
                     <Link
                       href={`/news/${story.slug}`}
                       className="no-underline decoration-current/45 underline-offset-4 transition hover:text-primary-green hover:underline hover:decoration-current"

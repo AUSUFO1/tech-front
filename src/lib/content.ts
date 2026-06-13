@@ -177,6 +177,7 @@ type HomepagePayload = {
   latestBlog?: SanityBlog[]
   latestJobs?: SanityJob[]
   latestOpportunities?: SanityOpportunity[]
+  trending?: Array<{_id: string; title: string; views: number; slug: string; type: string}>
 }
 
 type AuthoredItem = {
@@ -450,6 +451,7 @@ const homepageQuery = groq`
     body,
     seo
   },
+  "trending": [...*[_type == "news"] | order(views desc)[0...10]{_id,title,views,"slug":slug.current,"type":"news"},...*[_type == "blog"] | order(views desc)[0...10]{_id,title,views,"slug":slug.current,"type":"blog"},...*[_type == "job"] | order(views desc)[0...10]{_id,title,views,"slug":slug.current,"type":"jobs"},...*[_type == "opportunity"] | order(views desc)[0...10]{_id,title,views,"slug":slug.current,"type":"opportunities"}],
   "latestOpportunities": *[_type == "opportunity"] | order(coalesce(publishedAt, _createdAt) desc)[0...10] {
     _id,
     title,
@@ -769,6 +771,7 @@ export async function getHomepageContent(): Promise<{
   latestBlog: BlogContentItem[]
   latestJobs: JobContentItem[]
   latestOpportunities: OpportunityContentItem[]
+  trending: Array<{_id: string; title: string; views: number; slug: string; type: string}>
 }> {
   try {
     const data = await sanityFetch<HomepagePayload>(homepageQuery)
@@ -780,6 +783,7 @@ export async function getHomepageContent(): Promise<{
       latestBlog: mapBlog(data.latestBlog),
       latestJobs: mapJobs(data.latestJobs),
       latestOpportunities: mapOpportunities(data.latestOpportunities),
+      trending: (data.trending ?? []).sort((a,b) => b.views - a.views).slice(0,10),
     }
   } catch {
     return {
@@ -789,6 +793,7 @@ export async function getHomepageContent(): Promise<{
       latestBlog: [],
       latestJobs: [],
       latestOpportunities: [],
+      trending: [],
     }
   }
 }

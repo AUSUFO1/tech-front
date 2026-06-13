@@ -10,6 +10,9 @@ const primaryLinks = [
   { label: "Jobs", href: "/jobs" },
   { label: "Opportunities", href: "/opportunities" },
   { label: "Newsletters", href: "/newsletter" },
+  { label: "Blog", href: "/blog" },
+  { label: "News", href: "/news" },
+  { label: "Search", href: "/search" },
 ];
 
 const legalLinks = [
@@ -42,7 +45,7 @@ export function SiteFooter() {
 
       <div className="mx-auto grid w-full max-w-[1360px] gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-16">
         <div>
-          <Link href="/" className="font-display text-[2.6rem] font-bold tracking-[-0.08em] text-white">
+          <Link href="/" className="font-serif text-[2.6rem] font-bold italic tracking-[-0.03em] text-white">
             GizPulse
           </Link>
           <p className="mt-6 text-[0.95rem] leading-7 text-white/95">

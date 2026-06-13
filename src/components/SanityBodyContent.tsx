@@ -189,7 +189,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
           <AppImage
             src={imageUrl}
             alt={node.alt ?? ''}
-            className="h-auto w-full bg-card-background object-contain sm:max-h-[36rem] sm:object-contain"
+            className="h-auto w-full object-cover sm:max-h-[36rem]"
             width={1200}
             height={800}
             sizes="100vw"
@@ -272,7 +272,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
         <h1
           id={heading?.id}
           key={node._key ?? text}
-          className="scroll-mt-28 font-display text-[2.2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.8rem]"
+          className="scroll-mt-28 font-serif text-[2.2rem] font-bold leading-[1.05] tracking-[-0.02em] text-primary-text sm:text-[2.8rem]"
         >
           {blockNode ? renderSpanChildren(blockNode) : text}
         </h1>
@@ -285,7 +285,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
         <h2
           id={heading?.id}
           key={node._key ?? text}
-          className="scroll-mt-28 font-display text-[2rem] font-bold leading-[0.98] tracking-[-0.05em] text-primary-text sm:text-[2.3rem]"
+          className="scroll-mt-28 font-serif text-[2rem] font-bold leading-[1.05] tracking-[-0.02em] text-primary-text sm:text-[2.3rem]"
         >
           {blockNode ? renderSpanChildren(blockNode) : text}
         </h2>
@@ -298,7 +298,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
         <h3
           id={heading?.id}
           key={node._key ?? text}
-          className="scroll-mt-28 font-display text-[1.55rem] font-bold leading-[1.02] tracking-[-0.04em] text-primary-text sm:text-[1.75rem]"
+          className="scroll-mt-28 font-serif text-[1.55rem] font-bold leading-[1.1] tracking-[-0.01em] text-primary-text sm:text-[1.75rem]"
         >
           {blockNode ? renderSpanChildren(blockNode) : text}
         </h3>
@@ -308,7 +308,7 @@ export function SanityBodyContent({body}: {body?: PortableContentNode[]}) {
 
     if (style === 'h4') {
       rendered.push(
-        <h4 id={heading?.id} key={node._key ?? text} className="scroll-mt-28 font-display text-[1.24rem] font-bold tracking-[-0.02em] text-primary-text">
+        <h4 id={heading?.id} key={node._key ?? text} className="scroll-mt-28 font-serif text-[1.24rem] font-bold tracking-[0] text-primary-text">
           {blockNode ? renderSpanChildren(blockNode) : text}
         </h4>
       )

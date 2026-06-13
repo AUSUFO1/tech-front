@@ -112,7 +112,7 @@ export default async function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2340164587538524"
           crossOrigin="anonymous"
         />
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script id="theme-init" dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="flex min-h-screen flex-col">
         {isDraftMode ? (
@@ -126,7 +126,7 @@ export default async function RootLayout({
         <StructuredData data={siteStructuredData} />
         <ThemeProvider>
           <SiteHeaderServer />
-          <div className="flex-1 pt-[92px]">{children}</div>
+          <div className="flex-1 pt-[92px] lg:pt-[124px]">{children}</div>
           <SiteFooter />
         </ThemeProvider>
         {googleAnalyticsId ? <GoogleAnalytics measurementId={googleAnalyticsId} /> : null}

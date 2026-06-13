@@ -9,13 +9,17 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import type { QuickLink } from "@/lib/content-types";
 import { getQuickLinkHref } from "@/lib/link-mapping";
 import { socialUrls } from "@/lib/site-config";
+import { TrendingTicker } from "@/components/TrendingTicker";
 
 const navItems = [
-  { label: "BLOG", href: "/blog" },
-  { label: "JOBS", href: "/jobs" },
-  { label: "OPPORTUNITIES", href: "/opportunities" },
-  { label: "EARN", href: "/earn" },
-  { label: "NEWS", href: "/news" },
+  { label: "Africa Tech", href: "/news/category/africa-tech" },
+  { label: "Naija", href: "/news/category/naija" },
+  { label: "AI", href: "/news/category/artificial-intelligence" },
+  { label: "Remote Jobs", href: "/jobs/category/remote-jobs" },
+  { label: "Scholarships", href: "/opportunities/category/scholarships" },
+  { label: "Lifestyle", href: "/blog/category/lifestyle" },
+  { label: "NYSC", href: "/blog/category/nysc" },
+  { label: "Startups", href: "/blog/category/startups" },
 ];
 
 const legalLinks = [
@@ -49,7 +53,7 @@ function MenuTrigger({ open, onClick }: MenuTriggerProps) {
       aria-label={open ? "Close menu" : "Open menu"}
       aria-expanded={open}
       onClick={onClick}
-      className="flex h-11 w-11 items-center justify-center rounded-full text-primary-text transition-colors hover:bg-black/5 dark:hover:bg-white/8"
+      className="flex h-11 w-11 items-center justify-center rounded-full !text-white transition-colors hover:bg-white/10"
     >
       {open ? <X className="h-6 w-6" strokeWidth={2} /> : (
         <span className="relative block h-4 w-8">
@@ -65,14 +69,20 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const categoryGroups = navItems.map((item) => ({
+  const mobileNavItems = [
+    { label: "BLOG", href: "/blog" },
+    { label: "JOBS", href: "/jobs" },
+    { label: "OPPORTUNITIES", href: "/opportunities" },
+    { label: "NEWS", href: "/news" },
+  ];
+
+  const categoryGroups = mobileNavItems.map((item) => ({
     ...item,
     categories: quickLinks
       .filter((link) => {
         if (item.href === "/blog") return link.contentType === "blog";
         if (item.href === "/jobs") return link.contentType === "jobs";
         if (item.href === "/opportunities") return link.contentType === "opportunities";
-        if (item.href === "/earn") return link.contentType === "earn";
         if (item.href === "/news") return link.contentType === "news";
         return false;
       })
@@ -87,64 +97,100 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
       document.body.style.overflow = "";
       return;
     }
-
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
 
-  const handleMenuToggle = () => {
-    setMenuOpen((current) => !current);
-  };
-
-  const handleMenuClose = () => {
-    setMenuOpen(false);
-  };
-
+  const handleMenuToggle = () => setMenuOpen((current) => !current);
+  const handleMenuClose = () => setMenuOpen(false);
   const isActivePath = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-card-background">
-        <div className="mx-auto flex h-[92px] w-full max-w-[1360px] items-center justify-between gap-4 px-5 sm:px-8 lg:px-16">
-          <Link
-            href="/"
-            className="shrink-0 font-display text-[2.05rem] font-bold tracking-[-0.07em] !text-primary-green sm:text-[2.45rem]"
-            onClick={handleMenuClose}
-          >
-            GizPulse
-          </Link>
+      {/* Desktop header — two bar Forbes-style, hidden on mobile */}
+      <header className="fixed inset-x-0 top-0 z-50 hidden lg:block">
 
-          <nav className="hidden items-center gap-8 lg:flex">
+        {/* Bar 1: Green background — logo centered, search + toggle left, newsletter right */}
+        <div className="w-full bg-primary-green">
+          <div className="relative mx-auto flex h-[72px] w-full max-w-[1360px] items-center justify-between px-8 lg:px-16">
+
+            {/* Left side */}
+            <div className="flex items-center gap-3">
+              <Link
+                href="/search"
+                aria-label="Search"
+                className="flex h-9 w-9 items-center justify-center !text-white dark:!text-white transition-colors hover:!text-white/70"
+              >
+                <Search className="h-5 w-5" strokeWidth={1.8} />
+              </Link>
+              <div className="[&_button]:!text-white dark:[&_button]:!text-white [&_button]:hover:!text-white/70">
+                <ThemeToggle />
+              </div>
+            </div>
+
+            {/* Center: logo absolutely centered */}
+            <Link
+              href="/"
+              onClick={handleMenuClose}
+              className="absolute left-1/2 -translate-x-1/2 font-serif text-[3.2rem] font-bold italic tracking-[-0.03em] !text-white dark:!text-white"
+            >
+              GizPulse
+            </Link>
+
+            {/* Right side: newsletter */}
+            <Link
+              href="/newsletter"
+              className="rounded-sm bg-white px-5 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.1em] !text-primary-green transition-opacity hover:opacity-90"
+            >
+              Newsletter
+            </Link>
+          </div>
+        </div>
+
+        {/* Bar 2: Light background — nav category links */}
+        <div className="w-full border-t-[1px] border-t-[rgba(255,255,255,0.3)] bg-primary-green">
+          <div className="mx-auto flex h-[44px] w-full max-w-[1360px] items-center justify-center gap-8 px-8 lg:px-16">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative pb-1 text-[0.72rem] font-bold uppercase tracking-[0.18em] transition-colors ${
-                  isActivePath(item.href) ? "text-primary-green" : "text-primary-text hover:text-primary-green"
-                } after:absolute after:-bottom-[2px] after:left-0 after:h-[2px] after:w-full after:origin-left after:bg-primary-green after:transition-transform after:duration-200 ${
-                  isActivePath(item.href) ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"
+                className={`whitespace-nowrap text-[0.78rem] font-semibold tracking-[0.04em] transition-colors ${
+                  isActivePath(item.href)
+                    ? "!text-white underline underline-offset-4"
+                    : "!text-white/80 hover:!text-white hover:underline hover:underline-offset-4 hover:decoration-white"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
-          </nav>
+          </div>
+        </div>
+      </header>
 
+      {/* Mobile header — original preserved */}
+      <header className="fixed inset-x-0 top-0 z-50 bg-primary-green lg:hidden">
+        <div className="mx-auto flex h-[92px] w-full max-w-[1360px] items-center justify-between gap-4 px-5 sm:px-8">
+          <Link
+            href="/"
+            className="shrink-0 font-serif text-[2.05rem] font-bold italic tracking-[-0.05em] !text-white dark:!text-white sm:text-[2.45rem]"
+            onClick={handleMenuClose}
+          >
+            GizPulse
+          </Link>
           <div className="flex items-center gap-1 sm:gap-2">
             <Link
               href="/newsletter"
-              className="hidden rounded-full bg-primary-green px-6 py-3 text-[0.72rem] font-bold uppercase tracking-[0.16em] !text-white transition-opacity hover:opacity-90 lg:inline-flex"
+              className="hidden rounded-full bg-white px-6 py-3 text-[0.72rem] font-bold uppercase tracking-[0.16em] !text-primary-green transition-opacity hover:opacity-90 sm:inline-flex"
             >
               Newsletter
             </Link>
             <Link
               href="/search"
               aria-label="Search"
-              className="hidden h-11 w-11 items-center justify-center rounded-full text-primary-text transition-colors hover:bg-black/5 dark:hover:bg-white/8 sm:flex"
+              className="flex h-11 w-11 items-center justify-center rounded-full !text-white transition-colors hover:bg-white/10"
             >
               <Search className="h-5 w-5" strokeWidth={1.8} />
             </Link>
@@ -154,18 +200,18 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
         </div>
       </header>
 
+      {/* Mobile menu drawer */}
       <div
-        className={`fixed inset-0 top-[92px] z-40 overflow-y-auto border-t border-border bg-card-background transition-all duration-300 ${
+        className={`fixed inset-0 top-[92px] z-40 overflow-y-auto border-t border-border bg-card-background transition-all duration-300 lg:hidden ${
           menuOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"
         }`}
       >
-        <div className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-8 pt-6 sm:px-8 lg:px-16 lg:pb-10">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_320px] lg:gap-10">
+        <div className="mx-auto flex w-full max-w-[1360px] flex-col px-5 pb-8 pt-6 sm:px-8">
+          <div className="grid gap-8">
             <div>
               <div className="flex flex-wrap items-center gap-4 pb-6 text-primary-text">
                 {socialLinks.map((link) => {
                   const Icon = link.icon;
-
                   return (
                     <Link
                       key={link.label}
@@ -181,9 +227,7 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
               </div>
 
               <form action="/search" className="max-w-[34rem]">
-                <label htmlFor="menu-nav-search" className="sr-only">
-                  Search
-                </label>
+                <label htmlFor="menu-nav-search" className="sr-only">Search</label>
                 <input
                   id="menu-nav-search"
                   type="search"
@@ -193,7 +237,7 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
                 />
               </form>
 
-              <div className="mt-8 grid gap-8 lg:grid-cols-2">
+              <div className="mt-8 grid gap-8 sm:grid-cols-2">
                 {categoryGroups.map((group) => (
                   <section key={group.href} className="border-t border-border pt-5">
                     <Link
@@ -205,7 +249,6 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
                     >
                       {group.label}
                     </Link>
-
                     <div className="mt-5 flex flex-wrap gap-3">
                       {group.categories.map((category) => (
                         <Link
@@ -223,7 +266,7 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
               </div>
             </div>
 
-            <aside className="border-t border-border pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+            <aside className="border-t border-border pt-6">
               <div>
                 <p className="text-[0.72rem] font-bold uppercase tracking-[0.16em] text-muted-text">Explore</p>
                 <div className="mt-4 grid gap-3">
@@ -239,7 +282,6 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
                   ))}
                 </div>
               </div>
-
               <div className="mt-8 border-t border-border pt-6">
                 <Link
                   href="/newsletter"
@@ -249,7 +291,6 @@ export function SiteHeader({ quickLinks }: { quickLinks: QuickLink[] }) {
                   Join Newsletter
                 </Link>
               </div>
-
               <div className="mt-8 border-t border-border pt-6">
                 <p className="max-w-[18rem] text-[0.92rem] leading-7 text-muted-text">
                   GizPulse covers jobs, opportunities, guides, and news for ambitious readers in Nigeria and across the world.

@@ -81,7 +81,7 @@ export default async function NewsDetailPage({params}: Props) {
               {story.categoryTitle}
             </Link>
           </p>
-          <h1 className="mt-3 font-display text-[2.6rem] font-bold leading-[0.95] tracking-[-0.06em] text-primary-text sm:text-[3.5rem]">
+          <h1 className="mt-3 font-serif text-[2.4rem] font-bold leading-[1.05] tracking-[-0.02em] text-primary-text sm:text-[3.5rem]">
             {story.title}
           </h1>
           <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-muted-text">
@@ -98,7 +98,7 @@ export default async function NewsDetailPage({params}: Props) {
           <AppImage
             src={story.coverImageUrl}
             alt={story.coverImageAlt ?? story.title}
-            className="mt-8 h-auto max-h-[42rem] w-full bg-card-background object-contain"
+            className="mt-8 h-auto w-full object-cover max-h-[520px]"
             width={1600}
             height={900}
             sizes="(min-width: 1024px) 900px, 100vw"
@@ -130,7 +130,7 @@ export default async function NewsDetailPage({params}: Props) {
           <ArticleComments postType="news" postSlug={story.slug} />
 
           <section className="mt-12 border-t border-border pt-8">
-        <h2 className="font-display text-[2rem] font-bold tracking-[-0.05em] text-primary-text">Related Stories</h2>
+        <h2 className="font-serif text-[2rem] font-bold tracking-[-0.02em] text-primary-text">Related Stories</h2>
         <div className="mt-5 grid gap-6 md:grid-cols-3">
           {related.map((item) => (
             <RelatedStoryCard
