@@ -9,7 +9,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import type { QuickLink } from "@/lib/content-types";
 import { getQuickLinkHref } from "@/lib/link-mapping";
 import { socialUrls } from "@/lib/site-config";
-import { TrendingTicker } from "@/components/TrendingTicker";
 
 const navItems = [
   { label: "Africa Tech", href: "/news/category/africa-tech" },

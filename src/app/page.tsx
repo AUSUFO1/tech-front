@@ -56,9 +56,6 @@ function formatComments(count?: number) {
   return `${(count ?? 0).toLocaleString()} comments`
 }
 
-function getCategoryHref(link: QuickLink) {
-  return getQuickLinkHref(link.slug, link.contentType)
-}
 
 type TopUpdateItem = {
   _id: string
