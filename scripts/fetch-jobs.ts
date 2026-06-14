@@ -1,4 +1,4 @@
-// scripts/fetch-jobs.ts
+// src/lib/jobs/fetch-jobs.ts
 
 const HOURS_LIMIT = 48
 
@@ -33,6 +33,14 @@ function deduplicateByKey<T>(items: T[], key: (item: T) => string): T[] {
   })
 }
 
+function str(val: unknown): string {
+  return typeof val === 'string' ? val : ''
+}
+
+function strArr(val: unknown): string[] {
+  return Array.isArray(val) ? val.filter((v): v is string => typeof v === 'string') : []
+}
+
 async function fetchRemotive(): Promise<NormalizedJob[]> {
   const CATEGORIES = ['software-dev', 'product', 'data']
   const all: NormalizedJob[] = []
@@ -41,20 +49,21 @@ async function fetchRemotive(): Promise<NormalizedJob[]> {
       const res = await fetch(`https://remotive.com/api/remote-jobs?category=${category}`)
       if (!res.ok) { console.log(`  Remotive ${category}: failed ${res.status}`); continue }
       const data = await res.json()
-      const jobs = data.jobs || []
+      const jobs: unknown[] = Array.isArray(data.jobs) ? data.jobs : []
       for (const j of jobs) {
+        const job = j as Record<string, unknown>
         all.push({
-          sourceId: `remotive-${j.id}`,
+          sourceId: `remotive-${job.id}`,
           source: 'remotive',
-          url: j.url,
-          title: j.title,
-          company: j.company_name,
-          jobType: j.job_type,
-          publicationDate: j.publication_date,
-          location: j.candidate_required_location || 'Remote',
-          salary: j.salary || '',
-          description: j.description || '',
-          tags: j.tags || [],
+          url: str(job.url),
+          title: str(job.title),
+          company: str(job.company_name),
+          jobType: str(job.job_type),
+          publicationDate: str(job.publication_date),
+          location: str(job.candidate_required_location) || 'Remote',
+          salary: str(job.salary),
+          description: str(job.description),
+          tags: strArr(job.tags),
         })
       }
       console.log(`  Remotive ${category}: ${jobs.length} jobs`)
@@ -73,20 +82,26 @@ async function fetchJobicy(): Promise<NormalizedJob[]> {
       const res = await fetch(`https://jobicy.com/api/v2/remote-jobs?count=10&tag=${tag}`)
       if (!res.ok) { console.log(`  Jobicy ${tag}: failed ${res.status}`); continue }
       const data = await res.json()
-      const jobs = data.jobs || []
+      const jobs: unknown[] = Array.isArray(data.jobs) ? data.jobs : []
       for (const j of jobs) {
+        const job = j as Record<string, unknown>
+        const salaryMin = typeof job.salaryMin === 'number' ? job.salaryMin : 0
+        const salaryMax = typeof job.salaryMax === 'number' ? job.salaryMax : 0
+        const currency = str(job.salaryCurrency) || 'USD'
+        const salary = salaryMin > 0 ? `${currency} ${salaryMin.toLocaleString()}${salaryMax > 0 ? ` - ${salaryMax.toLocaleString()}` : ''}` : ''
+        const jobTypeArr = Array.isArray(job.jobType) ? job.jobType : []
         all.push({
-          sourceId: `jobicy-${j.id}`,
+          sourceId: `jobicy-${job.id}`,
           source: 'jobicy',
-          url: j.url,
-          title: j.jobTitle,
-          company: j.companyName,
-          jobType: j.jobType?.[0] || 'Full-Time',
-          publicationDate: j.pubDate,
-          location: j.jobGeo || 'Remote',
-          salary: j.salaryMin ? `${j.salaryCurrency || 'USD'} ${j.salaryMin.toLocaleString()}${j.salaryMax ? ` - ${j.salaryMax.toLocaleString()}` : ''}` : '',
-          description: j.jobDescription || '',
-          tags: j.jobIndustry || [],
+          url: str(job.url),
+          title: str(job.jobTitle),
+          company: str(job.companyName),
+          jobType: typeof jobTypeArr[0] === 'string' ? jobTypeArr[0] : 'Full-Time',
+          publicationDate: str(job.pubDate),
+          location: str(job.jobGeo) || 'Remote',
+          salary,
+          description: str(job.jobDescription),
+          tags: strArr(job.jobIndustry),
         })
       }
       console.log(`  Jobicy ${tag}: ${jobs.length} jobs`)
@@ -103,22 +118,31 @@ async function fetchRemoteOK(): Promise<NormalizedJob[]> {
       headers: { 'User-Agent': 'GizPulse/1.0' }
     })
     if (!res.ok) { console.log(`  RemoteOK: failed ${res.status}`); return [] }
-    const data = await res.json()
-    const jobs = (data as any[]).filter(j => j.id && j.position)
+    const data: unknown[] = await res.json()
+    const jobs = Array.isArray(data) ? data.filter(j => {
+      const job = j as Record<string, unknown>
+      return job.id && job.position
+    }) : []
     console.log(`  RemoteOK: ${jobs.length} jobs`)
-    return jobs.map(j => ({
-      sourceId: `remoteok-${j.id}`,
-      source: 'remoteok' as const,
-      url: j.url || `https://remoteok.com/remote-jobs/${j.slug}`,
-      title: j.position,
-      company: j.company,
-      jobType: 'Full-Time',
-      publicationDate: j.date,
-      location: j.location || 'Remote',
-      salary: j.salary_min ? `USD ${j.salary_min.toLocaleString()}${j.salary_max ? ` - ${j.salary_max.toLocaleString()}` : ''}` : '',
-      description: j.description || '',
-      tags: j.tags || [],
-    }))
+    return jobs.map(j => {
+      const job = j as Record<string, unknown>
+      const salaryMin = typeof job.salary_min === 'number' ? job.salary_min : 0
+      const salaryMax = typeof job.salary_max === 'number' ? job.salary_max : 0
+      const salary = salaryMin > 0 ? `USD ${salaryMin.toLocaleString()}${salaryMax > 0 ? ` - ${salaryMax.toLocaleString()}` : ''}` : ''
+      return {
+        sourceId: `remoteok-${job.id}`,
+        source: 'remoteok' as const,
+        url: str(job.url) || `https://remoteok.com/remote-jobs/${str(job.slug)}`,
+        title: str(job.position),
+        company: str(job.company),
+        jobType: 'Full-Time',
+        publicationDate: str(job.date),
+        location: str(job.location) || 'Remote',
+        salary,
+        description: str(job.description),
+        tags: strArr(job.tags),
+      }
+    })
   } catch (e) {
     console.log(`  RemoteOK: error — ${e}`)
     return []

@@ -1,4 +1,4 @@
-// scripts/fetch-opportunities.ts
+// src/lib/jobs/fetch-opportunities.ts
 
 const HOURS_LIMIT = 48
 
@@ -21,6 +21,10 @@ function isWithin48Hours(dateStr: string): boolean {
   const now = new Date()
   const diffHours = (now.getTime() - posted.getTime()) / (1000 * 60 * 60)
   return diffHours <= HOURS_LIMIT
+}
+
+function str(val: unknown): string {
+  return typeof val === 'string' ? val : ''
 }
 
 function extractOrganization(title: string): string {
@@ -59,27 +63,36 @@ function stripHtml(html: string): string {
     .trim()
 }
 
+interface WPPost {
+  id: number
+  date: string
+  link: string
+  title: { rendered: string }
+  content: { rendered: string }
+  excerpt: { rendered: string }
+}
+
 async function fetchOpportunitiesCorners(): Promise<NormalizedOpportunity[]> {
   try {
     const res = await fetch(
       'https://opportunitiescorners.info/wp-json/wp/v2/posts?per_page=20&_fields=id,title,date,link,excerpt,content'
     )
     if (!res.ok) { console.log(`OpportunitiesCorners: failed ${res.status}`); return [] }
-    const posts = await res.json()
+    const posts: WPPost[] = await res.json()
     console.log(`  OpportunitiesCorners: ${posts.length} posts`)
 
-    return posts.map((p: any) => {
-      const title = stripHtml(p.title.rendered)
-      const contentHtml = p.content.rendered
-      const excerptRaw = stripHtml(p.excerpt.rendered).slice(0, 217).replace(/\s+\S*$/, '...')
+    return posts.map((p) => {
+      const title = stripHtml(str(p.title?.rendered))
+      const contentHtml = str(p.content?.rendered)
+      const excerptRaw = stripHtml(str(p.excerpt?.rendered)).slice(0, 217).replace(/\s+\S*$/, '...')
 
       return {
         sourceId: `oppcorners-${p.id}`,
         source: 'opportunitiescorners' as const,
-        url: p.link,
+        url: str(p.link),
         title,
         organization: extractOrganization(title),
-        publicationDate: p.date,
+        publicationDate: str(p.date),
         deadline: extractDeadline(contentHtml),
         location: 'Worldwide',
         opportunityType: detectOpportunityType(title, contentHtml),

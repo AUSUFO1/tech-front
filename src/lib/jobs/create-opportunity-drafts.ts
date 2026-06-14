@@ -70,7 +70,7 @@ async function createDraft(opp: NormalizedOpportunity): Promise<void> {
   const draftId = getDraftId(opp.sourceId)
   const titleSlug = slugify(opp.title)
 
-  const doc: Record<string, unknown> = {
+  await client.createOrReplace({
     _id: draftId,
     _type: 'opportunity',
     title: opp.title,
@@ -87,13 +87,8 @@ async function createDraft(opp: NormalizedOpportunity): Promise<void> {
     featured: false,
     views: 0,
     body: htmlToBlocks(opp.description),
-  }
-
-  if (opp.deadline) {
-    doc.deadline = opp.deadline
-  }
-
-  await client.createOrReplace(doc)
+    ...(opp.deadline ? { deadline: opp.deadline } : {}),
+  })
   console.log(`   [${opp.source}] Draft created: ${opp.title}`)
 }
 
