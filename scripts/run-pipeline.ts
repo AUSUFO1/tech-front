@@ -1,14 +1,18 @@
 // scripts/run-pipeline.ts
-// Test runner — connects fetch-jobs and create-sanity-drafts
-import { fetchRemotiveJobs } from './fetch-jobs'
+import { fetchAllJobs } from './fetch-jobs'
 import { createSanityDrafts } from './create-sanity-drafts'
 
 async function main() {
   console.log('=== GizPulse Job Pipeline — Test Run ===\n')
 
-  console.log('--- Step 1: Fetching jobs from Remotive ---')
-  const jobs = await fetchRemotiveJobs()
-  console.log(`Fetched ${jobs.length} jobs\n`)
+  console.log('--- Step 1: Fetching jobs from all sources ---')
+  const jobs = await fetchAllJobs()
+  console.log(`Fetched ${jobs.length} recent jobs\n`)
+
+  if (jobs.length === 0) {
+    console.log('No jobs within 48hrs. Pipeline complete — nothing to post.')
+    return
+  }
 
   console.log('--- Step 2: Creating Sanity drafts ---')
   await createSanityDrafts(jobs)

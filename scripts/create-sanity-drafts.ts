@@ -1,6 +1,7 @@
 // scripts/create-sanity-drafts.ts
 import { createClient } from '@sanity/client'
 import * as fs from 'fs'
+import type { NormalizedJob } from './fetch-jobs'
 
 const env = fs.readFileSync('.env.local', 'utf8')
 const lines = env.split('\n')
@@ -16,19 +17,6 @@ const client = createClient({
 
 const REMOTE_JOBS_CATEGORY_ID = '26bfbb13-6b5b-4fe7-b6ec-c7da941fb2c0'
 const MAX_DRAFTS_PER_RUN = 10
-
-export interface RemotiveJob {
-  id: number
-  url: string
-  title: string
-  company_name: string
-  job_type: string
-  publication_date: string
-  candidate_required_location: string
-  salary: string
-  description: string
-  tags: string[]
-}
 
 function slugify(text: string): string {
   return text
@@ -73,74 +61,76 @@ function htmlToBlocks(html: string) {
   }))
 }
 
-function mapJobType(remotive: string): string {
-  const map: Record<string, string> = {
-    full_time: 'Full-time',
-    part_time: 'Part-time',
-    contract: 'Contract',
-    internship: 'Internship',
-    freelance: 'Contract',
-  }
-  return map[remotive] ?? 'Full-time'
+function mapJobType(type: string): string {
+  const lower = type.toLowerCase()
+  if (lower.includes('part')) return 'Part-time'
+  if (lower.includes('contract')) return 'Contract'
+  if (lower.includes('intern')) return 'Internship'
+  if (lower.includes('freelance')) return 'Contract'
+  return 'Full-time'
 }
 
-function getDraftId(jobId: number): string {
-  return `drafts.job-remotive-${jobId}`
+function getDraftId(sourceId: string): string {
+  return `drafts.job-${sourceId}`
 }
 
-async function draftExists(jobId: number): Promise<boolean> {
-  const doc = await client.getDocument(getDraftId(jobId))
+async function draftExists(sourceId: string): Promise<boolean> {
+  const doc = await client.getDocument(getDraftId(sourceId))
   return doc !== undefined
 }
 
-async function createDraft(job: RemotiveJob): Promise<void> {
-  const titleSlug = slugify(`${job.title}-${job.company_name}`)
-  const draftId = getDraftId(job.id)
+async function createDraft(job: NormalizedJob): Promise<void> {
+  const titleSlug = slugify(`${job.title}-${job.company}`)
+  const draftId = getDraftId(job.sourceId)
 
   const plainText = job.description
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ')
     .trim()
 
-  const excerpt = plainText.slice(0, 217).replace(/\s+\S*$/, '...')
+  const excerpt = plainText.slice(0, 217).replace(/\s+\S*$/, '...') || `${job.title} at ${job.company}. Remote position.`
 
   const doc = {
     _id: draftId,
     _type: 'job',
-    title: `${job.title} — ${job.company_name}`,
+    title: `${job.title} — ${job.company}`,
     slug: { _type: 'slug', current: titleSlug },
-    company: job.company_name,
-    location: job.candidate_required_location || 'Remote',
+    company: job.company,
+    location: job.location || 'Remote',
     remote: true,
-    employmentType: mapJobType(job.job_type),
+    employmentType: mapJobType(job.jobType),
     category: {
       _type: 'reference',
       _ref: REMOTE_JOBS_CATEGORY_ID,
     },
     excerpt: excerpt.slice(0, 220),
     applicationUrl: job.url,
-    publishedAt: new Date(job.publication_date).toISOString(),
+    publishedAt: new Date(job.publicationDate).toISOString(),
     featured: false,
     views: 0,
     body: htmlToBlocks(job.description),
   }
 
   await client.createOrReplace(doc)
-  console.log(`   Draft created: ${job.title} @ ${job.company_name}`)
+  console.log(`   [${job.source}] Draft created: ${job.title} @ ${job.company}`)
 }
 
-export async function createSanityDrafts(jobs: RemotiveJob[]): Promise<void> {
+export async function createSanityDrafts(jobs: NormalizedJob[]): Promise<void> {
   console.log(`\n=== Sanity Draft Creator ===`)
   console.log(`Jobs received: ${jobs.length}`)
 
-  // Check each job individually by draft ID
-  const newJobs: RemotiveJob[] = []
+  if (jobs.length === 0) {
+    console.log('No jobs to process.')
+    return
+  }
+
+  const newJobs: NormalizedJob[] = []
   for (const job of jobs) {
-    const exists = await draftExists(job.id)
+    const exists = await draftExists(job.sourceId)
     if (!exists) {
       newJobs.push(job)
     } else {
-      console.log(`   Skipping (already exists): ${job.title} @ ${job.company_name}`)
+      console.log(`   Skipping (already exists): ${job.title} @ ${job.company}`)
     }
   }
 

@@ -1,7 +1,7 @@
-// src/app/api/cron/fetch-jobs/route.ts
+// src/app/api/cron/fetch-opportunities/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { fetchAllJobs } from '../../../../lib/jobs/fetch-jobs'
-import { createSanityDrafts } from '../../../../lib/jobs/create-sanity-drafts'
+import { fetchAllOpportunities } from '../../../../lib/jobs/fetch-opportunities'
+import { createOpportunityDrafts } from '../../../../lib/jobs/create-opportunity-drafts'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -21,34 +21,34 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    log('Cron started: fetching jobs from all sources')
-    const jobs = await fetchAllJobs()
-    log(`Fetched ${jobs.length} recent jobs within 48hrs`)
+    log('Cron started: fetching opportunities')
+    const opportunities = await fetchAllOpportunities()
+    log(`Fetched ${opportunities.length} recent opportunities within 48hrs`)
 
-    if (jobs.length === 0) {
-      log('No new jobs within 48hrs — nothing to post today.')
+    if (opportunities.length === 0) {
+      log('No new opportunities within 48hrs — nothing to post today.')
       return NextResponse.json({
         success: true,
-        jobsFetched: 0,
-        message: 'No new jobs within 48hrs',
+        opportunitiesFetched: 0,
+        message: 'No new opportunities within 48hrs',
         logs,
         timestamp: new Date().toISOString(),
       })
     }
 
     log('Creating Sanity drafts')
-    await createSanityDrafts(jobs)
+    await createOpportunityDrafts(opportunities)
     log('Drafts created successfully')
 
     return NextResponse.json({
       success: true,
-      jobsFetched: jobs.length,
+      opportunitiesFetched: opportunities.length,
       logs,
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
-    console.error('Cron job failed:', message)
+    console.error('Opportunity cron failed:', message)
     return NextResponse.json({
       success: false,
       error: message,
